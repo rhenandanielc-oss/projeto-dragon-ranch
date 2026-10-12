@@ -58,6 +58,9 @@ function GraphicsSettings.Apply(id: string)
 		return
 	end
 	current = id
+	if base.Bloom == nil then
+		remember()
+	end
 	Lighting.GlobalShadows = preset.Shadows
 	local bloom = Lighting:FindFirstChildOfClass("BloomEffect")
 	if bloom then
