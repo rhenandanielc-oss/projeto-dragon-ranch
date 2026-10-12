@@ -42,7 +42,7 @@ explicitamente adiados pelo responsável.
 | B2 | Crescimento | ✅ somente por pontos, ritmo demorado, sem marcos obrigatórios |
 | B3 | Voo | ✅ a partir de Jovem; missão uma vez por dragão |
 | B4 | Combate | 🟡 parcial — espada e arco desde o início; falta: controles, habilidades, comando do dragão |
-| B5 | PvP: proteção inicial, zonas, itens saqueáveis, limite de perda | ⛔ pendente |
+| B5 | PvP | ✅ 3 zonas; até 40% dos materiais em zona perigosa; proteção de iniciante; anti-abuso |
 | B6 | Dungeons: tamanho do grupo, formação, desconexão, derrota, recompensas | ⛔ pendente |
 | B7 | Inventário e economia: capacidade, empilhamento, moedas, comércio | ⛔ pendente |
 | B8 | Dados salvos e proteção contra falha/duplicação | ⛔ pendente |
@@ -114,3 +114,4 @@ foi implementado.
 | 12/10/2026 | Chuva × Eletricidade; Wyrm desbloqueia entrar na terra |
 | 12/10/2026 | Crescimento por pontos, ritmo demorado |
 | 12/10/2026 | B2 resolvido: sem marcos obrigatórios |
+| 12/10/2026 | B5 resolvido: regras de PvP e loot |

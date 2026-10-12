@@ -572,7 +572,14 @@ jogadores novos; - Fazendas sem ataques PvP diretos; - Indicação visual
 clara de zonas perigosas; - Aviso antes de entrar em uma zona com risco
 de loot; - Proteção contra repetidos ataques abusivos ao mesmo jogador.
 
-A duração e os critérios dessas proteções precisam ser aprovados.
+**APROVADO (12/10/2026):**
+- **Proteção de iniciante:** o jogador não pode ser atacado até o seu
+  primeiro dragão chegar ao estágio Jovem. Se atacar outro jogador
+  antes disso, perde a proteção.
+- **Proteção ao renascer:** 2 minutos sem poder ser atacado após perder.
+- **Anti-abuso:** quem derrota o mesmo jogador de novo dentro de 30
+  minutos não recebe loot dele.
+- Aviso na tela ao entrar em cada tipo de zona.
 
 ### 11.3 Loot variável por zona
 
@@ -583,20 +590,25 @@ Categorias sugeridas: - **Zona protegida:** sem saque de PvP; - **Zona
 comum:** risco mínimo ou nenhuma perda de inventário; - **Zona
 perigosa:** perda limitada de itens elegíveis e recompensas melhores.
 
-Essas categorias são uma proposta de organização e precisam ser
-confirmadas.
+**APROVADO (12/10/2026):**
+- **Zona protegida** (fazendas, área inicial, vilas): sem PvP.
+- **Zona comum** (maior parte do mapa): PvP ativo, sem perda de itens; o
+  derrotado apenas renasce.
+- **Zona perigosa** (áreas com recursos e baús melhores): PvP com perda
+  limitada — o derrotado deixa cair **até 40%** dos materiais coletados
+  que estiver carregando.
 
 ### 11.4 Itens protegidos
 
-Nunca podem ser roubados ou perdidos permanentemente como consequência
-de derrota PvP: - Dragões; - Estágios e níveis permanentes; - Progresso
-essencial de missões; - Desbloqueio de voo; - Itens permanentes
-fundamentais para o funcionamento da conta.
+**APROVADO (12/10/2026).** Nunca podem ser roubados ou perdidos como
+consequência de derrota PvP: dragões; estágios e pontos de crescimento;
+progresso de missões; desbloqueio de voo e de entrar na terra;
+equipamentos; moedas; itens de missão; itens permanentes da conta.
 
 ### 11.5 Itens saqueáveis
 
-**PROPOSTA:** materiais coletados, parte dos consumíveis e outros itens
-explicitamente marcados como saqueáveis.
+**APROVADO (12/10/2026):** apenas materiais coletados que o jogador
+estiver carregando, e somente em zona perigosa (até 40%).
 
 O jogo deve informar quais itens podem ser perdidos e em quais zonas.
 Não permitir saques ilimitados nem a remoção de todo o inventário.
@@ -735,7 +747,9 @@ uma vez por dragão.
 **Ainda falta:** controles essenciais, conjunto inicial de habilidades e
 como o jogador comanda o dragão.
 
-### B5. Regras de PvP e loot
+### B5. Regras de PvP e loot — RESOLVIDO
+
+**Resolvido (12/10/2026):** ver seção 11.
 
 Confirmar como a proteção inicial funciona, quais zonas existem, quais
 itens são saqueáveis e o limite de perda por derrota.
@@ -874,6 +888,12 @@ mecânicas.
   0.2.4 (12/10/2026)                  Crescimento somente por pontos;
                                       marcos obrigatórios rejeitados. B2
                                       resolvido.
+
+  0.2.5 (12/10/2026)                  PvP: três zonas, perda de até 40%
+                                      dos materiais em zona perigosa,
+                                      proteção de iniciante até o
+                                      primeiro dragão virar Jovem,
+                                      anti-abuso. B5 resolvido.
 
   -----------------------------------------------------------------------
 
