@@ -473,6 +473,23 @@ As cinco silhuetas já são bem diferentes entre si, o que atende à regra 3.2.
 
 ---
 
+## 11.1 Modelos gerados (12/10/2026)
+
+A pedido do responsável ("dragão mais realista"), os dragões passaram a
+usar **modelos 3D gerados por IA no Roblox Studio** (`generate_mesh`), em
+estilo fantasia realista, separados em partes (corpo, cabeça, asas,
+cauda, patas) para facilitar animação futura.
+
+- Por espécie: **Ovo**, **Bebê** (cabeça grande, cara de filhote) e
+  **Adulto**.
+- **Jovem** e **Pré-adulto** usam o modelo Adulto em escala menor (0,62 e
+  0,8); **Ancião** usa o Adulto em escala 1,12 até ter modelo próprio.
+- Ficam em `ServerStorage.DragonAssets.<Espécie>.<Egg|Baby|Adult>`; o
+  atributo `YawDegrees` diz quanto girar para a cabeça ficar à frente.
+- Se um modelo faltar, o jogo usa o modelo provisório de peças simples.
+- **PENDENTE:** modelo próprio do Ancião; animações (rig com articulações
+  para andar, voar e atacar); versões visuais por raridade.
+
 ## 12. Modelagem, rigging e implementação
 
 ### 12.1 Organização dos modelos

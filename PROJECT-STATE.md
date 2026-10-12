@@ -105,7 +105,8 @@ foi implementado.
 | Mirante com montanhas, vale e cachoeira | ⬜ |
 | Área mágica com cristais | ⬜ |
 | Portão de dungeon com círculo de grupo | ⬜ |
-| Dragão em duas fases | ⛔ depende do estilo e da aprovação das silhuetas |
+| Hub Central, fazendas e bosques | ✅ 12/10/2026 |
+| Dragão em duas fases | ✅ 5 espécies com ovo, bebê e adulto gerados (aguardando aprovação do responsável) |
 | Interface em PC e celular | 🟡 primeiras telas prontas; testar no celular |
 
 ---
@@ -127,9 +128,13 @@ O código fica em `src/` (espelho exato do Studio). Pastas gerenciadas:
 | `Server/Services/FarmService` | 18 terrenos, atribuição ao entrar, placa com nome, nascer na própria fazenda | ✅ testado |
 | `Server/Services/InventoryService` | Núcleo da mochila (adicionar, remover, contar, empilhar) | ✅ |
 | `Server/Dragons/DragonService` | Ovo inicial, incubação, cuidados, treino, pontos, estágios, nome filtrado, dragão ativo, ampliar espaços | ✅ testado |
-| `Server/Dragons/DragonModels` | Modelos provisórios das 5 espécies por estágio | ✅ |
+| `Server/Dragons/DragonModels` | Usa os modelos realistas gerados (ServerStorage.DragonAssets); peças simples só como reserva | ✅ testado |
+| `Server/Services/NPCService` + `Client/UI/Dialog` | 4 NPCs no Hub com conversa | ✅ testado |
+| `Shared/Config/NPCs` | Nomes e falas dos NPCs | ✅ |
 | `Client/UI/*` | Escolha do ovo, painel de dragões, barra de moedas/itens, avisos (PC e celular) | ✅ testado |
-| `tools/studio/build_farms.luau` | Constrói a área das 18 fazendas (modo Edit) | ✅ |
+| `tools/studio/build_farms.luau` | (antigo) grade de 18 fazendas — substituído por build_hub | — |
+| `tools/studio/build_hub.luau` | Constrói o Hub Central, as 18 fazendas em anel, caminhos com bosque decorado e a floresta | ✅ |
+| `tools/studio/import_dragon_assets.luau` | Importa dragões gerados por IA para ServerStorage.DragonAssets | ✅ |
 | `tools/checksums.py` | Confere se o Studio está idêntico ao repositório | ✅ |
 
 **Testes da Fase 1 (12/10/2026, Play no Studio):**
@@ -162,6 +167,7 @@ esta lista ao concluir a V1.
 | 3 | Publicar o jogo e testar com amigos em servidor real (salvamento entre servidores, trava de sessão) | Fase 11 | ⬜ |
 | 4 | Testar no celular de verdade (controles, interface, desempenho) | Fase 11 | ⬜ |
 | 5 | Configurar ícone, miniaturas, descrição e classificação de idade (Experience Questionnaire) | Antes de lançar | ⬜ |
+| 6 | Conferir o desempenho no celular com o Hub (~9.000 objetos de cenário); se pesar, ativar StreamingEnabled e reduzir árvores | Fase 11 | ⬜ |
 
 ---
 
@@ -187,3 +193,4 @@ esta lista ao concluir a V1.
 | 12/10/2026 | Servidor de 8 para 18 jogadores; mapa dobrado para ~16.000 × 16.000 |
 | 12/10/2026 | Fase 1 concluída: fundação (config, rede protegida, salvamento) |
 | 12/10/2026 | Fase 2 concluída: 18 fazendas, ovo inicial, crescimento, cuidados, painel |
+| 12/10/2026 | Hub Central com 4 NPCs; fazendas em anel separadas por floresta; bosque decorado nas entradas; fazendas decoradas; dragões e cenário com modelos 3D gerados por IA |

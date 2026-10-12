@@ -47,6 +47,9 @@ local NetDefs: { [string]: RemoteDef } = {
 	SetActiveDragon = { Kind = "Event", Direction = "C2S", Args = { { Type = "string", MaxLen = 16 } }, Rate = 1, Burst = 3 },
 	ExpandDragonSlots = { Kind = "Event", Direction = "C2S", Args = {}, Rate = 0.5, Burst = 2 },
 
+	-- Hub: servidor abre a conversa com um NPC (id do NPC).
+	NpcDialog = { Kind = "Event", Direction = "S2C" },
+
 	-- Diagnóstico: medir latência e testar a proteção de frequência.
 	Ping = { Kind = "Function", Direction = "C2S", Args = { { Type = "integer", Min = 0, Max = 2 ^ 31 } }, Rate = 2, Burst = 5 },
 }

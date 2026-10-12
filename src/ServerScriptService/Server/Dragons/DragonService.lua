@@ -116,7 +116,7 @@ local function placementFor(plot: Model, data: { [string]: any }, dragonId: stri
 		local spot = base:FindFirstChild("EggSpot") :: Attachment
 		local offsets = { Vector3.new(0, 0, 0), Vector3.new(2.6, 0, 0), Vector3.new(-2.6, 0, 0), Vector3.new(0, 0, 2.6), Vector3.new(0, 0, -2.6) }
 		local off = offsets[((eggIndex - 1) % #offsets) + 1]
-		return CFrame.new(spot.WorldPosition + off - Vector3.new(0, 2.2, 0))
+		return spot.WorldCFrame * CFrame.new(off - Vector3.new(0, 2.2, 0))
 	end
 	local penIndex = 0
 	for _, id in ipairs(sortedIds(data)) do
@@ -128,8 +128,8 @@ local function placementFor(plot: Model, data: { [string]: any }, dragonId: stri
 		end
 	end
 	local pen = base:FindFirstChild("Pen" .. math.clamp(penIndex, 1, 8)) :: Attachment
-	-- virado para a entrada da fazenda
-	return CFrame.lookAt(pen.WorldPosition, pen.WorldPosition + Vector3.new(0, 0, -1)) * CFrame.Angles(0, math.rad(180), 0)
+	-- o attachment já aponta para a entrada da fazenda
+	return pen.WorldCFrame
 end
 
 local function addPrompt(model: Model, owner: Player, name: string, action: string, key: Enum.KeyCode, order: number)

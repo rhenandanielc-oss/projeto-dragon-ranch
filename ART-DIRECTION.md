@@ -246,6 +246,16 @@ Ao usar este documento com `GAME-DESIGN.md`:
 - Priorizar clareza visual, consistência artística e desempenho em Roblox.
 - Não prometer modelos 3D, animações ou efeitos profissionais apenas com prompts textuais; verificar quais recursos e ferramentas estão realmente disponíveis.
 
+## 13.1 Recursos gerados por IA (12/10/2026)
+
+O cenário do Hub e das fazendas usa modelos gerados por IA no Roblox
+Studio, guardados em `ServerStorage.WorldAssets`: carvalho, pinheiro,
+árvore folhosa, cerejeira, arbusto, ninho, arco de entrada, celeiro,
+lanterna, chafariz com estátua de dragão, barraca de mercado e quadro de
+missões. Os construtores (`tools/studio/*.luau`) clonam esses modelos.
+Estilo: fantasia estilizada com detalhe, cores vibrantes, florestas verdes
+e cerejeiras — coerente com §3.
+
 ## 14. Histórico de versões
 
 - **0.1:** documento inicial; incorporadas as preferências aprovadas de cores vibrantes, florestas verdes, magia colorida, paisagens variadas e grandes montanhas com vistas panorâmicas.

@@ -513,8 +513,8 @@ possam ser descobertos sem depender apenas de marcadores de interface.
 
 | Área | Posição | Zona |
 |---|---|---|
-| Vila inicial (mercador, NPCs, ponto de partida) | Centro-sul | Protegida |
-| Fazendas (18 terrenos) | Ao lado da vila | Protegida |
+| Vila inicial / Hub Central (mercador, NPCs, ponto de partida) | Centro-sul | Protegida |
+| Fazendas (18 terrenos) | Em anel ao redor do Hub, cada uma numa clareira da floresta | Protegida |
 | Prados e bosques | Em volta da vila | Comum |
 | Floresta densa e rio principal | Oeste | Comum |
 | Grande lago e cachoeiras | Leste | Comum |
@@ -528,6 +528,22 @@ ativa; a missão dá apenas uma pista vaga; ruínas com runas apontam a
 direção; dos mirantes é possível ver um brilho mágico no vale.
 
 As zonas perigosas ficam longe da vila, atrás de obstáculos naturais.
+
+### 8.4 Hub Central e fazendas (APROVADO 12/10/2026)
+
+- **Hub Central:** praça com chafariz e estátua de dragão, bancos, canteiros
+  e lanternas; **4 NPCs**: Tobias (Mercador), Mestra Lira (Missões), Vovó
+  Brisa (Cuidadora de Dragões) e Guarda Hilda (Guarda da Vila).
+- **Fazendas em volta do Hub**, bem espalhadas (a ~650 studs do centro),
+  cada uma numa clareira cercada de floresta densa e montes: **não é
+  possível ver a fazenda dos outros**.
+- **Entrada de cada fazenda:** caminho saindo da praça que termina num
+  **bosque decorado** (cerejeiras, carvalhos, arbustos, flores e
+  lanternas) e num arco de madeira com a placa do dono.
+- **Fazenda decorada:** celeiro, habitat do ovo (ninho de galhos e palha
+  sobre pedras, com abrigo e calor suave), camas de palha para os dragões,
+  cocho, bebedouro, laguinho, poço, horta, área de treino com bonecos,
+  baú, fardos de feno, barris, lanternas, banco, arbustos e flores.
 O terreno atual do place (~2.000 × 2.000) pode ser reaproveitado como
 parte da área central.
 
@@ -1110,6 +1126,12 @@ mecânicas.
                                       dungeon, mercador; fazenda 3→8.
                                       B1 resolvido — todos os bloqueios
                                       B1–B10 resolvidos.
+
+  0.3.2 (12/10/2026)                  Hub Central com NPCs e fazendas em
+                                      anel, separadas por floresta;
+                                      bosque decorado na entrada;
+                                      fazendas mais decoradas; dragões
+                                      com modelos realistas.
 
   0.3.1 (12/10/2026)                  Servidor passa de 8 para 18
                                       jogadores; 18 terrenos de fazenda;

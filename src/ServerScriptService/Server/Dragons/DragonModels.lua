@@ -1,9 +1,12 @@
 --!strict
--- Modelos PROVISÓRIOS dos dragões, feitos de peças simples, para testar a jogabilidade.
--- Cada espécie tem silhueta própria (DRAGON-VISUAL-DESIGN.md §11). Serão trocados pela arte final.
+-- Modelos dos dragões.
+-- 1. Se existir um modelo gerado em ServerStorage.DragonAssets.<Espécie>.<Egg|Baby|Adult>, ele é usado.
+--    Jovem, Pré-adulto e Ancião usam o modelo Adulto em escala menor/maior.
+-- 2. Senão, usa o modelo PROVISÓRIO de peças simples (silhueta de cada espécie, DRAGON-VISUAL-DESIGN.md §11).
 -- Coordenadas em escala Adulto; o chão fica em y = 0 relativo à peça Root.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerStorage = game:GetService("ServerStorage")
 
 local Elements = require(ReplicatedStorage.Shared.Config.Elements)
 local Species = require(ReplicatedStorage.Shared.Config.Species)
@@ -314,6 +317,48 @@ function DragonModels.UpdateTag(model: Model, dragon: { [string]: any })
 	sub.TextColor3 = rarity.Color
 end
 
+-- Escala do modelo Adulto gerado para cada estágio que o reaproveita.
+local MESH_STAGE_SCALE = { Young = 0.62, Subadult = 0.8, Adult = 1.0, Elder = 1.12 }
+
+local function meshAssetFor(speciesId: string, stage: string): (Model?, number)
+	local folder = ServerStorage:FindFirstChild("DragonAssets")
+	local species = folder and folder:FindFirstChild(speciesId)
+	if not species then
+		return nil, 1
+	end
+	if stage == "Egg" or stage == "Baby" then
+		return species:FindFirstChild(stage) :: Model?, 1
+	end
+	return species:FindFirstChild("Adult") :: Model?, MESH_STAGE_SCALE[stage] or 1
+end
+
+-- Coloca o modelo gerado sobre o Root: base no chão, cabeça para a frente (-Z do Root).
+local function attachMesh(source: Model, scale: number, root: BasePart): number
+	local mesh = source:Clone()
+	if scale ~= 1 then
+		mesh:ScaleTo(mesh:GetScale() * scale)
+	end
+	local yaw = math.rad(source:GetAttribute("YawDegrees") or 0)
+	mesh:PivotTo(root.CFrame * CFrame.Angles(0, yaw, 0))
+	local bcf, size = mesh:GetBoundingBox()
+	local bottom = bcf.Position - Vector3.new(0, size.Y / 2, 0)
+	mesh:PivotTo(mesh:GetPivot() + (root.Position - bottom))
+	for _, d in ipairs(mesh:GetDescendants()) do
+		if d:IsA("BasePart") then
+			d.Anchored = false
+			d.CanCollide = false
+			d.Massless = true
+			local weld = Instance.new("WeldConstraint")
+			weld.Part0 = root
+			weld.Part1 = d
+			weld.Parent = d
+		end
+	end
+	mesh.Name = "Mesh"
+	mesh.Parent = root.Parent
+	return size.Y
+end
+
 -- Cria o modelo de um dragão (ou ovo) na posição `at` (chão).
 function DragonModels.Build(dragon: { [string]: any }, at: CFrame): Model
 	local model = Instance.new("Model")
@@ -322,7 +367,11 @@ function DragonModels.Build(dragon: { [string]: any }, at: CFrame): Model
 	local colors = palette(dragon.Species, stage == "Elder")
 	local root = makeRoot(model, at)
 
-	if stage == "Egg" then
+	local source, meshScale = meshAssetFor(dragon.Species, stage)
+	if source then
+		local height = attachMesh(source, meshScale, root)
+		nameTag(model, root, height + 1.5)
+	elseif stage == "Egg" then
 		local egg = makePart({ kind = "Ball", size = Vector3.new(2.6, 3.4, 2.6), cf = CFrame.new(0, 1.7, 0), color = "main" }, 1, 1, colors, root)
 		egg.Name = "Egg"
 		-- faixas com a segunda cor indicam a espécie

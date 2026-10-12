@@ -31,8 +31,8 @@ local function spawnCFrame(plot: Model): CFrame?
 	local base = plot:FindFirstChild("Base")
 	local att = base and base:FindFirstChild("Spawn")
 	if att and att:IsA("Attachment") then
-		-- olhando para dentro da fazenda (-Z)
-		return CFrame.lookAt(att.WorldPosition, att.WorldPosition + Vector3.new(0, 0, -1))
+		-- o attachment já aponta para dentro da fazenda
+		return att.WorldCFrame
 	end
 	return nil
 end

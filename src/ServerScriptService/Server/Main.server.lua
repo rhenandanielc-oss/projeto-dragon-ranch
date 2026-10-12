@@ -9,6 +9,7 @@ local NetService = require(Server.Services.NetService)
 local DataService = require(Server.Data.DataService)
 local FarmService = require(Server.Services.FarmService)
 local DragonService = require(Server.Dragons.DragonService)
+local NPCService = require(Server.Services.NPCService)
 
 NetService.SetLoadedCheck(DataService.IsLoaded)
 NetService.Init()
@@ -50,6 +51,7 @@ end)
 
 FarmService.Init()
 DragonService.Init()
+NPCService.Init()
 DataService.Init()
 
 print("[Server] Servidor iniciado (Fase 2: fazenda e dragões)")
