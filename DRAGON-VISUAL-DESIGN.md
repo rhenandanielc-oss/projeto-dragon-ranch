@@ -424,7 +424,7 @@ As cinco silhuetas já são bem diferentes entre si, o que atende à regra 3.2.
 - **Asas:** Nenhuma (na anatomia tradicional).
 - **Patas e corpo:** Sem patas; corpo grosso e pesado.
 - **Cauda:** Contínua com o corpo.
-- **Voo:** não voa (APROVADO). É muito rápido em terra — mais rápido em solo que as espécies voadoras. A animação de corrida/deslizamento deve transmitir essa velocidade.
+- **Voo:** não voa (APROVADO). É muito rápido em terra — mais rápido em solo que as espécies voadoras. A animação de corrida/deslizamento deve transmitir essa velocidade. No estágio Jovem, por missão, desbloqueia **entrar na terra**: precisa de animação de mergulho no solo, deslocamento subterrâneo (rastro de terra na superfície) e saída.
 - **Chifres/cristas/espinhos:** PENDENTE
 - **Cores principais e secundárias:** PENDENTE — devem refletir os elementos
 - **Padrão de escamas/superfície:** PENDENTE

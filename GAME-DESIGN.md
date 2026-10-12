@@ -208,7 +208,9 @@ Elementos presentes na V1: Fogo, Eletricidade, Vento, Terra, Água e Chuva. A li
 - **Chuva:** controla fenômenos de tempestade — chuva, tempestades e raios.
 - **Fogo**, **Eletricidade**, **Vento** e **Terra**: efeitos a detalhar.
 
-**PENDENTE:** diferenciar os raios da Chuva (parte de uma tempestade) da Eletricidade do Wyvern, para que os dois elementos não fiquem com o mesmo papel.
+**APROVADO (12/10/2026) — Chuva × Eletricidade:**
+- **Eletricidade:** rápida e direta — choques, correntes, impulsos, ataques em alvo único ou em linha.
+- **Chuva:** em área e mais lenta — nuvens de tempestade, raios que caem numa região, chuva que atrapalha os inimigos.
 
 **APROVADO (12/10/2026) — elementos duplos:** espécies com dois elementos têm três grupos de poderes: poderes que combinam os dois elementos, poderes só do primeiro e poderes só do segundo. Exemplo: o Wyvern tem poderes de Fogo + Eletricidade juntos, poderes só de Fogo e poderes só de Eletricidade.
 
@@ -388,10 +390,13 @@ sua própria poção.
 
 **APROVADO (12/10/2026):** o Wyrm não voa (ver seção 4.2).
 
-**PENDENTE:** o que a missão da poção desbloqueia para o Wyrm (ou se ele
-tem outra missão de marco própria, por exemplo para liberar a velocidade
-máxima em terra); controles de voo (PC e celular), limites de voo e se
-haverá custo de energia.
+**APROVADO (12/10/2026):** o Wyrm tem uma missão de marco própria, no
+mesmo estágio (Jovem) e com a mesma estrutura (dungeon + item especial),
+que desbloqueia a habilidade de **entrar na terra** (escavar e se
+deslocar por baixo do solo). Também é feita uma vez por dragão.
+
+**PENDENTE:** controles de voo e de escavação (PC e celular), limites e
+se haverá custo de energia.
 
 ------------------------------------------------------------------------
 
@@ -667,8 +672,10 @@ autorizar explicitamente uma decisão provisória antes da implementação.
 elementos duplos têm poderes combinados e separados; Wyrm não voa e é
 muito rápido em terra; Dragão Asiático voa sem asas, ondulando.
 
-**Ainda falta:** diferença entre os raios da Chuva e a Eletricidade;
-equivalente da missão de voo para o Wyrm; identidade visual, função no
+**Resolvido também:** Chuva (área, tempestade) × Eletricidade (rápida,
+direta); Wyrm desbloqueia "entrar na terra" no lugar do voo.
+
+**Ainda falta:** identidade visual, função no
 combate e habilidades de cada espécie; os sete níveis de raridade e a
 regra da raridade secreta.
 
@@ -817,6 +824,11 @@ mecânicas.
                                       elementos duplos; Wyrm não voa e é
                                       muito rápido em terra; Dragão
                                       Asiático voa ondulando, sem asas.
+
+  0.2.2 (12/10/2026)                  Chuva × Eletricidade diferenciadas;
+                                      Wyrm desbloqueia "entrar na terra"
+                                      por missão de marco no estágio
+                                      Jovem.
 
   -----------------------------------------------------------------------
 
