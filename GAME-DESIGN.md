@@ -312,10 +312,43 @@ visualmente quanto em gameplay.
 -   Comida e água mantêm o dragão saudável e funcional, mas não devem
     acelerar o crescimento de forma desproporcional.
 
-### 5.2 Valores ainda não definidos
+### 5.2 Sistema de pontos de crescimento
 
-**PENDENTE:** duração ou esforço médio de cada estágio, requisitos de
-evolução e ritmo total desejado até ancião.
+**APROVADO (12/10/2026):** o dragão cresce juntando **pontos de
+crescimento** ao fazer atividades com o jogador. O crescimento deve ser
+**demorado**.
+
+Fontes de pontos:
+- **Cuidados** (comer, beber, carinho): poucos pontos, com limite diário.
+- **Treino na fazenda:** pontos médios.
+- **Combate, exploração e missões com o dragão ativo:** maior fonte.
+- **Dragões na fazenda** (não ativos) ganham um pouco com cuidados e
+  treino.
+
+Fome e sede: dragão bem cuidado ganha pontos no ritmo normal; com fome
+ou sede, ganha metade. Nunca regride nem morre.
+
+**Ritmo provisório (configurável, a ajustar em testes)** — uma sessão ≈
+30–45 min:
+
+| Passagem | Sessões nessa fase | Total acumulado aprox. |
+|---|---|---|
+| Ovo → Bebê | ~1 (≈30 min) | 0,5 h |
+| Bebê → Jovem | ~5 | 3–4 h |
+| Jovem → Pré-adulto | ~15 | 12–14 h |
+| Pré-adulto → Adulto | ~30 | 30–35 h |
+| Adulto → Ancião | ~80+ | 85 h ou mais |
+
+Como o voo é liberado no estágio Jovem, o primeiro voo acontece por volta
+de 3–4 horas de jogo com aquele dragão.
+
+**PROPOSTA (aguardando confirmação):** além dos pontos, cada passagem
+exige um marco:
+- Ovo → Bebê: incubar no ninho da fazenda;
+- Bebê → Jovem: missão de treinamento básico;
+- Jovem → Pré-adulto: missão do voo (ou de entrar na terra, no Wyrm);
+- Pré-adulto → Adulto: concluir uma dungeon com o dragão ativo;
+- Adulto → Ancião: provação especial de longo prazo.
 
 Recomendação de teste: definir metas de progressão em sessões de jogo, e
 não apenas em horas de calendário. Ajustar depois de testes com
@@ -679,7 +712,11 @@ direta); Wyrm desbloqueia "entrar na terra" no lugar do voo.
 combate e habilidades de cada espécie; os sete níveis de raridade e a
 regra da raridade secreta.
 
-### B2. Regra exata de crescimento
+### B2. Regra exata de crescimento — PARCIALMENTE RESOLVIDO
+
+**Resolvido (12/10/2026):** sistema de pontos de crescimento, ritmo
+demorado, valores provisórios na seção 5.2. **Ainda falta:** confirmar os
+marcos obrigatórios de cada passagem.
 
 Definir os requisitos de passagem entre os seis estágios: esforço
 esperado, missões, treinamento, cuidados e possíveis itens. Não é
@@ -829,6 +866,10 @@ mecânicas.
                                       Wyrm desbloqueia "entrar na terra"
                                       por missão de marco no estágio
                                       Jovem.
+
+  0.2.3 (12/10/2026)                  Crescimento por pontos, ritmo
+                                      demorado com valores provisórios;
+                                      marcos por estágio em proposta.
 
   -----------------------------------------------------------------------
 
