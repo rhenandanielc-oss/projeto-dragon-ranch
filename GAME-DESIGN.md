@@ -459,8 +459,32 @@ missão os marque primeiro.
 **PROPOSTA:** dar pistas visuais e ambientais para que locais secretos
 possam ser descobertos sem depender apenas de marcadores de interface.
 
-**PENDENTE:** nome, tema visual, dimensões e regiões internas do
-primeiro mapa.
+### 8.3 Terras de Escamarra (APROVADO 12/10/2026)
+
+- **Nome da região inicial:** Terras de Escamarra.
+- **Tamanho:** ~8.000 × 8.000 studs, com StreamingEnabled (carregamento
+  por proximidade, necessário para celular).
+- **Servidor:** até 8 jogadores; cada um com terreno de fazenda próprio.
+
+| Área | Posição | Zona |
+|---|---|---|
+| Vila inicial (mercador, NPCs, ponto de partida) | Centro-sul | Protegida |
+| Fazendas (8 terrenos) | Ao lado da vila | Protegida |
+| Prados e bosques | Em volta da vila | Comum |
+| Floresta densa e rio principal | Oeste | Comum |
+| Grande lago e cachoeiras | Leste | Comum |
+| Cordilheira com mirantes | Norte | Comum |
+| Vale dos Cristais | Extremo leste, atrás de penhascos | Perigosa |
+| Cânion vulcânico | Extremo oeste, após a floresta | Perigosa |
+| Portão da dungeon | Vale escondido na cordilheira norte, atrás de uma cachoeira | Comum |
+
+**Descoberta da dungeon:** sem marcador de interface, mesmo com a missão
+ativa; a missão dá apenas uma pista vaga; ruínas com runas apontam a
+direção; dos mirantes é possível ver um brilho mágico no vale.
+
+As zonas perigosas ficam longe da vila, atrás de obstáculos naturais.
+O terreno atual do place (~2.000 × 2.000) pode ser reaproveitado como
+parte da área central.
 
 ------------------------------------------------------------------------
 
@@ -830,7 +854,7 @@ dragão ativo, inventário, moedas, missões, desbloqueio do voo e estado
 da fazenda. O sistema precisa lidar com salvamentos falhos e evitar
 duplicação de itens.
 
-### B9. Escopo do mapa — PARCIALMENTE RESOLVIDO
+### B9. Escopo do mapa — RESOLVIDO
 
 **Resolvido (12/10/2026):**
 - O mapa deve ser **muito maior** que o terreno atual (~2.000 × 2.000
@@ -839,7 +863,7 @@ duplicação de itens.
 - Até **8 jogadores por servidor**; cada um recebe um **terreno de
   fazenda próprio** ao entrar, salvo entre servidores.
 
-**Falta:** aprovar tamanho, nome e layout propostos.
+Nome, tamanho e layout: ver seção 8.3.
 
 Definir o tema da região inicial, os pontos principais e o tamanho
 aproximado da área jogável. Não é necessário desenhar todo o mapa em
@@ -980,6 +1004,10 @@ mecânicas.
                                       resolvido). Mapa muito maior, 8
                                       jogadores por servidor, fazenda
                                       própria por jogador.
+
+  0.2.10 (12/10/2026)                 Mapa "Terras de Escamarra",
+                                      ~8.000 × 8.000 studs, layout e
+                                      regras de descoberta. B9 resolvido.
 
   -----------------------------------------------------------------------
 
