@@ -225,7 +225,18 @@ Elementos presentes na V1: Fogo, Eletricidade, Vento, Terra, Água e Chuva. A li
 
 **PENDENTE:** aparências, habilidades e atributos específicos de cada uma das cinco espécies.
 
-**PROPOSTA:** as cinco espécies iniciais devem ter funções de combate distintas — por exemplo, dano direto, mobilidade/velocidade, defesa/controle, área e suporte —, mas essa distribuição ainda precisa ser aprovada.
+**APROVADO (12/10/2026) — papéis de combate:**
+
+| Espécie | Papel | Ponto forte | Ponto fraco |
+|---|---|---|---|
+| Dragão Ocidental (Fogo) | Força bruta | Mais vida e dano direto | Velocidade média |
+| Wyvern (Fogo/Eletricidade) | Atacante aéreo | Dano explosivo, mergulhos rápidos | Menos defesa |
+| Amphiptere (Vento/Fogo) | Mobilidade | O mais rápido no ar; rajadas que empurram | Menos vida |
+| Wyrm (Terra/Água) | Defesa e emboscada | Mais defesa, muito rápido em terra, ataques saindo do chão | Não voa |
+| Dragão Asiático (Água/Chuva) | Área e suporte | Tempestades em área; chuva cura um pouco os aliados | Dano direto menor |
+
+Nenhuma espécie deve ser simplesmente "a melhor"; cada uma tem um jeito
+próprio de jogar.
 
 As espécies não devem ser apenas recolorações: cada uma deve ter diferenças visuais e de gameplay compreensíveis e balanceáveis. Não considerar a lista de raridades como definitiva até confirmação.
 
@@ -1054,6 +1065,9 @@ mecânicas.
                                       dragão, montaria a partir de Jovem
                                       (terra e voo), poderes por estágio.
                                       B4 resolvido.
+
+  0.2.12 (12/10/2026)                 Papéis de combate das cinco
+                                      espécies aprovados.
 
   -----------------------------------------------------------------------
 

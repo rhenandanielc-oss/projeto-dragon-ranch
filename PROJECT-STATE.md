@@ -38,7 +38,7 @@ explicitamente adiados pelo responsável.
 
 | Código | Decisão | Estado |
 |---|---|---|
-| B1 | Espécies e elementos | 🟡 parcial — 5 espécies, 6 elementos, poderes duplos e locomoção aprovados; falta: funções/habilidades de cada espécie, raridades |
+| B1 | Espécies e elementos | 🟡 parcial — 5 espécies, 6 elementos, poderes duplos e locomoção aprovados; papéis de combate aprovados; falta: raridades e obtenção de ovos |
 | B2 | Crescimento | ✅ somente por pontos, ritmo demorado, sem marcos obrigatórios |
 | B3 | Voo | ✅ a partir de Jovem; missão uma vez por dragão |
 | B4 | Combate | ✅ controles, flechas finitas, comando do dragão, montaria a partir de Jovem, poderes por estágio |
@@ -120,3 +120,4 @@ foi implementado.
 | 12/10/2026 | B8 resolvido; B9 parcial |
 | 12/10/2026 | B9 resolvido: Terras de Escamarra |
 | 12/10/2026 | B4 resolvido: combate e controles |
+| 12/10/2026 | Papéis de combate das espécies |

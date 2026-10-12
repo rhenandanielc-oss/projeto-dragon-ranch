@@ -338,6 +338,7 @@ As cinco silhuetas já são bem diferentes entre si, o que atende à regra 3.2.
 ### Espécie 1 — Wyvern
 
 - **Nome oficial da espécie:** Wyvern (APROVADO)
+- **Papel no combate:** Atacante aéreo — dano explosivo, mergulhos rápidos (APROVADO) — a silhueta e a postura devem comunicar esse papel
 - **Nome personalizado pelo jogador:** permitido para cada indivíduo; formato de interface PENDENTE
 - **Elementos:** Fogo / Eletricidade (APROVADO)
 - **Raridade:** definida na obtenção conforme tabela de raridades a aprovar
@@ -364,6 +365,7 @@ As cinco silhuetas já são bem diferentes entre si, o que atende à regra 3.2.
 ### Espécie 2 — Dragão Ocidental
 
 - **Nome oficial da espécie:** Dragão Ocidental (APROVADO)
+- **Papel no combate:** Força bruta — mais vida e dano direto (APROVADO) — a silhueta e a postura devem comunicar esse papel
 - **Nome personalizado pelo jogador:** permitido para cada indivíduo; formato de interface PENDENTE
 - **Elementos:** Fogo (APROVADO)
 - **Raridade:** definida na obtenção conforme tabela de raridades a aprovar
@@ -390,6 +392,7 @@ As cinco silhuetas já são bem diferentes entre si, o que atende à regra 3.2.
 ### Espécie 3 — Amphiptere
 
 - **Nome oficial da espécie:** Amphiptere (APROVADO)
+- **Papel no combate:** Mobilidade — o mais rápido no ar, rajadas que empurram (APROVADO) — a silhueta e a postura devem comunicar esse papel
 - **Nome personalizado pelo jogador:** permitido para cada indivíduo; formato de interface PENDENTE
 - **Elementos:** Vento / Fogo (APROVADO)
 - **Raridade:** definida na obtenção conforme tabela de raridades a aprovar
@@ -416,6 +419,7 @@ As cinco silhuetas já são bem diferentes entre si, o que atende à regra 3.2.
 ### Espécie 4 — Wyrm
 
 - **Nome oficial da espécie:** Wyrm (APROVADO)
+- **Papel no combate:** Defesa e emboscada — muito rápido em terra, ataques saindo do chão (APROVADO) — a silhueta e a postura devem comunicar esse papel
 - **Nome personalizado pelo jogador:** permitido para cada indivíduo; formato de interface PENDENTE
 - **Elementos:** Terra / Água (APROVADO)
 - **Raridade:** definida na obtenção conforme tabela de raridades a aprovar
@@ -442,6 +446,7 @@ As cinco silhuetas já são bem diferentes entre si, o que atende à regra 3.2.
 ### Espécie 5 — Dragão Asiático
 
 - **Nome oficial da espécie:** Dragão Asiático (APROVADO)
+- **Papel no combate:** Área e suporte — tempestades em área, chuva que cura aliados (APROVADO) — a silhueta e a postura devem comunicar esse papel
 - **Nome personalizado pelo jogador:** permitido para cada indivíduo; formato de interface PENDENTE
 - **Elementos:** Água / Chuva (APROVADO)
 - **Raridade:** definida na obtenção conforme tabela de raridades a aprovar
