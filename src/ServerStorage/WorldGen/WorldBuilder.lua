@@ -546,43 +546,86 @@ function WorldBuilder:buildHub()
 		self:lantern(C + Vector3.new(math.cos(a) * 98, 0, math.sin(a) * 98), C, plaza)
 	end
 	task.wait()
-	-- casas da vila em anel, entre as ruas
+	-- casas da vila ao longo das ruas que saem da praça, viradas para a rua
 	local houses = Instance.new("Folder")
 	houses.Name = "Village"
 	houses.Parent = hub
+	local placedAt = {}
 	local placed = 0
-	for ring, R in ipairs({ 150, 215, 270 }) do
-		local n = ({ 10, 14, 16 })[ring]
-		for k = 0, n - 1 do
-			local a = (k + 0.5 * (ring % 2)) / n * math.pi * 2
-			local x, y = H.x + math.cos(a) * R, H.y + math.sin(a) * R
-			if self:roadDist(x, y) > 26 and not (math.abs(x - H.x) < 30 and y > H.y + 100 and y < H.y + 175) then
-				local pos = V(x, y, self:groundY(x, y))
-				local cf = CFrame.lookAt(pos, Vector3.new(C.X, pos.Y, C.Z))
-				if not self:placeAsset("Cottage", cf, self.rng:NextNumber(0.9, 1.15), houses, 0.4) then
-					local m = Instance.new("Model")
-					m.Name = "Cottage"
-					part({ Name = "Walls", Size = Vector3.new(18, 11, 14), CFrame = cf * CFrame.new(0, 5.5, 0), Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(196, 170, 130) }, m)
-					local roof = Instance.new("WedgePart")
-					roof.Anchored = true
-					roof.Size = Vector3.new(19, 6, 8)
-					roof.CFrame = cf * CFrame.new(0, 14, -3.5) * CFrame.Angles(0, math.rad(180), 0)
-					roof.Material = Enum.Material.Fabric
-					roof.Color = Color3.fromRGB(150, 70, 50)
-					roof.Parent = m
-					local r2 = roof:Clone()
-					r2.CFrame = cf * CFrame.new(0, 14, 3.5)
-					r2.Parent = m
-					m.Parent = houses
-				end
-				placed += 1
-				if self.rng:NextNumber() < 0.6 then
-					self:lantern(pos + (cf.LookVector * 12) + cf.RightVector * 8, C, decor)
-				end
+	local function freeSpot(x: number, y: number, minD: number): boolean
+		if self:roadDist(x, y) < 17 then
+			return false
+		end
+		if math.abs(x - H.x) < 34 and y > H.y + 100 and y < H.y + 175 then
+			return false -- torre
+		end
+		for _, q in ipairs(placedAt) do
+			if (q[1] - x) ^ 2 + (q[2] - y) ^ 2 < minD * minD then
+				return false
 			end
 		end
-		task.wait()
+		return true
 	end
+	local function house(x: number, y: number, faceX: number, faceY: number)
+		local pos = V(x, y, self:groundY(x, y))
+		local cf = CFrame.lookAt(pos, V(faceX, faceY, pos.Y))
+		if not self:placeAsset("Cottage", cf * CFrame.Angles(0, math.rad(180), 0), self.rng:NextNumber(0.95, 1.2), houses, 0.5) then
+			part({ Name = "Cottage", Size = Vector3.new(18, 11, 14), CFrame = cf * CFrame.new(0, 5.5, 0), Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(196, 170, 130) }, houses)
+		end
+		table.insert(placedAt, { x, y })
+		placed += 1
+		-- quintal: cerca baixa, barril ou canteiro
+		local back = cf * CFrame.new(0, 0, 16)
+		if self.rng:NextNumber() < 0.5 then
+			self:flowers(back.Position, 4, 8, decor)
+		else
+			part({ Name = "Barrel", Shape = Enum.PartType.Cylinder, Size = Vector3.new(3.4, 2.6, 2.6), CFrame = (cf * CFrame.new(9, 1.7, -6)) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Wood, Color = Color3.fromRGB(120, 80, 46) }, decor)
+		end
+	end
+	for _, road in ipairs(self.data.ROADS) do
+		if road[1][1] == H.x and road[1][2] == H.y then
+			local p1 = road[2]
+			local dx, dy = p1[1] - H.x, p1[2] - H.y
+			local Ld = math.sqrt(dx * dx + dy * dy)
+			dx, dy = dx / Ld, dy / Ld
+			local px, py = -dy, dx
+			for r = 118, 300, 30 do
+				for _, s in ipairs({ -1, 1 }) do
+					local sx, sy = H.x + dx * r, H.y + dy * r
+					local x, y = sx + px * s * 26, sy + py * s * 26
+					if freeSpot(x, y, 24) then
+						house(x, y, sx, sy)
+						if self.rng:NextNumber() < 0.5 then
+							self:lantern(V(sx + px * s * 11, sy + py * s * 11, self:groundY(sx + px * s * 11, sy + py * s * 11)), V(sx, sy, 0), decor)
+						end
+					end
+				end
+			end
+			task.wait()
+		end
+	end
+	-- casas soltas entre as ruas
+	for _ = 1, 120 do
+		if placed >= 70 then
+			break
+		end
+		local a = self.rng:NextNumber(0, math.pi * 2)
+		local R = self.rng:NextNumber(125, 285)
+		local x, y = H.x + math.cos(a) * R, H.y + math.sin(a) * R
+		if freeSpot(x, y, 30) then
+			house(x, y, H.x, H.y)
+		end
+	end
+	-- barracas de mercado em volta da praça
+	for k = 0, 11 do
+		local a = (k + 0.5) / 12 * math.pi * 2
+		local x, y = H.x + math.cos(a) * 84, H.y + math.sin(a) * 84
+		if self:roadDist(x, y) > 12 and self.rng:NextNumber() < 0.75 then
+			local pos = V(x, y, self:groundY(x, y))
+			self:placeAsset("Stall", CFrame.lookAt(pos, Vector3.new(C.X, pos.Y, C.Z)) * CFrame.Angles(0, math.rad(180), 0), 0.9, decor)
+		end
+	end
+	task.wait()
 	-- árvores floridas e arbustos na borda da ilha
 	for k = 0, 59 do
 		local a = k / 60 * math.pi * 2 + self.rng:NextNumber(-0.03, 0.03)
@@ -1453,9 +1496,9 @@ function WorldBuilder:setupLighting()
 		(Terrain :: any).Decoration = true -- grama animada (nem sempre disponível por script)
 	end)
 	local colors = {
-		Grass = Color3.fromRGB(98, 136, 62),
-		LeafyGrass = Color3.fromRGB(78, 118, 52),
-		Ground = Color3.fromRGB(110, 92, 70),
+		Grass = Color3.fromRGB(88, 118, 56),
+		LeafyGrass = Color3.fromRGB(72, 100, 46),
+		Ground = Color3.fromRGB(102, 86, 66),
 		Rock = Color3.fromRGB(116, 114, 108),
 		Slate = Color3.fromRGB(92, 96, 100),
 		Snow = Color3.fromRGB(236, 242, 246),

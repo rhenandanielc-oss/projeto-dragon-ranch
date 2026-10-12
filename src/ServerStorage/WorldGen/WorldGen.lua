@@ -615,7 +615,7 @@ function WorldGen:computeChunk(x0: number, y0: number, n: number, step: number?)
 			end
 			-- base por região
 			if region == "forest" then
-				mat = if nz > 0.35 then M.Ground else M.LeafyGrass
+				mat = if nz > 0.5 then M.Ground else M.LeafyGrass
 			elseif region == "enchanted" then
 				mat = if nz > 0.2 then M.Grass else M.LeafyGrass
 			elseif region == "swamp" or region == "swampcore" then
@@ -641,9 +641,9 @@ function WorldGen:computeChunk(x0: number, y0: number, n: number, step: number?)
 					mat = if nz > 0.2 then M.Slate else M.Rock
 				end
 			elseif region == "coast" then
-				mat = if nz > 0.4 then M.LeafyGrass else M.Grass
+				mat = if nz > 0.55 then M.LeafyGrass else M.Grass
 			else
-				mat = if nz > 0.4 then M.LeafyGrass else M.Grass
+				mat = if nz > 0.55 then M.LeafyGrass else M.Grass
 			end
 			-- neve em altitude
 			if h > 760 + 50 * nz then
