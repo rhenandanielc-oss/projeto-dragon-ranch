@@ -14,7 +14,13 @@ Legenda: ✅ feito · 🟡 parcial · ⬜ não feito · ⛔ bloqueado por decis�
 
 ## 1. Fase atual
 
-**Fase 2 — Fazenda e ovos concluída (12/10/2026).** Próxima: Fase 3 — Dragão companheiro (ver `V1-ROADMAP.md`).
+**Mapa do mundo aberto construído (12/10/2026)** conforme `WORLD-DESIGN.md` v0.2:
+terreno de 16.000 × 16.000 studs, Hub na ilha fluvial, 18 fazendas espalhadas com
+bosques, florestas, pontes, acampamentos, waypoints, marcos, Castelo dos Dragões e
+ilhas flutuantes. Próximo: passe de gráficos (qualidade alta + ferramenta de
+otimização no jogo) e depois Fase 3 — Dragão companheiro (ver `V1-ROADMAP.md`).
+
+Fase 2 — Fazenda e ovos concluída (12/10/2026).
 
 Fase 1 — Fundação concluída (12/10/2026).
 
@@ -30,14 +36,14 @@ explicitamente adiados pelo responsável.
 
 | Item | Estado | Observação |
 |---|---|---|
-| `GAME-DESIGN.md` | ✅ | v0.2 — 5 espécies, voo, armas e dispositivos atualizados |
+| `GAME-DESIGN.md` | ✅ | v0.4 — mundo aberto aprovado (§8.3) |
 | `ART-DIRECTION.md` | ✅ | v0.2 |
 | `DRAGON-VISUAL-DESIGN.md` | ✅ | v0.2 — 5 fichas com anatomia-base proposta |
 | `PROJECT-STATE.md` | ✅ | este arquivo |
 | `MASTER-PROMPT.md` | ⬜ | regras de trabalho para o Claude |
 | `V1-ROADMAP.md` | ✅ | 11 fases de construção |
 | `IDEAS-BACKLOG.md` | ✅ | inclui ovos melhores (futuro) |
-| `WORLD-DESIGN.md` | 🟡 PROPOSTA | mundo aberto: 18 fazendas espalhadas, escala, encontros; aguardando decisões D1–D12 |
+| `WORLD-DESIGN.md` | ✅ v0.2 | mundo aberto aprovado (D1–D12 respondidas); artifact "Atlas de Escamarra" |
 
 ---
 
@@ -62,30 +68,29 @@ Outras pendências de arte: estilo final dos dragões (ART §12, DRAGON §14).
 
 ## 4. O que existe hoje no Roblox Studio
 
-Levantamento feito em 12/10/2026, em modo Edit.
+Atualizado em 12/10/2026, depois da construção do mundo aberto.
 
-| Área | Conteúdo | Relação com o design |
-|---|---|---|
-| Terreno | ~2.000 × 2.000 studs com terreno esculpido | Pode servir de base para a região inicial (B9) |
-| `Workspace.Foliage` | 26 bordos, 36 pinheiros, 7 arbustos | Aproveitável para florestas |
-| `Workspace.Cabins` | Cabin1, Cabin2, StarterCabin | Conteúdo do modelo do Roblox; pode virar referência para a fazenda |
-| `Workspace.ConstructionZone` | ~~Casas incompletas, materiais, ponte, placas~~ | **Removido em 12/10/2026** |
-| `Workspace.Props` / `Billboards` | Cerca, 7 tochas, ponte, 6 placas | Decoração de exemplo |
-| `Workspace.Tools` | ~~6 baús com ferramentas de exemplo~~ (e o baú da lanterna na StarterCabin) | **Removidos em 12/10/2026** |
-| `Lighting` | Atmosphere, Sky, Bloom, DepthOfField, SunRays | Base de iluminação já configurada |
-| `ServerScriptService`, `ReplicatedStorage`, `StarterPlayerScripts` | Código da Fase 1 (espelhado em `src/`) | Fundação implementada |
-
-**Conclusão:** o place é um mapa-modelo com cenário. Nenhum sistema de jogo
-(dragões, fazenda, crescimento, combate, dungeons, inventário, economia, save)
-foi implementado.
-
----
+| Área | Conteúdo |
+|---|---|
+| Terreno | Continente de ~14.000 studs num mundo de 16.000 × 16.000, gerado por `ServerStorage.WorldGen` (relevo por região, rios com nível de água, Grande Lago, pântano, mar, vulcão, rochedo do castelo, picos nevados, cânions de lava) |
+| `Workspace.Hub` | Ilha do Coração: praça, chafariz, Torre do Dragão (marco), 4 NPCs, mesa do cartógrafo (mapa e escolha de fazenda), ~70 casas, barracas, lanternas |
+| `Workspace.Farms` | 18 fazendas (Plot01–18) com posição, bioma e faixa como atributos; cerca, arco com placa, ninho, celeiro, cochos, 8 lugares de dragão |
+| `Workspace.World.Groves` | Bosque irregular em volta de cada fazenda (~8.800 árvores e arbustos), com corredor de entrada voltado para a estrada |
+| `Workspace.World.Forest` | Florestas e rochas por região em blocos de 1.024 studs (~32.000 objetos) |
+| `Workspace.World.Bridges` | 19 pontes onde as estradas cruzam água (inclui a ponte longa da Ilha do Lago) |
+| `Workspace.World.Camps` | 7 acampamentos com fogueira, cocho de água e de comida para dragões |
+| `Workspace.World.Waypoints` | 8 obeliscos rúnicos |
+| `Workspace.World.Landmarks` | Castelo dos Dragões, Farol, Cúpula das Ruínas, Árvore-Mãe, Árvore de Luz, Pilar de Cristal, portão da dungeon com cachoeira |
+| `Workspace.World.SkyIslands` | 9 ilhas flutuantes (terreno) com árvores frutíferas, arbustos de frutas, varal de carne, lagoa e queda-d'água |
+| `ServerStorage.WorldAssets` | Modelos 3D gerados por IA (árvores, pinheiro nevado, árvore morta, cogumelo, arbusto de frutas, rocha, cristais, casa, castelo, farol, ruínas, obelisco, acampamento, celeiro, ninho, etc.) |
+| `ServerStorage.OldWorld` | Cenário antigo (anel de fazendas e mapa-modelo), guardado só como reserva; pode ser apagado |
+| `Lighting` | Future, Atmosphere ajustada para ver longe, nuvens, bloom, raios de sol, correção de cor |
 
 ## 5. Sistemas da V1 (critérios do GAME-DESIGN §16)
 
 | # | Sistema | Estado | Depende de |
 |---|---|---|---|
-| 1 | Fazenda do jogador (atribuição e acesso) | ✅ | B9, B8 |
+| 1 | Fazenda do jogador (atribuição e acesso) | ✅ novatos perto do Hub; bioma à escolha com dragão Jovem | B9, B8 |
 | 2 | Ovo, cuidados (comida e água) | ✅ | B1, B2 |
 | 3 | Crescimento em 6 estágios + salvamento | 🟡 crescimento ✅; salvamento real a testar com API ativada | B2, B8 |
 | 4 | Coleta, moedas, compra/venda | ⬜ | B7 |
@@ -102,10 +107,10 @@ foi implementado.
 
 | Protótipo | Estado |
 |---|---|
-| Clareira de floresta | 🟡 floresta genérica do modelo existe |
-| Mirante com montanhas, vale e cachoeira | ⬜ |
-| Área mágica com cristais | ⬜ |
-| Portão de dungeon com círculo de grupo | ⬜ |
+| Clareira de floresta | ✅ fazendas em clareiras com bosque |
+| Mirante com montanhas, vale e cachoeira | 🟡 relevo pronto; cachoeiras ainda simples |
+| Área mágica com cristais | 🟡 Vale dos Cristais e Pilar de Cristal |
+| Portão de dungeon com círculo de grupo | 🟡 portão e cachoeira; falta o círculo de grupo |
 | Hub Central, fazendas e bosques | ✅ 12/10/2026 |
 | Dragão em duas fases | ✅ 5 espécies com ovo, bebê e adulto gerados (aguardando aprovação do responsável) |
 | Interface em PC e celular | 🟡 primeiras telas prontas; testar no celular |
@@ -134,9 +139,22 @@ O código fica em `src/` (espelho exato do Studio). Pastas gerenciadas:
 | `Shared/Config/NPCs` | Nomes e falas dos NPCs | ✅ |
 | `Client/UI/*` | Escolha do ovo, painel de dragões, barra de moedas/itens, avisos (PC e celular) | ✅ testado |
 | `tools/studio/build_farms.luau` | (antigo) grade de 18 fazendas — substituído por build_hub | — |
-| `tools/studio/build_hub.luau` | Constrói o Hub Central, as 18 fazendas em anel, caminhos com bosque decorado e a floresta | ✅ |
+| `tools/studio/build_hub.luau` | (antigo) Hub com fazendas em anel — substituído pelo WorldBuilder | — |
+| `ServerStorage/WorldGen/WorldData` | Dados do mundo: regiões, rios, estradas, fazendas, acampamentos, waypoints, ilhas | ✅ |
+| `ServerStorage/WorldGen/WorldGen` | Gerador de relevo e materiais (roda no Studio e no Luau de linha de comando) | ✅ |
+| `ServerStorage/WorldGen/TerrainWriter` | Escreve o terreno em blocos de 256 studs, em segundo plano (~1 min o mapa todo) | ✅ |
+| `ServerStorage/WorldGen/WorldBuilder` | Constrói Hub, pontes, fazendas, bosques, acampamentos, waypoints, marcos, ilhas, florestas e luz | ✅ |
+| `Shared/Config/Biomes` + `Client/UI/FarmChooser` | Escolha do bioma da fazenda na mesa do cartógrafo (validada no servidor) | ✅ |
+| `Client/UI/Compass` | Bússola com direção e distância da fazenda e do Hub | ✅ testado |
+| `tools/worldgen/preview.py` | Prévia do relevo em PNG sem abrir o Studio | ✅ |
+| `tools/studio/sync_from_github.luau` / `ServerStorage.RepoSync` | Copia o código do GitHub (por commit) para o Studio | ✅ |
 | `tools/studio/import_dragon_assets.luau` | Importa dragões gerados por IA para ServerStorage.DragonAssets | ✅ |
 | `tools/checksums.py` | Confere se o Studio está idêntico ao repositório | ✅ |
+
+**Testes do mundo aberto (12/10/2026, Play no Studio):**
+- Servidor inicia sem erros; jogador novo recebe a fazenda livre mais próxima do Hub (Moinho, ~2.100 studs) e nasce nela. ✅
+- Bússola mostra o Hub e a distância. ✅
+- Mesa do cartógrafo com o pedido "Ver mapa e fazendas"; 4 NPCs no Hub. ✅
 
 **Testes da Fase 1 (12/10/2026, Play no Studio):**
 - Perfil carrega e chega ao cliente (50 moedas, mochila 30). ✅
@@ -168,7 +186,9 @@ esta lista ao concluir a V1.
 | 3 | Publicar o jogo e testar com amigos em servidor real (salvamento entre servidores, trava de sessão) | Fase 11 | ⬜ |
 | 4 | Testar no celular de verdade (controles, interface, desempenho) | Fase 11 | ⬜ |
 | 5 | Configurar ícone, miniaturas, descrição e classificação de idade (Experience Questionnaire) | Antes de lançar | ⬜ |
-| 6 | Conferir o desempenho no celular com o Hub (~9.000 objetos de cenário); se pesar, ativar StreamingEnabled e reduzir árvores | Fase 11 | ⬜ |
+| 6 | Conferir o desempenho no celular com o mundo aberto (~50.000 objetos de cenário, StreamingEnabled ligado); se pesar, usar a ferramenta de qualidade do jogo e reduzir a floresta | Fase 11 | ⬜ |
+| 7 | **Salvar o place no Studio (File → Save to Roblox / Ctrl+S)** depois de cada sessão de construção: o terreno e o mundo só ficam guardados quando o place é salvo | Sempre | ⬜ |
+| 8 | Conferir no Studio, em *Workspace*, `StreamingTargetRadius` (~1024) e `StreamingMinRadius` (~256): o script não consegue alterar esses dois valores | Antes de publicar | ⬜ |
 
 ---
 
@@ -196,3 +216,4 @@ esta lista ao concluir a V1.
 | 12/10/2026 | Fase 2 concluída: 18 fazendas, ovo inicial, crescimento, cuidados, painel |
 | 12/10/2026 | Hub Central com 4 NPCs; fazendas em anel separadas por floresta; bosque decorado nas entradas; fazendas decoradas; dragões e cenário com modelos 3D gerados por IA |
 | 12/10/2026 | Proposta do mundo aberto (WORLD-DESIGN.md + mapa conceitual); construção do mapa pausada até aprovação |
+| 12/10/2026 | Mundo aberto aprovado (D1–D12) e construído: terreno 16k, Hub na ilha fluvial, 18 fazendas espalhadas com bosques, florestas, pontes, acampamentos, waypoints, marcos, castelo, ilhas flutuantes; regra de atribuição de fazenda; bússola |
