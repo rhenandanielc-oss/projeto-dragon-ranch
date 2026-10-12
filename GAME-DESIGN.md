@@ -506,12 +506,13 @@ possam ser descobertos sem depender apenas de marcadores de interface.
 - **Nome da região inicial:** Terras de Escamarra.
 - **Tamanho:** ~8.000 × 8.000 studs, com StreamingEnabled (carregamento
   por proximidade, necessário para celular).
-- **Servidor:** até 8 jogadores; cada um com terreno de fazenda próprio.
+- **Servidor:** até **18 jogadores** (alterado de 8 em 12/10/2026, para haver mais encontros e combates); cada um com terreno de fazenda próprio.
+- **Desempenho:** com até 18 jogadores e 18 dragões ativos, usar níveis de detalhe, limite de partículas por distância e StreamingEnabled; testar no celular.
 
 | Área | Posição | Zona |
 |---|---|---|
 | Vila inicial (mercador, NPCs, ponto de partida) | Centro-sul | Protegida |
-| Fazendas (8 terrenos) | Ao lado da vila | Protegida |
+| Fazendas (18 terrenos) | Ao lado da vila | Protegida |
 | Prados e bosques | Em volta da vila | Comum |
 | Floresta densa e rio principal | Oeste | Comum |
 | Grande lago e cachoeiras | Leste | Comum |
@@ -942,7 +943,7 @@ duplicação de itens.
 - O mapa deve ser **muito maior** que o terreno atual (~2.000 × 2.000
   studs), já na V1, para haver espaço de exploração; encontrar a dungeon
   e as zonas perigosas não deve ser fácil.
-- Até **8 jogadores por servidor**; cada um recebe um **terreno de
+- Até **18 jogadores por servidor**; cada um recebe um **terreno de
   fazenda próprio** ao entrar, salvo entre servidores.
 
 Nome, tamanho e layout: ver seção 8.3.
@@ -1107,6 +1108,9 @@ mecânicas.
                                       dungeon, mercador; fazenda 3→8.
                                       B1 resolvido — todos os bloqueios
                                       B1–B10 resolvidos.
+
+  0.3.1 (12/10/2026)                  Servidor passa de 8 para 18
+                                      jogadores; 18 terrenos de fazenda.
 
   -----------------------------------------------------------------------
 

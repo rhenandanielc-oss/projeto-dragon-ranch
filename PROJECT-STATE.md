@@ -48,7 +48,7 @@ explicitamente adiados pelo responsável.
 | B6 | Dungeons | ✅ grupo 1–4; morte elimina (mantém loot, sem baú final nem item de missão); baú a cada 20 h |
 | B7 | Inventário e economia | ✅ mochila 30→60; armazém 100; moeda única; sem comércio entre jogadores |
 | B8 | Salvamento | ✅ trava de sessão, autosave, itens com código único, servidor autoritativo contra exploiters |
-| B9 | Mapa | ✅ Terras de Escamarra, ~8.000 × 8.000 studs, 8 jogadores, layout aprovado |
+| B9 | Mapa | ✅ Terras de Escamarra, ~8.000 × 8.000 studs, 18 jogadores, layout aprovado |
 | B10 | Dispositivos | ✅ PC e celular |
 
 Outras pendências de arte: estilo final dos dragões (ART §12, DRAGON §14).
@@ -125,3 +125,4 @@ foi implementado.
 | 12/10/2026 | Papéis de combate das espécies |
 | 12/10/2026 | B1 resolvido: raridades e ovos. Todos os bloqueios resolvidos |
 | 12/10/2026 | Criados V1-ROADMAP.md e IDEAS-BACKLOG.md |
+| 12/10/2026 | Servidor de 8 para 18 jogadores |
