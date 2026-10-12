@@ -9,6 +9,12 @@ Rules.Server = {
 	MapSize = 16000, -- studs por lado, centrado na origem
 }
 
+-- Mundo aberto (WORLD-DESIGN.md v0.2). Posição do Hub no mundo do Roblox (X = leste, Z = sul).
+Rules.World = {
+	HubPosition = Vector3.new(0, 16, 1500),
+	FarmMoveCooldownSeconds = 120,
+}
+
 Rules.Farm = {
 	StartDragonSlots = 3,
 	MaxDragonSlots = 8,

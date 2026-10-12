@@ -15,6 +15,8 @@ local Notify = require(UI:WaitForChild("Notify"))
 local StarterChooser = require(UI:WaitForChild("StarterChooser"))
 local DragonPanel = require(UI:WaitForChild("DragonPanel"))
 local Dialog = require(UI:WaitForChild("Dialog"))
+local FarmChooser = require(UI:WaitForChild("FarmChooser"))
+local Compass = require(UI:WaitForChild("Compass"))
 
 -- Tela principal
 local screen = Theme.new("ScreenGui", {
@@ -29,6 +31,8 @@ Notify.Init(screen)
 DragonPanel.Init(screen)
 StarterChooser.Init(screen)
 Dialog.Init(screen)
+FarmChooser.Init(screen)
+Compass.Init(screen)
 
 -- Cada jogador só vê as ações dos próprios dragões.
 local function filterPrompt(inst: Instance)
@@ -59,6 +63,10 @@ end)
 
 NetClient.On("NpcDialog", function(npcId: string)
 	Dialog.Open(npcId)
+end)
+
+NetClient.On("FarmChooser", function(free: { string }, current: string, canChoose: boolean)
+	FarmChooser.Open(free, current, canChoose)
 end)
 
 NetClient.Fire("ClientReady")

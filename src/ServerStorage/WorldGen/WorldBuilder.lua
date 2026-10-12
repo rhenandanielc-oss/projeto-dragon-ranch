@@ -314,6 +314,24 @@ local KITS = {
 }
 WorldBuilder.KITS = KITS
 
+-- Escolha agrupada: pontos próximos tendem a receber a mesma espécie (bosquetes de 3–9)
+function WorldBuilder:pickAt(kit, x: number, y: number)
+	local total = 0
+	for _, e in ipairs(kit) do
+		total += e[2]
+	end
+	local u = math.clamp((math.noise(x / 55, y / 55, 41.3) * 1.6 + 1) / 2, 0, 0.999)
+	u = (u + self.rng:NextNumber(-0.08, 0.08)) % 1
+	local r = u * total
+	for _, e in ipairs(kit) do
+		r -= e[2]
+		if r <= 0 then
+			return e
+		end
+	end
+	return kit[#kit]
+end
+
 function WorldBuilder:pick(kit)
 	local total = 0
 	for _, e in ipairs(kit) do
@@ -675,7 +693,8 @@ function WorldBuilder:farmEntrance(f): (number, number)
 		local pts = WorldGen.sampleOpen(road, 20)
 		for _, p in ipairs(pts) do
 			local d = math.sqrt((p[1] - f.x) ^ 2 + (p[2] - f.y) ^ 2)
-			local score = math.abs(d - 360)
+			local hubD = math.sqrt((p[1] - self.data.HUB.x) ^ 2 + (p[2] - self.data.HUB.y) ^ 2)
+			local score = hubD + math.abs(d - 360) * 4 -- lado da estrada que vem do Hub
 			if d > 250 and d < 480 and score < best then
 				best, bx, by = score, p[1], p[2]
 			end
@@ -899,42 +918,63 @@ function WorldBuilder:buildFarm(f, parent: Instance): Model
 	return model
 end
 
--- Bosque em camadas em volta da fazenda, com corredor na entrada
+-- Bosque em camadas em volta da fazenda, com contorno irregular, bosquetes da mesma
+-- espécie, sub-bosque de arbustos e um corredor de entrada voltado para a estrada.
 function WorldBuilder:buildGrove(f, parent: Instance): number
 	local rng = self.rng
 	local ex, ey = self:farmEntrance(f)
 	local kit = KITS[f.biome] or KITS.mixed
+	local leaf = kit[1][5]
 	local grove = Instance.new("Model")
 	grove.Name = string.format("Grove%02d", f.id)
 	local n = 0
-	local r = 150
-	while r < 335 do
-		local ring = 2 * math.pi * r
-		local step = if r < 275 then 15 else 22
-		local count = math.floor(ring / step)
-		for k = 0, count - 1 do
-			local a = (k + rng:NextNumber(-0.4, 0.4)) / count * math.pi * 2
-			local rr = r + rng:NextNumber(-6, 6)
-			local dx, dy = math.cos(a), math.sin(a)
-			local along = dx * ex + dy * ey
-			local lateral = math.abs(dx * ey - dy * ex) * rr
-			local chance = if r < 275 then 0.85 else 0.5
-			if not (along > 0 and lateral < 14) and rng:NextNumber() < chance then
-				local x, y = f.x + dx * rr, f.y + dy * rr
-				local hit = self:surface(x, y)
-				if hit and hit.Material ~= Enum.Material.Water and hit.Normal.Y > 0.75 and self:roadDist(x, y) > 12 then
-					local e
-					if r < 165 or r > 300 then
-						e = if rng:NextNumber() < 0.6 then { "Bush", 1, 0.8, 1.3, kit[1][5] } else self:pick(kit)
+	local SP = 17
+	local seed = f.id * 7.31
+	for gx = -380, 380, SP do
+		for gy = -380, 380, SP do
+			local ox, oy = gx + rng:NextNumber(-0.45, 0.45) * SP, gy + rng:NextNumber(-0.45, 0.45) * SP
+			local r = math.sqrt(ox * ox + oy * oy)
+			local a = math.atan2(oy, ox)
+			local ca, sa = math.cos(a), math.sin(a)
+			-- contorno irregular (ruído pelo ângulo)
+			local rin = 150 + 18 * math.noise(ca * 1.7, sa * 1.7, seed)
+			local rout = 300 + 55 * math.noise(ca * 1.3 + 5, sa * 1.3, seed + 3) + 25 * math.noise(ca * 4, sa * 4, seed + 9)
+			if r > rin and r < rout + 70 then
+				local along = (ox * ex + oy * ey) / r
+				local lateral = math.abs(ox * ey - oy * ex)
+				if not (along > 0 and lateral < 13) then
+					local x, y = f.x + ox, f.y + oy
+					local clump = math.noise(x / 45, y / 45, seed + 17)
+					local p
+					if r < rout then
+						p = 0.62 + 0.3 * clump -- denso com pequenas clareiras
 					else
-						e = self:pick(kit)
+						p = 0.12 * (1 - (r - rout) / 70) + 0.1 * clump -- árvores soltas além da borda
 					end
-					self:plant(e[1], hit.Position, rng:NextNumber(e[3], e[4]), grove, e[5])
-					n += 1
+					if rng:NextNumber() < p then
+						local hit = self:surface(x, y)
+						if hit and hit.Material ~= Enum.Material.Water and hit.Normal.Y > 0.72 and self:roadDist(x, y) > 11 then
+							local e
+							if r < rin + 14 then
+								e = { "Bush", 1, 0.7, 1.2, leaf } -- borda interna baixa (deixa ver só relances)
+							else
+								e = self:pickAt(kit, x, y)
+							end
+							self:plant(e[1], hit.Position, rng:NextNumber(e[3], e[4]), grove, e[5])
+							n += 1
+							if e[1] ~= "Bush" and rng:NextNumber() < 0.22 then
+								local bx, by = x + rng:NextNumber(-6, 6), y + rng:NextNumber(-6, 6)
+								local bh = self:surface(bx, by)
+								if bh and bh.Material ~= Enum.Material.Water then
+									self:plant("Bush", bh.Position, rng:NextNumber(0.6, 1.0), grove, leaf)
+									n += 1
+								end
+							end
+						end
+					end
 				end
 			end
 		end
-		r += if r < 275 then 14 else 20
 	end
 	grove.Parent = parent
 	return n
@@ -1398,7 +1438,7 @@ function WorldBuilder:forestBlock(bi: number, bj: number, parent: Instance): num
 					local hit = self:surface(jx, jy)
 					if hit and hit.Material ~= Enum.Material.Water and hit.Position.Y < cfg[4] and hit.Position.Y > 1 then
 						local steep = hit.Normal.Y < 0.8
-						local e = if steep then { "Boulder", 1, 0.8, 2.0 } else self:pick(KITS[cfg[3]])
+						local e = if steep then { "Boulder", 1, 0.8, 2.0 } else self:pickAt(KITS[cfg[3]], jx, jy)
 						if not steep or rng:NextNumber() < 0.25 then
 							self:plant(e[1], hit.Position, rng:NextNumber(e[3], e[4]), block, e[5])
 							n += 1

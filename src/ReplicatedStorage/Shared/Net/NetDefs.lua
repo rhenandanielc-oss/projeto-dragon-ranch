@@ -47,6 +47,10 @@ local NetDefs: { [string]: RemoteDef } = {
 	SetActiveDragon = { Kind = "Event", Direction = "C2S", Args = { { Type = "string", MaxLen = 16 } }, Rate = 1, Burst = 3 },
 	ExpandDragonSlots = { Kind = "Event", Direction = "C2S", Args = {}, Rate = 0.5, Burst = 2 },
 
+	-- Mundo aberto: escolha do bioma da fazenda (mesa do cartógrafo no Hub).
+	FarmChooser = { Kind = "Event", Direction = "S2C" }, -- (biomas livres, bioma atual, pode escolher)
+	ChooseFarmBiome = { Kind = "Event", Direction = "C2S", Args = { { Type = "enum", Values = { "blossom", "coast", "crystal", "enchanted", "fir", "hidden", "lake", "meadow", "oak", "orchard", "pine", "rainforest", "redrock", "ruins", "snow", "swamp", "volcanic" } } }, Rate = 0.2, Burst = 2 },
+
 	-- Hub: servidor abre a conversa com um NPC (id do NPC).
 	NpcDialog = { Kind = "Event", Direction = "S2C" },
 

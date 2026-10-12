@@ -37,7 +37,7 @@ function ProfileTemplate.New(): { [string]: any }
 		QuestItems = {}, -- [itemId] = quantidade (não ocupa espaço)
 
 		Quests = { Active = {}, Completed = {} },
-		Farm = { Placed = {} },
+		Farm = { Placed = {}, PreferredBiome = "" }, -- bioma preferido (escolha liberada com dragão Jovem)
 
 		Protection = { NewPlayer = true },
 		Dungeon = { FinalChestReadyAt = 0 },

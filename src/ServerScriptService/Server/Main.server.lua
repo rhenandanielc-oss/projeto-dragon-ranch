@@ -35,7 +35,7 @@ NetService.On("ClientReady", function(player: Player)
 end)
 
 DataService.ProfileLoaded:Connect(function(player: Player)
-	FarmService.Assign(player)
+	FarmService.Assign(player, DataService.Get(player))
 	if clientReady[player] then
 		sendSnapshot(player)
 	end
@@ -45,6 +45,41 @@ Players.PlayerRemoving:Connect(function(player)
 	clientReady[player] = nil
 end)
 
+-- Mesa do cartógrafo no Hub: mapa e escolha do bioma da fazenda (D3/D8)
+local function setupMapTable()
+	local hub = workspace:FindFirstChild("Hub")
+	local plaza = hub and hub:FindFirstChild("Plaza")
+	local mapTable = plaza and plaza:FindFirstChild("MapTable")
+	if not mapTable or not mapTable:IsA("BasePart") then
+		warn("[Server] Mesa do cartógrafo não encontrada")
+		return
+	end
+	local prompt = Instance.new("ProximityPrompt")
+	prompt.Name = "OpenMap"
+	prompt.ActionText = "Ver mapa e fazendas"
+	prompt.ObjectText = "Mesa do cartógrafo"
+	prompt.MaxActivationDistance = 12
+	prompt.RequiresLineOfSight = false
+	prompt.Parent = mapTable
+	prompt.Triggered:Connect(function(player: Player)
+		local data = DataService.Get(player)
+		if not data then
+			return
+		end
+		local plot = FarmService.GetPlot(player)
+		NetService.Fire(player, "FarmChooser", FarmService.FreeBiomes(), plot and plot:GetAttribute("Biome") or "", FarmService.IsAdvanced(data))
+	end)
+end
+
+NetService.On("ChooseFarmBiome", function(player: Player, biome: string)
+	local data = DataService.Get(player)
+	local ok, message = FarmService.ChooseBiome(player, data, biome)
+	if data then
+		DataService.MarkChanged(player, "Farm")
+	end
+	NetService.Fire(player, "Notify", message, if ok then "success" else "info")
+end)
+
 NetService.On("Ping", function(_player: Player, n: number)
 	return n
 end)
@@ -52,6 +87,7 @@ end)
 FarmService.Init()
 DragonService.Init()
 NPCService.Init()
+setupMapTable()
 DataService.Init()
 
-print("[Server] Servidor iniciado (Fase 2: fazenda e dragões)")
+print("[Server] Servidor iniciado (mundo aberto, fazenda e dragões)")
