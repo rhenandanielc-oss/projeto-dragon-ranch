@@ -42,6 +42,8 @@ function ProfileTemplate.New(): { [string]: any }
 		Protection = { NewPlayer = true },
 		Dungeon = { FinalChestReadyAt = 0 },
 
+		Settings = { Graphics = "" }, -- "" = padrão do aparelho
+
 		Stats = { FirstJoin = os.time(), PlayTimeSeconds = 0, Sessions = 0 },
 
 		NextUid = 1, -- gerador de códigos únicos (dragões, equipamentos)

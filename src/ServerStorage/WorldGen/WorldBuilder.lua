@@ -977,8 +977,9 @@ function WorldBuilder:buildFarm(f, parent: Instance): Model
 	end
 	-- laguinho
 	local pond = L(2, 0, 50)
-	Terrain:FillCylinder(pond * CFrame.new(0, -1.5, 0), 9, 12, Enum.Material.Air)
-	Terrain:FillCylinder(pond * CFrame.new(0, -4, 0), 5, 12, Enum.Material.Water)
+	Terrain:FillCylinder(pond * CFrame.new(0, 2, 0), 14, 12, Enum.Material.Air)
+	Terrain:FillCylinder(pond * CFrame.new(0, -7, 0), 4, 13.5, Enum.Material.Slate)
+	Terrain:FillCylinder(pond * CFrame.new(0, -2.5, 0), 5, 12, Enum.Material.Water)
 	pond = pond * CFrame.new(0, -5, 0)
 	for i = 0, 11 do
 		local a = i / 12 * math.pi * 2
@@ -1138,15 +1139,15 @@ function WorldBuilder:buildCamps()
 			local p = at(math.cos(a) * 62, math.sin(a) * 62)
 			self:plant("Boulder", p, rng:NextNumber(0.8, 1.4), m)
 		end
-		-- bebedouro: lagoa de pedra para dragões beberem
+		-- bebedouro: lagoa natural com borda de rochas (terreno)
 		local wp = at(-26, 6)
-		Terrain:FillCylinder(CFrame.new(wp + Vector3.new(0, -1.5, 0)), 10, 17, Enum.Material.Air)
-		Terrain:FillCylinder(CFrame.new(wp + Vector3.new(0, -5, 0)), 6, 17, Enum.Material.Water)
-		Terrain:FillCylinder(CFrame.new(wp + Vector3.new(0, -9, 0)), 3, 18, Enum.Material.Slate)
-		for k = 0, 13 do
-			local a = k / 14 * math.pi * 2
-			local p = wp + Vector3.new(math.cos(a) * 19, 0, math.sin(a) * 19)
-			part({ Name = "BasinStone", Size = Vector3.new(5, 2.6, 4) * rng:NextNumber(0.9, 1.3), CFrame = CFrame.new(p.X, self:groundY(p.X, -p.Z) + 0.6, p.Z) * CFrame.Angles(0, a, 0), Material = Enum.Material.Slate, Color = Color3.fromRGB(112, 114, 118) }, m)
+		local wg = wp.Y
+		Terrain:FillCylinder(CFrame.new(wp.X, wg + 2, wp.Z), 14, 17, Enum.Material.Air)
+		Terrain:FillCylinder(CFrame.new(wp.X, wg - 7, wp.Z), 4, 19, Enum.Material.Slate)
+		Terrain:FillCylinder(CFrame.new(wp.X, wg - 2.5, wp.Z), 5, 16.5, Enum.Material.Water)
+		for k = 0, 15 do
+			local a = k / 16 * math.pi * 2
+			Terrain:FillBall(Vector3.new(wp.X + math.cos(a) * 18.5, wg - 0.5 + rng:NextNumber(-0.5, 1), wp.Z + math.sin(a) * 18.5), rng:NextNumber(3, 4.2), Enum.Material.Rock)
 		end
 		local basin = part({ Name = "DragonWater", Size = Vector3.new(30, 1, 30), CFrame = CFrame.new(wp), Transparency = 1, CanCollide = false, CanQuery = false }, m)
 		basin:SetAttribute("DragonWater", true)
@@ -1159,7 +1160,7 @@ function WorldBuilder:buildCamps()
 			part({ Name = "TroughWallL", Size = Vector3.new(32, 3.5, 1.4), CFrame = base * CFrame.new(0, 3, -3.9), Material = Enum.Material.Slate, Color = Color3.fromRGB(110, 110, 114) }, m)
 			part({ Name = "TroughWallR", Size = Vector3.new(32, 3.5, 1.4), CFrame = base * CFrame.new(0, 3, 3.9), Material = Enum.Material.Slate, Color = Color3.fromRGB(110, 110, 114) }, m)
 			for k = -3, 3 do
-				part({ Name = "Meat", Shape = Enum.PartType.Ball, Size = Vector3.new(5, 3, 4) * rng:NextNumber(0.8, 1.2), CFrame = base * CFrame.new(k * 4.2, 3.4, rng:NextNumber(-1.2, 1.2)) * CFrame.Angles(0, rng:NextNumber(0, 3), 0), Material = Enum.Material.SmoothPlastic, Color = Color3.fromRGB(150, 58, 50), CanCollide = false }, m)
+				part({ Name = "Meat", Shape = Enum.PartType.Ball, Size = Vector3.new(5, 3, 4) * rng:NextNumber(0.8, 1.2), CFrame = base * CFrame.new(k * 4.2, 3.4, rng:NextNumber(-1.2, 1.2)) * CFrame.Angles(rng:NextNumber(-0.4, 0.4), rng:NextNumber(0, 3), 0), Material = Enum.Material.Fabric, Color = Color3.fromRGB(122, 46, 40), CanCollide = false }, m)
 				if k % 2 == 0 then
 					part({ Name = "Bone", Shape = Enum.PartType.Cylinder, Size = Vector3.new(6, 0.9, 0.9), CFrame = base * CFrame.new(k * 4.2 + 1, 4.6, 0.8) * CFrame.Angles(0, rng:NextNumber(0, 3), 0), Material = Enum.Material.SmoothPlastic, Color = Color3.fromRGB(232, 222, 196), CanCollide = false }, m)
 				end
@@ -1176,7 +1177,7 @@ function WorldBuilder:buildCamps()
 			end
 			part({ Name = "RackBar", Size = Vector3.new(25, 1.4, 1.4), CFrame = rc * CFrame.new(0, 21.5, 0), Material = Enum.Material.Wood, Color = DARKWOOD }, m)
 			for k = -4, 4, 2 do
-				part({ Name = "HangingMeat", Size = Vector3.new(2.6, 6, 1.8), CFrame = rc * CFrame.new(k * 2.2, 17, 0), Material = Enum.Material.SmoothPlastic, Color = Color3.fromRGB(140, 60, 48), CanCollide = false }, m)
+				part({ Name = "HangingMeat", Size = Vector3.new(2.6, 6, 1.8), CFrame = rc * CFrame.new(k * 2.2, 17, 0), Material = Enum.Material.Fabric, Color = Color3.fromRGB(110, 48, 40), CanCollide = false }, m)
 			end
 		end
 		-- abrigo alto e aberto (dragões cabem por baixo)
@@ -1208,7 +1209,7 @@ function WorldBuilder:buildCamps()
 		for _, o in ipairs({ { 42, -6 }, { -44, -40 }, { -6, 44 } }) do
 			self:plant("Boulder", at(o[1], o[2]), rng:NextNumber(3.2, 4.5), m)
 		end
-		self:plant("DeadTree", at(-46, 30), 3.2, m)
+		self:plant("DeadTree", at(-46, 30), 2.2, m)
 		-- braseiro grande
 		local bp = at(0, 4)
 		part({ Name = "BrazierBase", Shape = Enum.PartType.Cylinder, Size = Vector3.new(3, 9, 9), CFrame = CFrame.new(bp + Vector3.new(0, 1.5, 0)) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Cobblestone, Color = Color3.fromRGB(96, 92, 88) }, m)
@@ -1683,67 +1684,74 @@ end
 -- Luz, céu e água (base visual; a ferramenta de qualidade vem depois)
 --------------------------------------------------------------------------
 function WorldBuilder:setupLighting()
-	Lighting.ClockTime = 14.2
-	Lighting.GeographicLatitude = 35
-	Lighting.Brightness = 3
+	-- Base "Ultra" (a ferramenta de qualidade do cliente reduz a partir daqui)
+	Lighting.ClockTime = 15
+	Lighting.GeographicLatitude = 30
+	Lighting.Brightness = 3.2
+	Lighting.ExposureCompensation = 0.15
 	Lighting.EnvironmentDiffuseScale = 1
 	Lighting.EnvironmentSpecularScale = 1
-	Lighting.ShadowSoftness = 0.25
-	Lighting.OutdoorAmbient = Color3.fromRGB(120, 124, 132)
-	Lighting.Ambient = Color3.fromRGB(70, 72, 80)
+	Lighting.ShadowSoftness = 0.2
+	Lighting.OutdoorAmbient = Color3.fromRGB(138, 140, 150)
+	Lighting.Ambient = Color3.fromRGB(64, 66, 76)
+	Lighting.ColorShift_Top = Color3.fromRGB(255, 236, 205)
+	Lighting.ColorShift_Bottom = Color3.fromRGB(0, 0, 0)
 	local atm = Lighting:FindFirstChildOfClass("Atmosphere") or Instance.new("Atmosphere")
-	atm.Density = 0.12
-	atm.Offset = 0.15
-	atm.Haze = 1.2
-	atm.Glare = 0.4
-	atm.Color = Color3.fromRGB(199, 212, 226)
-	atm.Decay = Color3.fromRGB(106, 120, 140)
+	atm.Density = 0.26
+	atm.Offset = 0.22
+	atm.Haze = 1.8
+	atm.Glare = 0.6
+	atm.Color = Color3.fromRGB(214, 226, 236)
+	atm.Decay = Color3.fromRGB(118, 140, 168)
 	atm.Parent = Lighting
 	local bloom = Lighting:FindFirstChildOfClass("BloomEffect") or Instance.new("BloomEffect")
-	bloom.Intensity = 0.5
-	bloom.Size = 28
-	bloom.Threshold = 1.6
+	bloom.Intensity = 0.8
+	bloom.Size = 32
+	bloom.Threshold = 1.4
 	bloom.Parent = Lighting
 	local rays = Lighting:FindFirstChildOfClass("SunRaysEffect") or Instance.new("SunRaysEffect")
-	rays.Intensity = 0.06
-	rays.Spread = 0.6
+	rays.Intensity = 0.12
+	rays.Spread = 0.8
 	rays.Parent = Lighting
 	local cc = Lighting:FindFirstChildOfClass("ColorCorrectionEffect") or Instance.new("ColorCorrectionEffect")
-	cc.Saturation = 0.1
-	cc.Contrast = 0.06
-	cc.Brightness = 0.01
-	cc.TintColor = Color3.fromRGB(255, 250, 244)
+	cc.Saturation = 0.15
+	cc.Contrast = 0.1
+	cc.Brightness = 0.02
+	cc.TintColor = Color3.fromRGB(255, 249, 238)
 	cc.Parent = Lighting
-	local dof = Lighting:FindFirstChildOfClass("DepthOfFieldEffect")
-	if dof then
-		dof.Enabled = false
-	end
+	local dof = Lighting:FindFirstChildOfClass("DepthOfFieldEffect") or Instance.new("DepthOfFieldEffect")
+	dof.FarIntensity = 0.12
+	dof.NearIntensity = 0
+	dof.FocusDistance = 70
+	dof.InFocusRadius = 90
+	dof.Enabled = true
+	dof.Parent = Lighting
 	local clouds = Terrain:FindFirstChildOfClass("Clouds") or Instance.new("Clouds")
-	clouds.Cover = 0.55
-	clouds.Density = 0.55
-	clouds.Color = Color3.fromRGB(250, 250, 255)
+	clouds.Cover = 0.6
+	clouds.Density = 0.6
+	clouds.Color = Color3.fromRGB(252, 252, 255)
 	clouds.Parent = Terrain
-	Terrain.WaterColor = Color3.fromRGB(38, 104, 122)
-	Terrain.WaterTransparency = 0.65
-	Terrain.WaterReflectance = 0.6
-	Terrain.WaterWaveSize = 0.12
-	Terrain.WaterWaveSpeed = 8
+	Terrain.WaterColor = Color3.fromRGB(34, 92, 104)
+	Terrain.WaterTransparency = 0.75
+	Terrain.WaterReflectance = 0.7
+	Terrain.WaterWaveSize = 0.15
+	Terrain.WaterWaveSpeed = 9
 	pcall(function()
 		(Terrain :: any).Decoration = true -- grama animada (nem sempre disponível por script)
 	end)
 	local colors = {
-		Grass = Color3.fromRGB(88, 118, 56),
-		LeafyGrass = Color3.fromRGB(72, 100, 46),
-		Ground = Color3.fromRGB(102, 86, 66),
-		Rock = Color3.fromRGB(116, 114, 108),
-		Slate = Color3.fromRGB(92, 96, 100),
-		Snow = Color3.fromRGB(236, 242, 246),
-		Sand = Color3.fromRGB(210, 194, 150),
-		Mud = Color3.fromRGB(84, 72, 54),
-		Basalt = Color3.fromRGB(52, 50, 54),
-		CrackedLava = Color3.fromRGB(230, 90, 40),
+		Grass = Color3.fromRGB(104, 138, 58),
+		LeafyGrass = Color3.fromRGB(82, 114, 46),
+		Ground = Color3.fromRGB(104, 88, 66),
+		Rock = Color3.fromRGB(118, 116, 110),
+		Slate = Color3.fromRGB(96, 98, 102),
+		Snow = Color3.fromRGB(238, 243, 247),
+		Sand = Color3.fromRGB(212, 196, 152),
+		Mud = Color3.fromRGB(86, 72, 54),
+		Basalt = Color3.fromRGB(54, 52, 56),
+		CrackedLava = Color3.fromRGB(232, 92, 40),
 		Limestone = Color3.fromRGB(206, 196, 170),
-		Cobblestone = Color3.fromRGB(132, 128, 120),
+		Cobblestone = Color3.fromRGB(128, 124, 116),
 		Glacier = Color3.fromRGB(170, 214, 232),
 		Salt = Color3.fromRGB(226, 226, 232),
 	}

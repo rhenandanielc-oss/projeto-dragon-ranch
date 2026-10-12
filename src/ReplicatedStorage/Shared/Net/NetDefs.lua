@@ -51,6 +51,9 @@ local NetDefs: { [string]: RemoteDef } = {
 	FarmChooser = { Kind = "Event", Direction = "S2C" }, -- (biomas livres, bioma atual, pode escolher)
 	ChooseFarmBiome = { Kind = "Event", Direction = "C2S", Args = { { Type = "enum", Values = { "blossom", "coast", "crystal", "enchanted", "fir", "hidden", "lake", "meadow", "oak", "orchard", "pine", "rainforest", "redrock", "ruins", "snow", "swamp", "volcanic" } } }, Rate = 0.2, Burst = 2 },
 
+	-- Ferramenta de qualidade gráfica: salva a escolha do jogador no perfil.
+	SetGraphics = { Kind = "Event", Direction = "C2S", Args = { { Type = "enum", Values = { "Low", "Medium", "High", "Ultra" } } }, Rate = 1, Burst = 4 },
+
 	-- Hub: servidor abre a conversa com um NPC (id do NPC).
 	NpcDialog = { Kind = "Event", Direction = "S2C" },
 

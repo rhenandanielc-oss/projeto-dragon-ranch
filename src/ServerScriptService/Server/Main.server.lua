@@ -80,6 +80,13 @@ NetService.On("ChooseFarmBiome", function(player: Player, biome: string)
 	NetService.Fire(player, "Notify", message, if ok then "success" else "info")
 end)
 
+NetService.On("SetGraphics", function(player: Player, id: string)
+	local data = DataService.Get(player)
+	if data and type(data.Settings) == "table" then
+		data.Settings.Graphics = id
+	end
+end)
+
 NetService.On("Ping", function(_player: Player, n: number)
 	return n
 end)
