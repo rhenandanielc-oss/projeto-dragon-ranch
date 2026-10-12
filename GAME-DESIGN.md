@@ -500,9 +500,25 @@ voo.
 Possíveis recompensas: - Moedas; - Materiais de criação; -
 Equipamentos; - Poções; - Ingredientes raros; - Itens de missão.
 
-**PENDENTE:** número de jogadores por grupo, dificuldade, duração média,
-política de reentrada, derrota dentro da dungeon e distribuição de
-recompensas.
+### 9.5 Regras aprovadas (12/10/2026)
+
+- **Grupo:** de 1 a 4 jogadores, cada um com seu dragão ativo; é possível
+  entrar sozinho.
+- **Formação:** o primeiro jogador a pisar no círculo do portão vira
+  líder; quem pisar no círculo em até 30 segundos entra no grupo; o líder
+  inicia (ou a contagem termina) e todos vão para a instância.
+- **Desconexão:** o jogador tem 3 minutos para voltar e retomar na mesma
+  instância; se não voltar, sai do grupo sem perder o que já tinha.
+- **Morte:** quem morre **não volta mais** àquela expedição — é eliminado
+  e devolvido ao portão no mundo aberto. Se todos morrerem, a expedição
+  falha. Não há perda de itens (dungeon não é zona de PvP).
+- **Recompensas:** loot individual, sem disputa no grupo; o item da missão
+  de voo (ou de entrar na terra) é dado a todos com a missão ativa.
+- **Reentrada:** livre, mas o baú final dá a recompensa completa apenas
+  uma vez a cada 20 horas por jogador.
+
+**PENDENTE:** o jogador eliminado fica com o loot coletado até a morte?
+Recebe algo se o grupo concluir a dungeon? Dificuldade e duração média.
 
 ------------------------------------------------------------------------
 
@@ -754,7 +770,10 @@ como o jogador comanda o dragão.
 Confirmar como a proteção inicial funciona, quais zonas existem, quais
 itens são saqueáveis e o limite de perda por derrota.
 
-### B6. Estrutura das dungeons
+### B6. Estrutura das dungeons — QUASE RESOLVIDO
+
+**Resolvido (12/10/2026):** ver seção 9.5. **Falta:** o que o jogador
+eliminado mantém.
 
 Definir tamanho máximo dos grupos, fluxo para formar o grupo na entrada,
 comportamento ao desconectar, derrota dentro da dungeon e distribuição
@@ -894,6 +913,11 @@ mecânicas.
                                       proteção de iniciante até o
                                       primeiro dragão virar Jovem,
                                       anti-abuso. B5 resolvido.
+
+  0.2.6 (12/10/2026)                  Dungeons: grupos de 1 a 4, formação
+                                      no círculo, morte elimina o
+                                      jogador da expedição, loot
+                                      individual, baú final a cada 20 h.
 
   -----------------------------------------------------------------------
 
