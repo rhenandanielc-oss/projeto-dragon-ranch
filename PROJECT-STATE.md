@@ -37,6 +37,7 @@ explicitamente adiados pelo responsável.
 | `MASTER-PROMPT.md` | ⬜ | regras de trabalho para o Claude |
 | `V1-ROADMAP.md` | ✅ | 11 fases de construção |
 | `IDEAS-BACKLOG.md` | ✅ | inclui ovos melhores (futuro) |
+| `WORLD-DESIGN.md` | 🟡 PROPOSTA | mundo aberto: 18 fazendas espalhadas, escala, encontros; aguardando decisões D1–D12 |
 
 ---
 
@@ -194,3 +195,4 @@ esta lista ao concluir a V1.
 | 12/10/2026 | Fase 1 concluída: fundação (config, rede protegida, salvamento) |
 | 12/10/2026 | Fase 2 concluída: 18 fazendas, ovo inicial, crescimento, cuidados, painel |
 | 12/10/2026 | Hub Central com 4 NPCs; fazendas em anel separadas por floresta; bosque decorado nas entradas; fazendas decoradas; dragões e cenário com modelos 3D gerados por IA |
+| 12/10/2026 | Proposta do mundo aberto (WORLD-DESIGN.md + mapa conceitual); construção do mapa pausada até aprovação |
