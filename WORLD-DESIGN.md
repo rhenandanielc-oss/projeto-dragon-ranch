@@ -126,9 +126,11 @@ própria fazenda. Posições: Pico Branco (−4600, 6000), Vulcão (−6200,
 Ruínas (5300, 3900), Portão do Castelo (3300, 5500), Coração do Pântano
 (3900, −5600), Cachoeira Grande (3700, 500).
 
-**Acampamentos de viagem com comida e água (D10).** 7 pequenas zonas
-protegidas nas estradas, cada uma com tenda, fogueira, cocho de água e
-varal de comida para os dragões: Rio (−3200, −1600), Fenda (−4900,
+**Acampamentos de viagem para dragões (D10).** 7 pequenas zonas
+protegidas nas estradas, feitas na escala dos dragões (não há tendas de
+pessoas): lagoa-bebedouro com borda de rochas, cochos de pedra com carne,
+varal alto de carne, abrigo alto e aberto, ninhos grandes de palha, poleiros
+e braseiro: Rio (−3200, −1600), Fenda (−4900,
 −700), Passo (−900, 3700), Lago (2700, 0), Sul (−1000, −5000), Brejo
 (1900, −4900), Nordeste (3200, 4000).
 
@@ -178,6 +180,14 @@ distância entre duas fazendas é ~2.100 studs** (era ~1.450).
 
 Direções equilibradas: norte 4, 9, 18 · nordeste 8, 17 · leste 3, 10, 16 ·
 sudeste 5, 11 · sul 1, 12 · sudoeste 6, 13 · oeste 2, 7, 15 · noroeste 14.
+
+### 3.0 Vegetação "na medida" (pedido na aprovação)
+
+Nem poluído de árvores, nem vazio: manchas de floresta alta (pinheiros e
+carvalhos realistas) com clareiras, bordas mais ralas, campos abertos com
+árvores solitárias, e sub-bosque de samambaias, arbustos, flores e rochas.
+A quantidade de floresta varia por região (Floresta Densa tem mais; Prados
+Centrais, Costa e Cânion, bem menos). Referência visual: Dystovia.
 
 ### 3.1 Como cada fazenda se integra à paisagem
 
