@@ -19,7 +19,7 @@ local STONE = Color3.fromRGB(150, 146, 138)
 local BASE_SCALE = {
 	Pine = 2.2, Tree2 = 1.6, Arch = 1.6, QuestBoard = 1.4, Blossom = 1.1, Boulder = 1.6,
 	Waypoint = 1.3, Camp = 1.4, Castle = 2.8, Lighthouse = 1.5, Ruins = 2.2, Cottage = 1.3, Crystal = 1.0,
-	SnowPine = 1.8, DeadTree = 1.5, FruitBush = 1.0, Mushroom = 1.0, TallPine = 1.25, Flowers = 1.0,
+	SnowPine = 1.8, DeadTree = 1.5, FruitBush = 1.0, Mushroom = 1.0, TallPine = 2.2, Flowers = 1.0,
 }
 
 --------------------------------------------------------------------------
