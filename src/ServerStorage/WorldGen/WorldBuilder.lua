@@ -1449,7 +1449,9 @@ function WorldBuilder:setupLighting()
 	Terrain.WaterReflectance = 0.6
 	Terrain.WaterWaveSize = 0.12
 	Terrain.WaterWaveSpeed = 8
-	Terrain.Decoration = true
+	pcall(function()
+		(Terrain :: any).Decoration = true -- grama animada (nem sempre disponível por script)
+	end)
 	local colors = {
 		Grass = Color3.fromRGB(98, 136, 62),
 		LeafyGrass = Color3.fromRGB(78, 118, 52),
