@@ -61,7 +61,7 @@
 <path d="M800.0,950.0 C795.0,931.7 773.3,876.7 770.0,840.0 C766.7,803.3 796.7,791.7 780.0,730.0 C763.3,668.3 691.7,530.0 670.0,470.0 C648.3,410.0 641.7,398.3 650.0,370.0 C658.3,341.7 708.3,311.7 720.0,300.0" fill="none" stroke="#7A5B3A" stroke-width="2.6" stroke-dasharray="9 6" stroke-linecap="round" opacity="0.85"/>
 <path d="M650.0,370.0 C625.0,361.7 546.7,336.7 500.0,320.0 C453.3,303.3 391.7,278.3 370.0,270.0" fill="none" stroke="#7A5B3A" stroke-width="2.6" stroke-dasharray="9 6" stroke-linecap="round" opacity="0.85"/>
 <path d="M720.0,300.0 C738.3,286.7 803.3,241.7 830.0,220.0 C856.7,198.3 871.7,178.3 880.0,170.0" fill="none" stroke="#7A5B3A" stroke-width="2.6" stroke-dasharray="9 6" stroke-linecap="round" opacity="0.85"/>
-<path d="M800.0,950.0 C780.0,941.7 718.3,913.3 680.0,900.0 C641.7,886.7 610.0,871.7 570.0,870.0 C530.0,868.3 468.3,913.3 440.0,890.0 C411.7,866.7 406.7,756.7 400.0,730.0" fill="none" stroke="#7A5B3A" stroke-width="2.6" stroke-dasharray="9 6" stroke-linecap="round" opacity="0.85"/>
+<path d="M800.0,950.0 C780.0,941.7 718.3,913.3 680.0,900.0 C641.7,886.7 610.0,871.7 570.0,870.0 C530.0,868.3 473.3,915.0 440.0,890.0 C406.7,865.0 381.7,748.3 370.0,720.0" fill="none" stroke="#7A5B3A" stroke-width="2.6" stroke-dasharray="9 6" stroke-linecap="round" opacity="0.85"/>
 <path d="M440.0,890.0 C418.3,886.7 338.3,880.0 310.0,870.0 C281.7,860.0 288.3,835.0 270.0,830.0 C251.7,825.0 211.7,838.3 200.0,840.0" fill="none" stroke="#7A5B3A" stroke-width="2.6" stroke-dasharray="9 6" stroke-linecap="round" opacity="0.85"/>
 <path d="M800.0,950.0 C820.0,945.0 881.7,936.7 920.0,920.0 C958.3,903.3 995.0,873.3 1030.0,850.0 C1065.0,826.7 1111.7,826.7 1130.0,780.0 C1148.3,733.3 1123.3,621.7 1140.0,570.0 C1156.7,518.3 1200.0,505.0 1230.0,470.0 C1260.0,435.0 1305.0,378.3 1320.0,360.0" fill="none" stroke="#7A5B3A" stroke-width="2.6" stroke-dasharray="9 6" stroke-linecap="round" opacity="0.85"/>
 <path d="M1230.0,470.0 C1213.3,456.7 1146.7,426.7 1130.0,390.0 C1113.3,353.3 1125.0,281.7 1130.0,250.0 C1135.0,218.3 1155.0,208.3 1160.0,200.0" fill="none" stroke="#7A5B3A" stroke-width="2.6" stroke-dasharray="9 6" stroke-linecap="round" opacity="0.85"/>
@@ -201,9 +201,9 @@
 <circle cx="540.0" cy="1090.0" r="13" fill="#2F6F62" stroke="#F5F6F1" stroke-width="2.5"/>
 <text x="540.0" y="1095.0" class="m-farm" text-anchor="middle" fill="#F5F6F1">6</text></g>
 <g class="farm"><title>Fazenda 7 · Cascata do Oeste</title>
-<circle cx="400.0" cy="730.0" r="24" fill="#B07A1E" fill-opacity="0.18"/>
-<circle cx="400.0" cy="730.0" r="13" fill="#B07A1E" stroke="#F5F6F1" stroke-width="2.5"/>
-<text x="400.0" y="735.0" class="m-farm" text-anchor="middle" fill="#F5F6F1">7</text></g>
+<circle cx="370.0" cy="720.0" r="24" fill="#B07A1E" fill-opacity="0.18"/>
+<circle cx="370.0" cy="720.0" r="13" fill="#B07A1E" stroke="#F5F6F1" stroke-width="2.5"/>
+<text x="370.0" y="725.0" class="m-farm" text-anchor="middle" fill="#F5F6F1">7</text></g>
 <g class="farm"><title>Fazenda 8 · Bosque Encantado</title>
 <circle cx="1140.0" cy="570.0" r="24" fill="#B07A1E" fill-opacity="0.18"/>
 <circle cx="1140.0" cy="570.0" r="13" fill="#B07A1E" stroke="#F5F6F1" stroke-width="2.5"/>

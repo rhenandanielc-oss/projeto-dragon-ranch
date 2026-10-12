@@ -119,6 +119,54 @@ function WorldBuilder:roadDist(x: number, y: number): number
 	return best
 end
 
+-- Pinta o material da superfície (sem mudar o relevo) numa célula de ~8 studs
+local PAINT_SOURCES = {
+	Enum.Material.Grass, Enum.Material.LeafyGrass, Enum.Material.Ground, Enum.Material.Mud, Enum.Material.Sand,
+	Enum.Material.Rock, Enum.Material.Slate, Enum.Material.Snow, Enum.Material.Basalt, Enum.Material.Limestone,
+	Enum.Material.Glacier, Enum.Material.Salt, Enum.Material.Cobblestone, Enum.Material.Pavement, Enum.Material.CrackedLava,
+}
+function WorldBuilder:paintCell(wx: number, wz: number, half: number, mat: Enum.Material)
+	local hit = workspace:Raycast(Vector3.new(wx, 3000, wz), Vector3.new(0, -3200, 0), self.raySolid)
+	if not hit then
+		return
+	end
+	local g = hit.Position.Y
+	local region = Region3.new(Vector3.new(wx - half, g - 8, wz - half), Vector3.new(wx + half, g + 4, wz + half)):ExpandToGrid(4)
+	for _, src in ipairs(PAINT_SOURCES) do
+		if src ~= mat then
+			Terrain:ReplaceMaterial(region, 4, src, mat)
+		end
+	end
+end
+
+-- disco no mapa (x, y) de raio r
+function WorldBuilder:paintDisc(x: number, y: number, r: number, mat: Enum.Material)
+	for gx = -r, r, 8 do
+		for gy = -r, r, 8 do
+			if gx * gx + gy * gy <= r * r then
+				self:paintCell(x + gx, -(y + gy), 4, mat)
+			end
+		end
+	end
+end
+
+-- faixa entre dois pontos do mundo (Vector3), largura w
+function WorldBuilder:paintStrip(a: Vector3, b: Vector3, w: number, mat: Enum.Material)
+	local d = Vector3.new(b.X - a.X, 0, b.Z - a.Z)
+	local len = d.Magnitude
+	if len < 0.1 then
+		return
+	end
+	local dir = d / len
+	local side = Vector3.new(-dir.Z, 0, dir.X)
+	for t = 0, len, 6 do
+		for o = -w / 2 + 3, w / 2 - 3 + 0.01, 6 do
+			local p = a + dir * t + side * o
+			self:paintCell(p.X, p.Z, 4, mat)
+		end
+	end
+end
+
 --------------------------------------------------------------------------
 -- Peças e modelos
 --------------------------------------------------------------------------
@@ -464,8 +512,8 @@ function WorldBuilder:buildHub()
 		return V(H.x + dx, H.y + dy, self:groundY(H.x + dx, H.y + dy))
 	end
 	-- praça de pedra e anel de calçada
-	Terrain:FillCylinder(CFrame.new(C.X, gy - 2.5, C.Z), 4, 95, Enum.Material.Cobblestone)
-	Terrain:FillCylinder(CFrame.new(C.X, gy - 2.3, C.Z), 4.2, 72, Enum.Material.Pavement)
+	self:paintDisc(H.x, H.y, 96, Enum.Material.Cobblestone)
+	self:paintDisc(H.x, H.y, 70, Enum.Material.Pavement)
 	-- ruas de pedra da praça até a beira da ilha (seguindo as estradas)
 	for _, road in ipairs(self.data.ROADS) do
 		if road[1][1] == H.x and road[1][2] == H.y then
@@ -473,11 +521,7 @@ function WorldBuilder:buildHub()
 			local dx, dy = p1[1] - H.x, p1[2] - H.y
 			local L = math.sqrt(dx * dx + dy * dy)
 			dx, dy = dx / L, dy / L
-			for r = 90, H.r0 + 40, 8 do
-				local x, y = H.x + dx * r, H.y + dy * r
-				local g = self:groundY(x, y)
-				Terrain:FillBlock(CFrame.lookAt(V(x, y, g - 2.4), V(x + dx, y + dy, g - 2.4)), Vector3.new(12, 4.2, 9), Enum.Material.Cobblestone)
-			end
+			self:paintStrip(V(H.x + dx * 90, H.y + dy * 90), V(H.x + dx * (H.r0 + 60), H.y + dy * (H.r0 + 60)), 14, Enum.Material.Cobblestone)
 		end
 	end
 	task.wait()
@@ -588,7 +632,7 @@ function WorldBuilder:buildHub()
 	local function house(x: number, y: number, faceX: number, faceY: number)
 		local pos = V(x, y, self:groundY(x, y))
 		local cf = CFrame.lookAt(pos, V(faceX, faceY, pos.Y))
-		if not self:placeAsset("Cottage", cf * CFrame.Angles(0, math.rad(180), 0), self.rng:NextNumber(0.95, 1.2), houses, 0.5) then
+		if not self:placeAsset("Cottage", cf * CFrame.Angles(0, math.rad(180), 0), self.rng:NextNumber(0.78, 0.95), houses, 0.5) then
 			part({ Name = "Cottage", Size = Vector3.new(18, 11, 14), CFrame = cf * CFrame.new(0, 5.5, 0), Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(196, 170, 130) }, houses)
 		end
 		table.insert(placedAt, { x, y })
@@ -608,11 +652,11 @@ function WorldBuilder:buildHub()
 			local Ld = math.sqrt(dx * dx + dy * dy)
 			dx, dy = dx / Ld, dy / Ld
 			local px, py = -dy, dx
-			for r = 118, 300, 30 do
+			for r = 120, 300, 42 do
 				for _, s in ipairs({ -1, 1 }) do
 					local sx, sy = H.x + dx * r, H.y + dy * r
 					local x, y = sx + px * s * 26, sy + py * s * 26
-					if freeSpot(x, y, 24) then
+					if freeSpot(x, y, 32) then
 						house(x, y, sx, sy)
 						if self.rng:NextNumber() < 0.5 then
 							self:lantern(V(sx + px * s * 11, sy + py * s * 11, self:groundY(sx + px * s * 11, sy + py * s * 11)), V(sx, sy, 0), decor)
@@ -737,7 +781,7 @@ function WorldBuilder:buildFarm(f, parent: Instance): Model
 		a.WorldCFrame = cf
 	end
 	-- caminho interno de pedras da entrada ao centro
-	Terrain:FillBlock(F * CFrame.new(0, -4.2, -HALF / 2 - 4), Vector3.new(9, 4.2, HALF + 8), Enum.Material.Cobblestone)
+	self:paintStrip((F * CFrame.new(0, 0, -HALF - 6)).Position, (F * CFrame.new(0, 0, -6)).Position, 10, Enum.Material.Cobblestone)
 	-- cerca com abertura na entrada
 	local fence = Instance.new("Model")
 	fence.Name = "Fence"
@@ -852,7 +896,10 @@ function WorldBuilder:buildFarm(f, parent: Instance): Model
 		part({ Name = "Barrel", Shape = Enum.PartType.Cylinder, Size = Vector3.new(3.6, 2.8, 2.8), CFrame = onGround(o[1], 1.8, o[2]) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Wood, Color = Color3.fromRGB(120, 80, 46) }, model)
 	end
 	-- área de treino
-	Terrain:FillCylinder(L(44, -4.2, -30), 4.2, 15 * S, Enum.Material.Sand)
+	do
+		local c = L(44, 0, -30).Position
+		self:paintDisc(c.X, -c.Z, 15 * S, Enum.Material.Sand)
+	end
 	part({ Name = "TrainingPost", Size = Vector3.new(2, 8, 2), CFrame = onGround(44, 4, -30), Material = Enum.Material.Wood, Color = DARKWOOD }, model)
 	for _, o in ipairs({ { 36, -22 }, { 52, -38 } }) do
 		local dummy = Instance.new("Model")
@@ -864,7 +911,7 @@ function WorldBuilder:buildFarm(f, parent: Instance): Model
 	end
 	-- horta
 	for row = 0, 2 do
-		Terrain:FillBlock(L(-44, -4.2, -40 + row * 8), Vector3.new(22 * S, 4.2, 4 * S), Enum.Material.Mud)
+		self:paintStrip(L(-60, 0, -40 + row * 8).Position, L(-28, 0, -40 + row * 8).Position, 6, Enum.Material.Mud)
 		for c = 0, 4 do
 			part({ Name = "Crop", Shape = Enum.PartType.Ball, Size = Vector3.new(1.8, 1.6, 1.8), CFrame = onGround(-52 + c * 4, 1.2, -40 + row * 8), Material = Enum.Material.Grass, Color = if row == 1 then Color3.fromRGB(230, 120, 60) else Color3.fromRGB(110, 180, 70), CanCollide = false }, model)
 		end
@@ -877,9 +924,10 @@ function WorldBuilder:buildFarm(f, parent: Instance): Model
 		part({ Name = "StrawBed", Shape = Enum.PartType.Cylinder, Size = Vector3.new(0.6, 10, 10), CFrame = CFrame.new(p + Vector3.new(0, 0.4, 0)) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Fabric, Color = Color3.fromRGB(214, 184, 110), CanCollide = false, CastShadow = false }, model)
 	end
 	-- laguinho
-	local pond = L(2, -5, 50)
-	Terrain:FillCylinder(pond, 6, 12, Enum.Material.Air)
-	Terrain:FillCylinder(pond, 6, 12, Enum.Material.Water)
+	local pond = L(2, 0, 50)
+	Terrain:FillCylinder(pond * CFrame.new(0, -1.5, 0), 9, 12, Enum.Material.Air)
+	Terrain:FillCylinder(pond * CFrame.new(0, -4, 0), 5, 12, Enum.Material.Water)
+	pond = pond * CFrame.new(0, -5, 0)
 	for i = 0, 11 do
 		local a = i / 12 * math.pi * 2
 		local p = (pond * CFrame.new(math.cos(a) * 13.5, 0, math.sin(a) * 13.5)).Position

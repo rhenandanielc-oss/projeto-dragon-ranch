@@ -169,8 +169,8 @@ padrão do Roblox) e um caminho ~30% mais longo que a linha reta.
 | 18 | Vale Oculto | Vale escondido na cordilheira | Bosque antigo, nevoeiro, flores raras | Caverna que atravessa a montanha | Máximo | ~7.850 (10,6 min) | O lugar mais escondido do mapa |
 
 Posições aprovadas (x, y): 1 (−300, −3700) · 2 (−2300, −700) · 3 (2300,
-−500) · 4 (−200, 700) · 5 (1700, −2800) · 6 (−2600, −2900) · 7 (−4000,
-700) · 8 (3400, 2300) · 9 (−1300, 3300) · 10 (4200, −1700) · 11 (3300,
+−500) · 4 (−200, 700) · 5 (1700, −2800) · 6 (−2600, −2900) · 7 (−4300,
+800) · 8 (3400, 2300) · 9 (−1300, 3300) · 10 (4200, −1700) · 11 (3300,
 −4700) · 12 (−1800, −6200) · 13 (−4700, −2700) · 14 (−4300, 5300) · 15
 (−6000, −400) · 16 (5500, 300) · 17 (5200, 4400) · 18 (800, 6300). Na
 aprovação as fazendas foram afastadas umas das outras: **a menor
