@@ -11,8 +11,9 @@ Pastas gerenciadas (apagadas e recriadas a cada sincronização):
   ReplicatedStorage/Shared
   ServerScriptService/Server
   StarterPlayer/StarterPlayerScripts/Client
+  ServerStorage/WorldGen
 
-Uso: python3 tools/build_sync.py > saida.luau
+Uso: python3 tools/build_sync.py [--only Servico/Pasta ...] > saida.luau
 """
 import os
 import sys
@@ -23,6 +24,7 @@ MANAGED = [
     ("ReplicatedStorage", ["Shared"]),
     ("ServerScriptService", ["Server"]),
     ("StarterPlayer", ["StarterPlayerScripts", "Client"]),
+    ("ServerStorage", ["WorldGen"]),
 ]
 
 
@@ -72,7 +74,10 @@ def main():
         "local created = 0",
     ]
     counter = [0]
+    only = sys.argv[sys.argv.index("--only") + 1:] if "--only" in sys.argv else None
     for service, chain in MANAGED:
+        if only and "/".join([service] + chain) not in only:
+            continue
         base = os.path.join(ROOT, service, *chain)
         if not os.path.isdir(base):
             continue
