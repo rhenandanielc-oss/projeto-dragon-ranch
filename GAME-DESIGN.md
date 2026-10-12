@@ -806,14 +806,40 @@ Definir a capacidade inicial do inventário, empilhamento de itens,
 fontes principais de moedas e se comércio direto entre jogadores entra
 na V1.
 
-### B8. Salvamento e propriedade
+### B8. Salvamento e propriedade — RESOLVIDO
+
+**Resolvido (12/10/2026):**
+- **Dados salvos:** dragões (espécie, elementos, raridade, nomes, estágio,
+  pontos, voo/terra desbloqueados), dragão ativo, mochila, armazém,
+  moedas, missões, fazenda e proteção de iniciante.
+- **Quando:** a cada 2–3 minutos, ao sair e ao fechar o servidor.
+- **Trava de sessão:** os dados do jogador ficam travados no servidor em
+  que ele está, impedindo duplicação entre servidores.
+- **Itens únicos:** cada equipamento tem um código único.
+- **Falhas:** novas tentativas; nunca sobrescrever dados bons com dados
+  vazios ou corrompidos.
+- **Proteção contra exploiters (requisito do responsável):** o servidor é
+  a única autoridade sobre moedas, itens, pontos, dano e recompensas; todo
+  pedido do cliente (RemoteEvent/RemoteFunction) é validado — tipo dos
+  dados, distância, posse do item, tempo de recarga e limite de
+  frequência; movimentos e velocidades impossíveis são verificados no
+  servidor; o cliente nunca informa quanto ganhou.
 
 Definir os dados persistentes necessários: dragões e seus estágios,
 dragão ativo, inventário, moedas, missões, desbloqueio do voo e estado
 da fazenda. O sistema precisa lidar com salvamentos falhos e evitar
 duplicação de itens.
 
-### B9. Escopo do mapa
+### B9. Escopo do mapa — PARCIALMENTE RESOLVIDO
+
+**Resolvido (12/10/2026):**
+- O mapa deve ser **muito maior** que o terreno atual (~2.000 × 2.000
+  studs), já na V1, para haver espaço de exploração; encontrar a dungeon
+  e as zonas perigosas não deve ser fácil.
+- Até **8 jogadores por servidor**; cada um recebe um **terreno de
+  fazenda próprio** ao entrar, salvo entre servidores.
+
+**Falta:** aprovar tamanho, nome e layout propostos.
 
 Definir o tema da região inicial, os pontos principais e o tamanho
 aproximado da área jogável. Não é necessário desenhar todo o mapa em
@@ -948,6 +974,12 @@ mecânicas.
   0.2.8 (12/10/2026)                  Inventário (mochila 30→60, armazém
                                       100), moeda única, sem comércio
                                       entre jogadores na V1. B7 resolvido.
+
+  0.2.9 (12/10/2026)                  Salvamento com trava de sessão e
+                                      proteção contra exploiters (B8
+                                      resolvido). Mapa muito maior, 8
+                                      jogadores por servidor, fazenda
+                                      própria por jogador.
 
   -----------------------------------------------------------------------
 

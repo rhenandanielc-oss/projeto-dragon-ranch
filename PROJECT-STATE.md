@@ -45,8 +45,8 @@ explicitamente adiados pelo responsável.
 | B5 | PvP | ✅ 3 zonas; até 40% dos materiais em zona perigosa; proteção de iniciante; anti-abuso |
 | B6 | Dungeons | ✅ grupo 1–4; morte elimina (mantém loot, sem baú final nem item de missão); baú a cada 20 h |
 | B7 | Inventário e economia | ✅ mochila 30→60; armazém 100; moeda única; sem comércio entre jogadores |
-| B8 | Dados salvos e proteção contra falha/duplicação | ⛔ pendente |
-| B9 | Mapa: tema, pontos principais, tamanho | ⛔ pendente |
+| B8 | Salvamento | ✅ trava de sessão, autosave, itens com código único, servidor autoritativo contra exploiters |
+| B9 | Mapa | 🟡 parcial — muito maior que o atual; 8 jogadores/servidor; fazenda por jogador; falta: tamanho, nome e layout |
 | B10 | Dispositivos | ✅ PC e celular |
 
 Outras pendências de arte: estilo final dos dragões (ART §12, DRAGON §14).
@@ -117,3 +117,4 @@ foi implementado.
 | 12/10/2026 | B5 resolvido: regras de PvP e loot |
 | 12/10/2026 | B6 resolvido: regras de dungeon |
 | 12/10/2026 | B7 resolvido: inventário e economia |
+| 12/10/2026 | B8 resolvido; B9 parcial |
