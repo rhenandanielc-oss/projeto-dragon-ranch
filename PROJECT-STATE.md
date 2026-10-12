@@ -41,7 +41,7 @@ explicitamente adiados pelo responsável.
 | B1 | Espécies e elementos | 🟡 parcial — 5 espécies, 6 elementos, poderes duplos e locomoção aprovados; falta: funções/habilidades de cada espécie, raridades |
 | B2 | Crescimento | ✅ somente por pontos, ritmo demorado, sem marcos obrigatórios |
 | B3 | Voo | ✅ a partir de Jovem; missão uma vez por dragão |
-| B4 | Combate | 🟡 parcial — espada e arco desde o início; falta: controles, habilidades, comando do dragão |
+| B4 | Combate | ✅ controles, flechas finitas, comando do dragão, montaria a partir de Jovem, poderes por estágio |
 | B5 | PvP | ✅ 3 zonas; até 40% dos materiais em zona perigosa; proteção de iniciante; anti-abuso |
 | B6 | Dungeons | ✅ grupo 1–4; morte elimina (mantém loot, sem baú final nem item de missão); baú a cada 20 h |
 | B7 | Inventário e economia | ✅ mochila 30→60; armazém 100; moeda única; sem comércio entre jogadores |
@@ -119,3 +119,4 @@ foi implementado.
 | 12/10/2026 | B7 resolvido: inventário e economia |
 | 12/10/2026 | B8 resolvido; B9 parcial |
 | 12/10/2026 | B9 resolvido: Terras de Escamarra |
+| 12/10/2026 | B4 resolvido: combate e controles |

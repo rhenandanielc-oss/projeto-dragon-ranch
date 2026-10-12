@@ -587,8 +587,48 @@ espécies.
 **APROVADO (12/10/2026):** espada e arco estão disponíveis desde o
 início.
 
-**PENDENTE:** munição, recarga, dano, alcance, esquiva e controles para
-PC e celular.
+### 10.5 Controles e regras de combate (APROVADO 12/10/2026)
+
+**Controles (PC / celular):**
+
+| Ação | PC | Celular |
+|---|---|---|
+| Atacar | Clique esquerdo | Botão de ataque |
+| Trocar arma/equipamento | Rolagem do mouse percorre o menu de equipamentos equipados | Botão pequeno que abre o menu de equipamentos equipados |
+| Bloquear (espada) / mirar (arco) | Clique direito | Botão segurar |
+| Esquiva (rolamento, com recarga) | Q | Botão de esquiva |
+| Poções e itens rápidos | Barra de inventário na tela com até 8 itens visíveis; o jogador escolhe a poção e bebe | Mesma barra, por toque |
+| Interagir | E | Botão contextual |
+| Dragão: atacar o alvo mirado | F | Botão |
+| Dragão: voltar para perto | G | Botão |
+| Dragão: poderes especiais | Z, X, C | Botões |
+
+**Habilidades do jogador (desde o início):** espada com combo de 3 golpes
+e Golpe Giratório; arco com tiro carregado e Flecha Tripla.
+
+**Flechas:** são finitas. Obtidas em baús, fabricadas pelo jogador e
+derrubadas por monstros. Empilham até 50 por espaço (provisório).
+
+**Comando do dragão:** segue o jogador e ataca sozinho quem atacar o
+jogador; poderes especiais apenas sob comando, com recarga; se derrotado,
+recua para descansar e pode ser chamado de novo após 60 segundos. Nunca
+morre.
+
+**Montaria:** a partir do estágio Jovem o jogador pode montar no dragão e
+controlá-lo diretamente, **em terra ou voando** (voo após a missão).
+Montado, o jogador não usa espada e arco; controla os ataques e poderes
+do dragão.
+
+**Poderes do dragão por estágio:**
+- Ovo e Bebê: não lutam (o Bebê pode acompanhar, sem combater).
+- Jovem: ataque básico + 1 poder do primeiro elemento.
+- Pré-adulto: + 1 poder do segundo elemento.
+- Adulto: + poder combinado dos dois elementos (Dragão Ocidental, de
+  elemento único, recebe um terceiro poder de Fogo, mais forte).
+- Ancião: versões mais fortes dos poderes.
+
+**PENDENTE (não bloqueia):** onde e como as flechas são fabricadas;
+valores de dano, alcance e recargas (balanceamento).
 
 ### 10.4 Balanceamento
 
@@ -800,12 +840,12 @@ isso.
 **Resolvido (12/10/2026):** voo a partir do estágio Jovem; missão de voo
 uma vez por dragão.
 
-### B4. Escopo do combate da V1 — PARCIALMENTE RESOLVIDO
+### B4. Escopo do combate da V1 — RESOLVIDO
 
 **Resolvido (12/10/2026):** espada e arco disponíveis desde o começo.
 
-**Ainda falta:** controles essenciais, conjunto inicial de habilidades e
-como o jogador comanda o dragão.
+**Resolvido também:** controles, habilidades, comando do dragão,
+montaria e poderes por estágio (seção 10.5).
 
 ### B5. Regras de PvP e loot — RESOLVIDO
 
@@ -1008,6 +1048,12 @@ mecânicas.
   0.2.10 (12/10/2026)                 Mapa "Terras de Escamarra",
                                       ~8.000 × 8.000 studs, layout e
                                       regras de descoberta. B9 resolvido.
+
+  0.2.11 (12/10/2026)                 Controles PC/celular, barra de 8
+                                      itens, flechas finitas, comando do
+                                      dragão, montaria a partir de Jovem
+                                      (terra e voo), poderes por estágio.
+                                      B4 resolvido.
 
   -----------------------------------------------------------------------
 
