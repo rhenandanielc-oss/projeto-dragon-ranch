@@ -517,8 +517,12 @@ Equipamentos; - Poções; - Ingredientes raros; - Itens de missão.
 - **Reentrada:** livre, mas o baú final dá a recompensa completa apenas
   uma vez a cada 20 horas por jogador.
 
-**PENDENTE:** o jogador eliminado fica com o loot coletado até a morte?
-Recebe algo se o grupo concluir a dungeon? Dificuldade e duração média.
+- **Jogador eliminado:** fica com o loot coletado até morrer; **não**
+  recebe o baú final, mesmo que o grupo vença, e por isso o limite de 20
+  horas dele não é gasto; **não** recebe o item da missão de voo (ou de
+  entrar na terra) — precisa concluir a dungeon vivo.
+
+**PENDENTE (balanceamento, não bloqueia):** dificuldade e duração média.
 
 ------------------------------------------------------------------------
 
@@ -770,10 +774,9 @@ como o jogador comanda o dragão.
 Confirmar como a proteção inicial funciona, quais zonas existem, quais
 itens são saqueáveis e o limite de perda por derrota.
 
-### B6. Estrutura das dungeons — QUASE RESOLVIDO
+### B6. Estrutura das dungeons — RESOLVIDO
 
-**Resolvido (12/10/2026):** ver seção 9.5. **Falta:** o que o jogador
-eliminado mantém.
+**Resolvido (12/10/2026):** ver seção 9.5.
 
 Definir tamanho máximo dos grupos, fluxo para formar o grupo na entrada,
 comportamento ao desconectar, derrota dentro da dungeon e distribuição
@@ -918,6 +921,11 @@ mecânicas.
                                       no círculo, morte elimina o
                                       jogador da expedição, loot
                                       individual, baú final a cada 20 h.
+
+  0.2.7 (12/10/2026)                  Jogador eliminado mantém o loot,
+                                      não recebe baú final nem item de
+                                      missão; limite de 20 h não é gasto.
+                                      B6 resolvido.
 
   -----------------------------------------------------------------------
 

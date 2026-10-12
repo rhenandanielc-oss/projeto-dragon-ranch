@@ -43,7 +43,7 @@ explicitamente adiados pelo responsável.
 | B3 | Voo | ✅ a partir de Jovem; missão uma vez por dragão |
 | B4 | Combate | 🟡 parcial — espada e arco desde o início; falta: controles, habilidades, comando do dragão |
 | B5 | PvP | ✅ 3 zonas; até 40% dos materiais em zona perigosa; proteção de iniciante; anti-abuso |
-| B6 | Dungeons | 🟡 quase — grupo 1–4, morte elimina, loot individual, baú a cada 20 h; falta: o que o eliminado mantém |
+| B6 | Dungeons | ✅ grupo 1–4; morte elimina (mantém loot, sem baú final nem item de missão); baú a cada 20 h |
 | B7 | Inventário e economia: capacidade, empilhamento, moedas, comércio | ⛔ pendente |
 | B8 | Dados salvos e proteção contra falha/duplicação | ⛔ pendente |
 | B9 | Mapa: tema, pontos principais, tamanho | ⛔ pendente |
@@ -115,4 +115,4 @@ foi implementado.
 | 12/10/2026 | Crescimento por pontos, ritmo demorado |
 | 12/10/2026 | B2 resolvido: sem marcos obrigatórios |
 | 12/10/2026 | B5 resolvido: regras de PvP e loot |
-| 12/10/2026 | B6 quase resolvido: regras de dungeon |
+| 12/10/2026 | B6 resolvido: regras de dungeon |
