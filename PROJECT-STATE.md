@@ -14,7 +14,9 @@ Legenda: ✅ feito · 🟡 parcial · ⬜ não feito · ⛔ bloqueado por decis�
 
 ## 1. Fase atual
 
-**Fase 0 — Design.** Conforme o `GAME-DESIGN.md` (seções 15 e 18), a programação
+**Fase 0 — Design concluída (12/10/2026).** Todos os bloqueios B1–B10 resolvidos.
+
+~~Fase 0 — Design.~~ Conforme o `GAME-DESIGN.md` (seções 15 e 18), a programação
 dos sistemas só começa depois que os bloqueios B1–B10 forem resolvidos ou
 explicitamente adiados pelo responsável.
 
@@ -29,8 +31,8 @@ explicitamente adiados pelo responsável.
 | `DRAGON-VISUAL-DESIGN.md` | ✅ | v0.2 — 5 fichas com anatomia-base proposta |
 | `PROJECT-STATE.md` | ✅ | este arquivo |
 | `MASTER-PROMPT.md` | ⬜ | regras de trabalho para o Claude |
-| `V1-ROADMAP.md` | ⬜ | fases e dependências — depende dos bloqueios |
-| `IDEAS-BACKLOG.md` | ⬜ | recursos futuros (seção 14 do design) |
+| `V1-ROADMAP.md` | ✅ | 11 fases de construção |
+| `IDEAS-BACKLOG.md` | ✅ | inclui ovos melhores (futuro) |
 
 ---
 
@@ -38,7 +40,7 @@ explicitamente adiados pelo responsável.
 
 | Código | Decisão | Estado |
 |---|---|---|
-| B1 | Espécies e elementos | 🟡 parcial — 5 espécies, 6 elementos, poderes duplos e locomoção aprovados; papéis de combate aprovados; falta: raridades e obtenção de ovos |
+| B1 | Espécies e elementos | ✅ 5 espécies, 6 elementos, papéis, raridades (mudam muito o dragão), ovos |
 | B2 | Crescimento | ✅ somente por pontos, ritmo demorado, sem marcos obrigatórios |
 | B3 | Voo | ✅ a partir de Jovem; missão uma vez por dragão |
 | B4 | Combate | ✅ controles, flechas finitas, comando do dragão, montaria a partir de Jovem, poderes por estágio |
@@ -121,3 +123,5 @@ foi implementado.
 | 12/10/2026 | B9 resolvido: Terras de Escamarra |
 | 12/10/2026 | B4 resolvido: combate e controles |
 | 12/10/2026 | Papéis de combate das espécies |
+| 12/10/2026 | B1 resolvido: raridades e ovos. Todos os bloqueios resolvidos |
+| 12/10/2026 | Criados V1-ROADMAP.md e IDEAS-BACKLOG.md |

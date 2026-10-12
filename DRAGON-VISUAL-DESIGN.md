@@ -26,7 +26,7 @@ Este arquivo complementa a direção de arte geral. Não substitui as regras de 
 - **PENDENTE:** precisa ser definido antes de fechar o design final.
 - **FUTURO:** pode ser desenvolvido depois da V1.
 
-Não apresentar propostas como decisões aprovadas. As cinco espécies iniciais e seus elementos estão aprovados; aparências e distribuição de raridades ainda precisam ser confirmadas.
+Não apresentar propostas como decisões aprovadas. As cinco espécies iniciais e seus elementos estão aprovados; raridades aprovadas; aparências ainda precisam ser confirmadas.
 
 ## 3. Regras gerais de identidade dos dragões
 
@@ -75,22 +75,23 @@ As seis fases devem pertencer claramente à mesma espécie. Ao crescer, o dragã
 ### Status das decisões
 - **APROVADO (12/10/2026):** cinco espécies na V1, com possibilidade de adicionar outras em atualizações.
 - **APROVADO (12/10/2026):** elementos Fogo, Eletricidade, Vento, Terra, Água e Chuva, distribuídos conforme a seção 11.
-- **PROPOSTA SELECIONADA PARA AVALIAÇÃO:** sete níveis de raridade, incluindo uma raridade secreta acima de Mítico.
+- **APROVADO:** sete níveis de raridade, incluindo Secreto acima de Mítico.
 - **PROPOSTA SELECIONADA PARA AVALIAÇÃO:** cada indivíduo terá o nome oficial da espécie e um nome personalizado escolhido pelo jogador.
-- **PROPOSTA SELECIONADA PARA AVALIAÇÃO:** raridade influenciará principalmente dificuldade de obtenção, aparência e efeitos visuais, não poder de combate garantido.
+- **APROVADO (12/10/2026):** a raridade muda muito o dragão — ataques e voo muito mais bonitos, voo mais rápido e mecânicas de combate extras (ver `GAME-DESIGN.md` §4.2).
 
 ### Elementos
 **APROVADO:** Fogo, Eletricidade, Vento, Terra, Água e Chuva. A lista candidata anterior (Fogo, Água, Natureza, Gelo e Raio) foi substituída. **APROVADO:** Água (mar, rios) e Chuva (chuva, tempestades, raios) são distintas. Espécies com dois elementos têm poderes combinados e poderes separados de cada elemento; os efeitos visuais precisam mostrar as três variações.
 
-### Raridades candidatas
-A sequência de trabalho é **Comum → Incomum → Raro → Épico → Lendário → Mítico → Secreto**. Os nomes, a ordem, as probabilidades e os métodos de obtenção ainda precisam de aprovação. A raridade secreta deve ser descoberta de maneira especial, mas sua regra concreta permanece pendente.
+### Raridades
+**APROVADO:** Comum → Incomum → Raro → Épico → Lendário → Mítico → Secreto. Chances e obtenção em `GAME-DESIGN.md` §4.2. O Secreto só é obtido por descoberta especial.
 
 ### Regra visual da raridade
 - A raridade pode ser comunicada por moldura, ícone, brilho ou efeitos visuais controlados na interface e na apresentação do dragão.
 - Não alterar a identidade da espécie apenas para indicar raridade.
 - Variantes raras podem ter padrões, detalhes, materiais ou efeitos especiais, desde que a leitura da espécie continue clara.
 - Não aplicar brilho intenso permanente a todos os dragões raros; reservar os efeitos mais chamativos para momentos e variantes especiais.
-- A raridade não deve, por si só, tornar um dragão visualmente ilegível ou significativamente mais forte em combate.
+- A raridade não deve tornar o dragão visualmente ilegível.
+- Cada raridade acima de Comum precisa de uma versão visual própria dos poderes e do rastro de voo, cada vez mais impressionante; Lendário, Mítico e Secreto devem ser claramente espetaculares, sem esconder a silhueta.
 
 ### Nome oficial e nome personalizado
 A interface deverá distinguir o nome da espécie do apelido do indivíduo. Exemplo de apresentação: **[Nome personalizado] — [Nome da espécie]**. O formato exato da interface ainda é uma proposta. O nome personalizado não substitui nem altera a espécie, o elemento ou a raridade.
@@ -341,7 +342,7 @@ As cinco silhuetas já são bem diferentes entre si, o que atende à regra 3.2.
 - **Papel no combate:** Atacante aéreo — dano explosivo, mergulhos rápidos (APROVADO) — a silhueta e a postura devem comunicar esse papel
 - **Nome personalizado pelo jogador:** permitido para cada indivíduo; formato de interface PENDENTE
 - **Elementos:** Fogo / Eletricidade (APROVADO)
-- **Raridade:** definida na obtenção conforme tabela de raridades a aprovar
+- **Raridade:** definida na obtenção (ver tabela em `GAME-DESIGN.md` §4.2)
 - **Silhueta (PROPOSTA, baseada na anatomia tradicional do tipo):** bípede; as asas funcionam como membros dianteiros; postura inclinada para a frente.
 - **Cabeça e focinho:** PROPOSTA: cabeça angulosa, com chifres voltados para trás.
 - **Asas:** Grandes asas membranosas, que também servem de apoio no chão.
@@ -368,7 +369,7 @@ As cinco silhuetas já são bem diferentes entre si, o que atende à regra 3.2.
 - **Papel no combate:** Força bruta — mais vida e dano direto (APROVADO) — a silhueta e a postura devem comunicar esse papel
 - **Nome personalizado pelo jogador:** permitido para cada indivíduo; formato de interface PENDENTE
 - **Elementos:** Fogo (APROVADO)
-- **Raridade:** definida na obtenção conforme tabela de raridades a aprovar
+- **Raridade:** definida na obtenção (ver tabela em `GAME-DESIGN.md` §4.2)
 - **Silhueta (PROPOSTA, baseada na anatomia tradicional do tipo):** quadrúpede robusto com um par de asas nas costas; silhueta clássica de dragão.
 - **Cabeça e focinho:** PROPOSTA: cabeça grande, mandíbula forte, chifres e cristas proeminentes.
 - **Asas:** Par de asas membranosas grandes, separado das patas.
@@ -395,7 +396,7 @@ As cinco silhuetas já são bem diferentes entre si, o que atende à regra 3.2.
 - **Papel no combate:** Mobilidade — o mais rápido no ar, rajadas que empurram (APROVADO) — a silhueta e a postura devem comunicar esse papel
 - **Nome personalizado pelo jogador:** permitido para cada indivíduo; formato de interface PENDENTE
 - **Elementos:** Vento / Fogo (APROVADO)
-- **Raridade:** definida na obtenção conforme tabela de raridades a aprovar
+- **Raridade:** definida na obtenção (ver tabela em `GAME-DESIGN.md` §4.2)
 - **Silhueta (PROPOSTA, baseada na anatomia tradicional do tipo):** corpo de serpente com asas; sem patas.
 - **Cabeça e focinho:** PROPOSTA: cabeça pequena e aerodinâmica, cristas leves.
 - **Asas:** Um par de asas (membranosas ou emplumadas), principal traço da silhueta.
@@ -422,7 +423,7 @@ As cinco silhuetas já são bem diferentes entre si, o que atende à regra 3.2.
 - **Papel no combate:** Defesa e emboscada — muito rápido em terra, ataques saindo do chão (APROVADO) — a silhueta e a postura devem comunicar esse papel
 - **Nome personalizado pelo jogador:** permitido para cada indivíduo; formato de interface PENDENTE
 - **Elementos:** Terra / Água (APROVADO)
-- **Raridade:** definida na obtenção conforme tabela de raridades a aprovar
+- **Raridade:** definida na obtenção (ver tabela em `GAME-DESIGN.md` §4.2)
 - **Silhueta (PROPOSTA, baseada na anatomia tradicional do tipo):** serpente gigante, corpo grosso e enrolado; sem asas e sem patas.
 - **Cabeça e focinho:** PROPOSTA: cabeça massiva, mandíbula larga, aspecto de criatura escavadora.
 - **Asas:** Nenhuma (na anatomia tradicional).
@@ -449,7 +450,7 @@ As cinco silhuetas já são bem diferentes entre si, o que atende à regra 3.2.
 - **Papel no combate:** Área e suporte — tempestades em área, chuva que cura aliados (APROVADO) — a silhueta e a postura devem comunicar esse papel
 - **Nome personalizado pelo jogador:** permitido para cada indivíduo; formato de interface PENDENTE
 - **Elementos:** Água / Chuva (APROVADO)
-- **Raridade:** definida na obtenção conforme tabela de raridades a aprovar
+- **Raridade:** definida na obtenção (ver tabela em `GAME-DESIGN.md` §4.2)
 - **Silhueta (PROPOSTA, baseada na anatomia tradicional do tipo):** corpo serpentino muito longo, com quatro patas curtas; sem asas.
 - **Cabeça e focinho:** PROPOSTA: focinho alongado, bigodes, chifres ramificados, juba.
 - **Asas:** Nenhuma (na anatomia tradicional, voa por magia).
@@ -529,7 +530,7 @@ Antes de aprovar um modelo, verificar:
 1. Confirmar o estilo visual dos dragões: fantasia estilizada e detalhada, cartoon, low-poly ou semirrealista.
 2. ~~Definir os nomes das espécies~~ (resolvido: cinco espécies). Aprovar as silhuetas propostas na seção 11.
 3. ~~Associar elementos às espécies~~ e ~~locomoção do Wyrm e do Dragão Asiático~~ (resolvidos).
-4. Confirmar os sete níveis de raridade, incluindo o nome e o método de obtenção da raridade secreta.
+4. ~~Confirmar raridades~~ (resolvido). Definir o visual de poderes e voo para cada raridade.
 5. Escolher as silhuetas, cores e características que diferenciam as espécies.
 6. Criar primeiro um modelo de referência de uma espécie em duas fases bem distintas.
 7. Validar o estilo e o desempenho no Roblox Studio antes de produzir as seis fases das cinco espécies.

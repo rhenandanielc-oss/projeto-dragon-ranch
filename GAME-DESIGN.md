@@ -4,9 +4,9 @@
 
 **Projeto:** Jogo de criação e aventura com dragões no Roblox\
 **Nome provisório:** Dragon Ranch\
-**Versão do documento:** 0.2\
-**Status:** Design em consolidação --- não iniciar programação até
-revisar os bloqueios essenciais\
+**Versão do documento:** 0.3\
+**Status:** Bloqueios B1–B10 resolvidos em 12/10/2026 --- liberado para
+implementação por etapas (ver `V1-ROADMAP.md`)\
 **Idioma:** Português (Brasil)
 
 ------------------------------------------------------------------------
@@ -218,10 +218,43 @@ Elementos presentes na V1: Fogo, Eletricidade, Vento, Terra, Água e Chuva. A li
 - **Wyrm:** não voa. Em compensação, é muito rápido em terra, bem mais rápido em solo do que as espécies que voam.
 - **Dragão Asiático:** voa sem asas, ondulando o corpo de um lado para o outro.
 
-**PROPOSTAS SELECIONADAS PARA AVALIAÇÃO — ainda não tratadas como decisões finais:**
-- **Raridades:** sete níveis, incluindo uma raridade secreta acima de Mítico. Nomes candidatos: Comum, Incomum, Raro, Épico, Lendário, Mítico e Secreto. Os nomes e a ordem final ainda precisam de confirmação.
-- **Nomes:** cada dragão terá o nome oficial da espécie e poderá receber um nome personalizado pelo jogador.
-- **Função da raridade:** afetará principalmente a dificuldade de obtenção, a aparência e os efeitos visuais. Não deve, por si só, tornar um dragão significativamente mais forte em combate.
+**APROVADO (12/10/2026) — raridades e ovos:**
+
+Sete raridades: Comum → Incomum → Raro → Épico → Lendário → Mítico →
+Secreto.
+
+**A raridade muda muito o dragão:**
+- ataques e poderes visualmente muito mais bonitos;
+- voo visualmente mais bonito e **mais rápido**;
+- **mecânicas de combate extras** nos poderes.
+
+Os valores exatos (quanto de velocidade, quais mecânicas por raridade)
+serão definidos no balanceamento. **Cuidado de design:** como o PvP é em
+mundo aberto, os bônus por raridade devem ser fortes e desejáveis, mas
+calibrados para que um dragão Comum bem jogado ainda tenha chance contra
+um raro — as mecânicas extras devem acrescentar opções, não anular as
+fraquezas da espécie.
+
+**Obtenção de ovos:**
+- **Ovo inicial:** no primeiro acesso, o jogador escolhe uma das cinco
+  espécies; o ovo inicial é sempre Comum.
+- **Ninhos selvagens:** espalhados pelo mapa, reaparecem com o tempo e
+  são mais comuns em zonas perigosas. Cada ninho é **protegido por um
+  dragão selvagem**; é preciso vencê-lo para pegar o ovo. A espécie do ovo
+  é **aleatória** e não precisa ser a do guardião.
+- **Baú final da dungeon:** chance de conter um ovo.
+- **Mercador da vila:** vende ovos por muitas moedas, apenas Comum ou
+  Incomum.
+
+**Chances (ninhos e dungeon, provisório):** Comum 55%, Incomum 25%, Raro
+12%, Épico 5%, Lendário 2,4%, Mítico 0,6%. **Secreto não sai por
+sorte:** só por uma descoberta especial (ex.: ninho raro que surge apenas
+durante tempestades num lugar escondido de zona perigosa); detalhes
+reservados.
+
+**Fazenda:** 3 espaços para dragões no início, ampliáveis com moedas até 8.
+
+- **Nomes:** cada dragão tem o nome oficial da espécie e pode receber um nome personalizado pelo jogador.
 
 **PENDENTE:** aparências, habilidades e atributos específicos de cada uma das cinco espécies.
 
@@ -238,7 +271,7 @@ Elementos presentes na V1: Fogo, Eletricidade, Vento, Terra, Água e Chuva. A li
 Nenhuma espécie deve ser simplesmente "a melhor"; cada uma tem um jeito
 próprio de jogar.
 
-As espécies não devem ser apenas recolorações: cada uma deve ter diferenças visuais e de gameplay compreensíveis e balanceáveis. Não considerar a lista de raridades como definitiva até confirmação.
+As espécies não devem ser apenas recolorações: cada uma deve ter diferenças visuais e de gameplay compreensíveis e balanceáveis. 
 
 ### 4.3 Identificação e raridade dos dragões
 
@@ -247,11 +280,9 @@ As espécies não devem ser apenas recolorações: cada uma deve ter diferenças
 - **Nome personalizado:** nome que o jogador pode dar ao indivíduo.
 - **Espécie:** determina anatomia, aparência-base e identidade natural.
 - **Elemento:** determina a identidade elemental e orienta os efeitos e habilidades.
-- **Raridade:** indica principalmente a dificuldade de obtenção e a apresentação visual.
+- **Raridade:** indica dificuldade de obtenção, visual dos ataques e do voo, velocidade de voo e mecânicas de combate extras.
 
-A proposta atual prevê sete níveis de raridade, com um nível secreto acima de Mítico. A sequência candidata é Comum → Incomum → Raro → Épico → Lendário → Mítico → Secreto; nomes, ordem e distribuição de obtenção continuam pendentes de aprovação final.
-
-**Regra de balanceamento proposta:** raridade deve priorizar exclusividade visual e dificuldade de obtenção, não ser uma garantia automática de superioridade em combate. O equilíbrio deve depender também de estágio, atributos, habilidades e decisões do jogador.
+Raridades e seus efeitos: ver seção 4.2.
 
 ### 4.4 Atributos
 
@@ -821,7 +852,7 @@ Estas são as decisões ainda não resolvidas que afetam diretamente a
 arquitetura ou o escopo. O responsável pelo projeto deve respondê-las ou
 autorizar explicitamente uma decisão provisória antes da implementação.
 
-### B1. Detalhes das cinco espécies iniciais e dos elementos — PARCIALMENTE RESOLVIDO
+### B1. Detalhes das cinco espécies iniciais e dos elementos — RESOLVIDO
 
 **Resolvido (12/10/2026):** cinco espécies e seus elementos (ver seção 4.2).
 
@@ -833,8 +864,8 @@ muito rápido em terra; Dragão Asiático voa sem asas, ondulando.
 direta); Wyrm desbloqueia "entrar na terra" no lugar do voo.
 
 **Ainda falta:** identidade visual, função no
-combate e habilidades de cada espécie; os sete níveis de raridade e a
-regra da raridade secreta.
+combate e habilidades de cada espécie (resolvido depois); raridades e
+ovos (resolvido, seção 4.2). **B1 RESOLVIDO.**
 
 ### B2. Regra exata de crescimento — RESOLVIDO
 
@@ -1068,6 +1099,14 @@ mecânicas.
 
   0.2.12 (12/10/2026)                 Papéis de combate das cinco
                                       espécies aprovados.
+
+  0.3 (12/10/2026)                    Raridades mudam muito o dragão
+                                      (visual, velocidade de voo,
+                                      mecânicas extras); ovos: escolha
+                                      inicial, ninhos com guardião,
+                                      dungeon, mercador; fazenda 3→8.
+                                      B1 resolvido — todos os bloqueios
+                                      B1–B10 resolvidos.
 
   -----------------------------------------------------------------------
 
