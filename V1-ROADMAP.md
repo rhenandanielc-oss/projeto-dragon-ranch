@@ -41,7 +41,7 @@ evita teleportes entre servidores, que só funcionam no jogo publicado.
 | Fase | Conteúdo | Depende de | Estado |
 |---|---|---|---|
 | **1. Fundação** | Estrutura de pastas; módulos de configuração; camada de rede com validação; salvamento com trava de sessão e autosave; remoção dos itens de exemplo do mapa | — | ✅ 12/10/2026 |
-| **2. Fazenda e ovos** | 18 terrenos de fazenda atribuídos ao entrar; escolha do ovo inicial (5 espécies); ninho e incubação; nascimento; comida e água; pontos de crescimento; troca de estágio; nome personalizado; 3→8 espaços | 1 | ⬜ |
+| **2. Fazenda e ovos** | 18 terrenos de fazenda atribuídos ao entrar; escolha do ovo inicial (5 espécies); ninho e incubação; nascimento; comida e água; pontos de crescimento; troca de estágio; nome personalizado; 3→8 espaços | 1 | ✅ 12/10/2026 |
 | **3. Dragão companheiro** | Dragão ativo segue o jogador; troca de dragão ativo; montaria em terra a partir de Jovem; velocidade do Wyrm | 2 | ⬜ |
 | **4. Inventário e economia** | Mochila 30→60 com empilhamento; armazém 100; barra de 8 itens; coleta no mapa com reaparecimento; mercador; moedas | 1 | ⬜ |
 | **5. Combate** | Espada (combo, Golpe Giratório), arco (tiro carregado, Flecha Tripla), flechas finitas, bloqueio, esquiva; inimigos básicos; comandos do dragão (F, G, Z/X/C); poderes por estágio; poções; dragão recua e volta após 60 s | 3, 4 | ⬜ |

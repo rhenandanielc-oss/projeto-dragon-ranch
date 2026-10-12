@@ -318,6 +318,18 @@ function DataService.NewUid(player: Player, prefix: string): string?
 	return prefix .. tostring(n)
 end
 
+-- Avisa o cliente que um campo do perfil mudou (ligado ao NetService em Main).
+local changedCallback: ((Player, string, any) -> ())? = nil
+function DataService.SetChangedCallback(fn: (Player, string, any) -> ())
+	changedCallback = fn
+end
+function DataService.MarkChanged(player: Player, key: string)
+	local data = DataService.Get(player)
+	if data and changedCallback then
+		changedCallback(player, key, data[key])
+	end
+end
+
 function DataService.IsUsingMemoryStore(): boolean
 	return usingMock
 end

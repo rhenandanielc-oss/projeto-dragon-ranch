@@ -14,7 +14,9 @@ Legenda: ✅ feito · 🟡 parcial · ⬜ não feito · ⛔ bloqueado por decis�
 
 ## 1. Fase atual
 
-**Fase 1 — Fundação concluída (12/10/2026).** Próxima: Fase 2 — Fazenda e ovos (ver `V1-ROADMAP.md`).
+**Fase 2 — Fazenda e ovos concluída (12/10/2026).** Próxima: Fase 3 — Dragão companheiro (ver `V1-ROADMAP.md`).
+
+Fase 1 — Fundação concluída (12/10/2026).
 
 Fase 0 — Design concluída (12/10/2026): todos os bloqueios B1–B10 resolvidos.
 
@@ -82,9 +84,9 @@ foi implementado.
 
 | # | Sistema | Estado | Depende de |
 |---|---|---|---|
-| 1 | Fazenda do jogador (atribuição e acesso) | ⬜ | B9, B8 |
-| 2 | Ovo, cuidados (comida e água) | ⬜ | B1, B2 |
-| 3 | Crescimento em 6 estágios + salvamento | ⬜ | B2, B8 |
+| 1 | Fazenda do jogador (atribuição e acesso) | ✅ | B9, B8 |
+| 2 | Ovo, cuidados (comida e água) | ✅ | B1, B2 |
+| 3 | Crescimento em 6 estágios + salvamento | 🟡 crescimento ✅; salvamento real a testar com API ativada | B2, B8 |
 | 4 | Coleta, moedas, compra/venda | ⬜ | B7 |
 | 5 | Missões e NPCs | ⬜ | B3, B9 |
 | 6 | Entrada física da dungeon + grupo | ⬜ | B6 |
@@ -104,7 +106,7 @@ foi implementado.
 | Área mágica com cristais | ⬜ |
 | Portão de dungeon com círculo de grupo | ⬜ |
 | Dragão em duas fases | ⛔ depende do estilo e da aprovação das silhuetas |
-| Interface em PC e celular | ⬜ desbloqueado (B10 resolvido) |
+| Interface em PC e celular | 🟡 primeiras telas prontas; testar no celular |
 
 ---
 
@@ -122,6 +124,13 @@ O código fica em `src/` (espelho exato do Studio). Pastas gerenciadas:
 | `Server/Services/NetService` | Rede protegida: limite de frequência, validação de argumentos, infrações e expulsão | ✅ testado |
 | `Server/Data/DataService` | Salvamento com trava de sessão, autosave, BindToClose, novas tentativas | ✅ testado (memória) |
 | `Server/Data/ProfileTemplate` | Formato do perfil + reconciliação | ✅ |
+| `Server/Services/FarmService` | 18 terrenos, atribuição ao entrar, placa com nome, nascer na própria fazenda | ✅ testado |
+| `Server/Services/InventoryService` | Núcleo da mochila (adicionar, remover, contar, empilhar) | ✅ |
+| `Server/Dragons/DragonService` | Ovo inicial, incubação, cuidados, treino, pontos, estágios, nome filtrado, dragão ativo, ampliar espaços | ✅ testado |
+| `Server/Dragons/DragonModels` | Modelos provisórios das 5 espécies por estágio | ✅ |
+| `Client/UI/*` | Escolha do ovo, painel de dragões, barra de moedas/itens, avisos (PC e celular) | ✅ testado |
+| `tools/studio/build_farms.luau` | Constrói a área das 18 fazendas (modo Edit) | ✅ |
+| `tools/checksums.py` | Confere se o Studio está idêntico ao repositório | ✅ |
 
 **Testes da Fase 1 (12/10/2026, Play no Studio):**
 - Perfil carrega e chega ao cliente (50 moedas, mochila 30). ✅
@@ -129,10 +138,30 @@ O código fica em `src/` (espelho exato do Studio). Pastas gerenciadas:
 - Cliente tentando disparar remote do servidor (ex.: falsificar moedas): rejeitado. ✅
 - Rajada de 20 pedidos: só 5 aceitos (limite de frequência). ✅
 
-**Pendente do responsável:** ativar *Game Settings > Security > Enable
-Studio Access to API Services* para testar o salvamento real no Studio.
-Sem isso o jogo usa armazenamento em memória durante os testes. Ao publicar,
-definir o máximo de jogadores do servidor como 18.
+**Testes da Fase 2 (12/10/2026, Play no Studio, com acelerador de pontos só de teste):**
+- Jogador recebe a Fazenda 01, a placa mostra o nome e ele nasce dentro dela. ✅
+- Tela de escolha mostra as 5 espécies; escolher cria 1 ovo Comum no ninho e dá 10 carnes e 10 águas. ✅
+- Escolher de novo ou mandar espécie inexistente: ignorado/rejeitado. ✅
+- Ovo chocou (Ovo → Bebê); carinho e brincadeira deram pontos; Bebê → Jovem. ✅
+- Ao virar Jovem, a proteção de iniciante terminou com aviso. ✅
+- Alimentar dragão satisfeito é recusado e não gasta item. ✅
+- Renomear (com filtro de texto do Roblox) e ampliar fazenda sem moedas (recusado). ✅
+- Renomear dragão inexistente, nome de 500 letras e tipo errado: rejeitados. ✅
+- Acelerador de pontos de teste funciona **somente no Studio** (atributo `TestPointsMultiplier` em ServerScriptService, ligado só durante o Play).
+
+
+## 9. Tarefas do responsável (lembrar ao final do projeto)
+
+Coisas que só o dono do jogo pode fazer no Roblox. O Claude deve relembrar
+esta lista ao concluir a V1.
+
+| # | Tarefa | Quando | Feito |
+|---|---|---|---|
+| 1 | Ativar *Game Settings → Security → Enable Studio Access to API Services* (salvamento real nos testes) | Qualquer momento; necessário antes dos testes finais | ⬜ |
+| 2 | Definir *Game Settings → Places → Server Size* = 18 | Ao publicar | ⬜ |
+| 3 | Publicar o jogo e testar com amigos em servidor real (salvamento entre servidores, trava de sessão) | Fase 11 | ⬜ |
+| 4 | Testar no celular de verdade (controles, interface, desempenho) | Fase 11 | ⬜ |
+| 5 | Configurar ícone, miniaturas, descrição e classificação de idade (Experience Questionnaire) | Antes de lançar | ⬜ |
 
 ---
 
@@ -157,3 +186,4 @@ definir o máximo de jogadores do servidor como 18.
 | 12/10/2026 | Criados V1-ROADMAP.md e IDEAS-BACKLOG.md |
 | 12/10/2026 | Servidor de 8 para 18 jogadores; mapa dobrado para ~16.000 × 16.000 |
 | 12/10/2026 | Fase 1 concluída: fundação (config, rede protegida, salvamento) |
+| 12/10/2026 | Fase 2 concluída: 18 fazendas, ovo inicial, crescimento, cuidados, painel |

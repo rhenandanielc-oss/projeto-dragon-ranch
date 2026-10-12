@@ -41,6 +41,12 @@ local NetDefs: { [string]: RemoteDef } = {
 	-- Servidor envia avisos curtos para a tela.
 	Notify = { Kind = "Event", Direction = "S2C" },
 
+	-- Fase 2: fazenda e dragões
+	ChooseStarter = { Kind = "Event", Direction = "C2S", Args = { { Type = "enum", Values = { "Wyvern", "WesternDragon", "Amphiptere", "Wyrm", "AsianDragon" } } }, Rate = 0.5, Burst = 2 },
+	RenameDragon = { Kind = "Event", Direction = "C2S", Args = { { Type = "string", MaxLen = 16 }, { Type = "string", MaxLen = 60 } }, Rate = 0.5, Burst = 3 },
+	SetActiveDragon = { Kind = "Event", Direction = "C2S", Args = { { Type = "string", MaxLen = 16 } }, Rate = 1, Burst = 3 },
+	ExpandDragonSlots = { Kind = "Event", Direction = "C2S", Args = {}, Rate = 0.5, Burst = 2 },
+
 	-- Diagnóstico: medir latência e testar a proteção de frequência.
 	Ping = { Kind = "Function", Direction = "C2S", Args = { { Type = "integer", Min = 0, Max = 2 ^ 31 } }, Rate = 2, Burst = 5 },
 }

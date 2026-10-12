@@ -7,9 +7,16 @@ local Players = game:GetService("Players")
 local Server = ServerScriptService:WaitForChild("Server")
 local NetService = require(Server.Services.NetService)
 local DataService = require(Server.Data.DataService)
+local FarmService = require(Server.Services.FarmService)
+local DragonService = require(Server.Dragons.DragonService)
 
 NetService.SetLoadedCheck(DataService.IsLoaded)
 NetService.Init()
+
+-- Mudanças no perfil são enviadas ao dono (cópia somente-leitura).
+DataService.SetChangedCallback(function(player: Player, key: string, value: any)
+	NetService.Fire(player, "ProfileChanged", key, value)
+end)
 
 -- Cliente pronto -> envia cópia do perfil quando estiver carregado.
 local clientReady: { [Player]: boolean } = {}
@@ -27,6 +34,7 @@ NetService.On("ClientReady", function(player: Player)
 end)
 
 DataService.ProfileLoaded:Connect(function(player: Player)
+	FarmService.Assign(player)
 	if clientReady[player] then
 		sendSnapshot(player)
 	end
@@ -40,6 +48,8 @@ NetService.On("Ping", function(_player: Player, n: number)
 	return n
 end)
 
+FarmService.Init()
+DragonService.Init()
 DataService.Init()
 
-print("[Server] Fundação iniciada")
+print("[Server] Servidor iniciado (Fase 2: fazenda e dragões)")
