@@ -39,7 +39,7 @@ explicitamente adiados pelo responsável.
 | Código | Decisão | Estado |
 |---|---|---|
 | B1 | Espécies e elementos | 🟡 parcial — 5 espécies, 6 elementos, poderes duplos e locomoção aprovados; falta: funções/habilidades de cada espécie, raridades |
-| B2 | Crescimento | 🟡 parcial — pontos de crescimento e ritmo demorado aprovados; falta confirmar marcos por estágio |
+| B2 | Crescimento | ✅ somente por pontos, ritmo demorado, sem marcos obrigatórios |
 | B3 | Voo | ✅ a partir de Jovem; missão uma vez por dragão |
 | B4 | Combate | 🟡 parcial — espada e arco desde o início; falta: controles, habilidades, comando do dragão |
 | B5 | PvP: proteção inicial, zonas, itens saqueáveis, limite de perda | ⛔ pendente |
@@ -113,3 +113,4 @@ foi implementado.
 | 12/10/2026 | Seis elementos; regra dos elementos duplos; Wyrm terrestre veloz; Dragão Asiático voa ondulando |
 | 12/10/2026 | Chuva × Eletricidade; Wyrm desbloqueia entrar na terra |
 | 12/10/2026 | Crescimento por pontos, ritmo demorado |
+| 12/10/2026 | B2 resolvido: sem marcos obrigatórios |

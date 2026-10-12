@@ -328,8 +328,13 @@ Fontes de pontos:
 Fome e sede: dragão bem cuidado ganha pontos no ritmo normal; com fome
 ou sede, ganha metade. Nunca regride nem morre.
 
-**Ritmo provisório (configurável, a ajustar em testes)** — uma sessão ≈
-30–45 min:
+**APROVADO (12/10/2026):** a passagem de estágio depende **somente dos
+pontos**. Não há cronômetro nem marcos obrigatórios: ao atingir a
+pontuação necessária, o dragão cresce.
+
+**Calibração provisória (configurável, a ajustar em testes).** As horas
+abaixo não são tempo de espera; são apenas uma estimativa de quanto jogo
+ativo leva para juntar os pontos de cada estágio. Uma sessão ≈ 30–45 min:
 
 | Passagem | Sessões nessa fase | Total acumulado aprox. |
 |---|---|---|
@@ -342,13 +347,9 @@ ou sede, ganha metade. Nunca regride nem morre.
 Como o voo é liberado no estágio Jovem, o primeiro voo acontece por volta
 de 3–4 horas de jogo com aquele dragão.
 
-**PROPOSTA (aguardando confirmação):** além dos pontos, cada passagem
-exige um marco:
-- Ovo → Bebê: incubar no ninho da fazenda;
-- Bebê → Jovem: missão de treinamento básico;
-- Jovem → Pré-adulto: missão do voo (ou de entrar na terra, no Wyrm);
-- Pré-adulto → Adulto: concluir uma dungeon com o dragão ativo;
-- Adulto → Ancião: provação especial de longo prazo.
+**REJEITADO (12/10/2026):** marcos obrigatórios por estágio. Missões,
+dungeons e a missão de voo dão pontos, mas não são exigidas para crescer.
+A missão de voo continua sendo o que libera o voo (seção 7).
 
 Recomendação de teste: definir metas de progressão em sessões de jogo, e
 não apenas em horas de calendário. Ajustar depois de testes com
@@ -712,11 +713,10 @@ direta); Wyrm desbloqueia "entrar na terra" no lugar do voo.
 combate e habilidades de cada espécie; os sete níveis de raridade e a
 regra da raridade secreta.
 
-### B2. Regra exata de crescimento — PARCIALMENTE RESOLVIDO
+### B2. Regra exata de crescimento — RESOLVIDO
 
-**Resolvido (12/10/2026):** sistema de pontos de crescimento, ritmo
-demorado, valores provisórios na seção 5.2. **Ainda falta:** confirmar os
-marcos obrigatórios de cada passagem.
+**Resolvido (12/10/2026):** crescimento somente por pontos, ritmo
+demorado, sem marcos obrigatórios; calibração provisória na seção 5.2.
 
 Definir os requisitos de passagem entre os seis estágios: esforço
 esperado, missões, treinamento, cuidados e possíveis itens. Não é
@@ -870,6 +870,10 @@ mecânicas.
   0.2.3 (12/10/2026)                  Crescimento por pontos, ritmo
                                       demorado com valores provisórios;
                                       marcos por estágio em proposta.
+
+  0.2.4 (12/10/2026)                  Crescimento somente por pontos;
+                                      marcos obrigatórios rejeitados. B2
+                                      resolvido.
 
   -----------------------------------------------------------------------
 
