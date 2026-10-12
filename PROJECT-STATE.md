@@ -1,0 +1,111 @@
+# PROJECT-STATE.md
+## Estado atual do projeto Dragon Ranch
+
+**Última atualização:** 12/10/2026
+**Documentos de referência:** `GAME-DESIGN.md`, `ART-DIRECTION.md`, `DRAGON-VISUAL-DESIGN.md`
+**Place no Studio:** "Rancho do Dragão" (placeId 14594299983)
+
+Este arquivo registra o que já foi feito, o que falta e o que está bloqueado.
+Deve ser atualizado a cada etapa concluída.
+
+Legenda: ✅ feito · 🟡 parcial · ⬜ não feito · ⛔ bloqueado por decisão pendente
+
+---
+
+## 1. Fase atual
+
+**Fase 0 — Design.** Conforme o `GAME-DESIGN.md` (seções 15 e 18), a programação
+dos sistemas só começa depois que os bloqueios B1–B10 forem resolvidos ou
+explicitamente adiados pelo responsável.
+
+---
+
+## 2. Documentação
+
+| Item | Estado | Observação |
+|---|---|---|
+| `GAME-DESIGN.md` | ✅ | v0.1 — decisões aprovadas + pendências |
+| `ART-DIRECTION.md` | ✅ | v0.1 |
+| `DRAGON-VISUAL-DESIGN.md` | ✅ | v0.1 — fichas das espécies vazias |
+| `PROJECT-STATE.md` | ✅ | este arquivo |
+| `MASTER-PROMPT.md` | ⬜ | regras de trabalho para o Claude |
+| `V1-ROADMAP.md` | ⬜ | fases e dependências — depende dos bloqueios |
+| `IDEAS-BACKLOG.md` | ⬜ | recursos futuros (seção 14 do design) |
+
+---
+
+## 3. Bloqueios essenciais (GAME-DESIGN §15)
+
+| Código | Decisão | Estado |
+|---|---|---|
+| B1 | Três espécies: nomes, elementos (5), funções, raridades (7) | ⛔ pendente |
+| B2 | Requisitos de crescimento entre os 6 estágios | ⛔ pendente |
+| B3 | Estágio mínimo para voar; missão por jogador/espécie/dragão | ⛔ pendente |
+| B4 | Escopo do combate: controles, habilidades, comando do dragão, armas iniciais | ⛔ pendente |
+| B5 | PvP: proteção inicial, zonas, itens saqueáveis, limite de perda | ⛔ pendente |
+| B6 | Dungeons: tamanho do grupo, formação, desconexão, derrota, recompensas | ⛔ pendente |
+| B7 | Inventário e economia: capacidade, empilhamento, moedas, comércio | ⛔ pendente |
+| B8 | Dados salvos e proteção contra falha/duplicação | ⛔ pendente |
+| B9 | Mapa: tema, pontos principais, tamanho | ⛔ pendente |
+| B10 | Dispositivos: PC / celular / console | ⛔ pendente |
+
+Outras pendências de arte: estilo final dos dragões (ART §12, DRAGON §14).
+
+---
+
+## 4. O que existe hoje no Roblox Studio
+
+Levantamento feito em 12/10/2026, em modo Edit.
+
+| Área | Conteúdo | Relação com o design |
+|---|---|---|
+| Terreno | ~2.000 × 2.000 studs com terreno esculpido | Pode servir de base para a região inicial (B9) |
+| `Workspace.Foliage` | 26 bordos, 36 pinheiros, 7 arbustos | Aproveitável para florestas |
+| `Workspace.Cabins` | Cabin1, Cabin2, StarterCabin | Conteúdo do modelo do Roblox; pode virar referência para a fazenda |
+| `Workspace.ConstructionZone` | Casas incompletas, materiais, ponte, placas | Conteúdo do modelo do Roblox; sem função no design |
+| `Workspace.Props` / `Billboards` | Cerca, 7 tochas, ponte, 6 placas | Decoração de exemplo |
+| `Workspace.Tools` | 6 baús com ferramentas de exemplo (Gravity Coil, Teleport etc.) | **Não fazem parte do design** — remover ou substituir |
+| `Lighting` | Atmosphere, Sky, Bloom, DepthOfField, SunRays | Base de iluminação já configurada |
+| `ServerScriptService`, `ReplicatedStorage`, `ServerStorage`, `StarterGui` | Vazios | Nenhum sistema implementado |
+
+**Conclusão:** o place é um mapa-modelo com cenário. Nenhum sistema de jogo
+(dragões, fazenda, crescimento, combate, dungeons, inventário, economia, save)
+foi implementado.
+
+---
+
+## 5. Sistemas da V1 (critérios do GAME-DESIGN §16)
+
+| # | Sistema | Estado | Depende de |
+|---|---|---|---|
+| 1 | Fazenda do jogador (atribuição e acesso) | ⬜ | B9, B8 |
+| 2 | Ovo, cuidados (comida e água) | ⬜ | B1, B2 |
+| 3 | Crescimento em 6 estágios + salvamento | ⬜ | B2, B8 |
+| 4 | Coleta, moedas, compra/venda | ⬜ | B7 |
+| 5 | Missões e NPCs | ⬜ | B3, B9 |
+| 6 | Entrada física da dungeon + grupo | ⬜ | B6 |
+| 7 | Instância da dungeon, inimigos, chefe, recompensas | ⬜ | B6, B4 |
+| 8 | Missão e desbloqueio do voo | ⬜ | B3 |
+| 9 | Combate em tempo real (jogador + dragão) | ⬜ | B4, B1 |
+| 10 | PvP, proteção e loot por zona | ⬜ | B5 |
+| 11 | Salvamento sem perda nem duplicação | ⬜ | B8 |
+| 12 | Suporte aos dispositivos escolhidos | ⬜ | B10 |
+
+## 6. Protótipos de arte recomendados (ART-DIRECTION §11)
+
+| Protótipo | Estado |
+|---|---|
+| Clareira de floresta | 🟡 floresta genérica do modelo existe |
+| Mirante com montanhas, vale e cachoeira | ⬜ |
+| Área mágica com cristais | ⬜ |
+| Portão de dungeon com círculo de grupo | ⬜ |
+| Dragão em duas fases | ⛔ depende de B1 e do estilo |
+| Interface em PC e celular | ⛔ depende de B10 |
+
+---
+
+## 7. Histórico
+
+| Data | Alteração |
+|---|---|
+| 12/10/2026 | Criação do arquivo; levantamento do place no Studio |
