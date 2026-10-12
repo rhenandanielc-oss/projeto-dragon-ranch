@@ -203,14 +203,25 @@ vigente da V1:
 
 Elementos presentes na V1: Fogo, Eletricidade, Vento, Terra, Água e Chuva. A lista candidata anterior (Fogo, Água, Natureza, Gelo e Raio) foi substituída.
 
-**PENDENTE:** confirmar se Água e Chuva são elementos distintos (com efeitos próprios) ou se Chuva é uma variação de Água; definir como funcionam os elementos duplos (dois tipos de ataque, ou um elemento principal e um secundário).
+**APROVADO (12/10/2026) — elementos:** a V1 tem **seis** elementos distintos.
+- **Água:** controla massas de água, como mar e rios.
+- **Chuva:** controla fenômenos de tempestade — chuva, tempestades e raios.
+- **Fogo**, **Eletricidade**, **Vento** e **Terra**: efeitos a detalhar.
+
+**PENDENTE:** diferenciar os raios da Chuva (parte de uma tempestade) da Eletricidade do Wyvern, para que os dois elementos não fiquem com o mesmo papel.
+
+**APROVADO (12/10/2026) — elementos duplos:** espécies com dois elementos têm três grupos de poderes: poderes que combinam os dois elementos, poderes só do primeiro e poderes só do segundo. Exemplo: o Wyvern tem poderes de Fogo + Eletricidade juntos, poderes só de Fogo e poderes só de Eletricidade.
+
+**APROVADO (12/10/2026) — locomoção especial:**
+- **Wyrm:** não voa. Em compensação, é muito rápido em terra, bem mais rápido em solo do que as espécies que voam.
+- **Dragão Asiático:** voa sem asas, ondulando o corpo de um lado para o outro.
 
 **PROPOSTAS SELECIONADAS PARA AVALIAÇÃO — ainda não tratadas como decisões finais:**
 - **Raridades:** sete níveis, incluindo uma raridade secreta acima de Mítico. Nomes candidatos: Comum, Incomum, Raro, Épico, Lendário, Mítico e Secreto. Os nomes e a ordem final ainda precisam de confirmação.
 - **Nomes:** cada dragão terá o nome oficial da espécie e poderá receber um nome personalizado pelo jogador.
 - **Função da raridade:** afetará principalmente a dificuldade de obtenção, a aparência e os efeitos visuais. Não deve, por si só, tornar um dragão significativamente mais forte em combate.
 
-**PENDENTE:** aparências, habilidades e atributos específicos de cada uma das cinco espécies; como Wyrm (tradicionalmente sem asas) e Dragão Asiático (tradicionalmente voa sem asas) realizam o voo.
+**PENDENTE:** aparências, habilidades e atributos específicos de cada uma das cinco espécies.
 
 **PROPOSTA:** as cinco espécies iniciais devem ter funções de combate distintas — por exemplo, dano direto, mobilidade/velocidade, defesa/controle, área e suporte —, mas essa distribuição ainda precisa ser aprovada.
 
@@ -375,8 +386,12 @@ imediatamente.
 missão de voo é feita **uma vez por dragão**: cada dragão precisa receber
 sua própria poção.
 
-**PENDENTE:** controles de voo (PC e celular), limites de voo e se haverá
-custo de energia.
+**APROVADO (12/10/2026):** o Wyrm não voa (ver seção 4.2).
+
+**PENDENTE:** o que a missão da poção desbloqueia para o Wyrm (ou se ele
+tem outra missão de marco própria, por exemplo para liberar a velocidade
+máxima em terra); controles de voo (PC e celular), limites de voo e se
+haverá custo de energia.
 
 ------------------------------------------------------------------------
 
@@ -648,10 +663,14 @@ autorizar explicitamente uma decisão provisória antes da implementação.
 
 **Resolvido (12/10/2026):** cinco espécies e seus elementos (ver seção 4.2).
 
-**Ainda falta:** se Água e Chuva são elementos distintos; como funcionam
-os elementos duplos; como Wyrm e Dragão Asiático voam sem asas; identidade
-visual, função no combate e habilidade exclusiva de cada espécie; os sete
-níveis de raridade e a regra da raridade secreta.
+**Resolvido (12/10/2026):** Água e Chuva são distintas (seis elementos);
+elementos duplos têm poderes combinados e separados; Wyrm não voa e é
+muito rápido em terra; Dragão Asiático voa sem asas, ondulando.
+
+**Ainda falta:** diferença entre os raios da Chuva e a Eletricidade;
+equivalente da missão de voo para o Wyrm; identidade visual, função no
+combate e habilidades de cada espécie; os sete níveis de raridade e a
+regra da raridade secreta.
 
 ### B2. Regra exata de crescimento
 
@@ -792,6 +811,12 @@ mecânicas.
                                       dragão; espada e arco desde o
                                       início; PC e celular. B3 e B10
                                       resolvidos; B1 e B4 parciais.
+
+  0.2.1 (12/10/2026)                  Seis elementos (Água e Chuva
+                                      distintas); regra de poderes dos
+                                      elementos duplos; Wyrm não voa e é
+                                      muito rápido em terra; Dragão
+                                      Asiático voa ondulando, sem asas.
 
   -----------------------------------------------------------------------
 

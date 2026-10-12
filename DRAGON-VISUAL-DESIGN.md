@@ -80,7 +80,7 @@ As seis fases devem pertencer claramente à mesma espécie. Ao crescer, o dragã
 - **PROPOSTA SELECIONADA PARA AVALIAÇÃO:** raridade influenciará principalmente dificuldade de obtenção, aparência e efeitos visuais, não poder de combate garantido.
 
 ### Elementos
-**APROVADO:** Fogo, Eletricidade, Vento, Terra, Água e Chuva. A lista candidata anterior (Fogo, Água, Natureza, Gelo e Raio) foi substituída. **PENDENTE:** se Chuva é distinta de Água e como funcionam os elementos duplos.
+**APROVADO:** Fogo, Eletricidade, Vento, Terra, Água e Chuva. A lista candidata anterior (Fogo, Água, Natureza, Gelo e Raio) foi substituída. **APROVADO:** Água (mar, rios) e Chuva (chuva, tempestades, raios) são distintas. Espécies com dois elementos têm poderes combinados e poderes separados de cada elemento; os efeitos visuais precisam mostrar as três variações.
 
 ### Raridades candidatas
 A sequência de trabalho é **Comum → Incomum → Raro → Épico → Lendário → Mítico → Secreto**. Os nomes, a ordem, as probabilidades e os métodos de obtenção ainda precisam de aprovação. A raridade secreta deve ser descoberta de maneira especial, mas sua regra concreta permanece pendente.
@@ -424,7 +424,7 @@ As cinco silhuetas já são bem diferentes entre si, o que atende à regra 3.2.
 - **Asas:** Nenhuma (na anatomia tradicional).
 - **Patas e corpo:** Sem patas; corpo grosso e pesado.
 - **Cauda:** Contínua com o corpo.
-- **Voo:** PENDENTE — não tem asas. Definir como voa (magia elemental, mudança de forma, ou se usa outro tipo de deslocamento).
+- **Voo:** não voa (APROVADO). É muito rápido em terra — mais rápido em solo que as espécies voadoras. A animação de corrida/deslizamento deve transmitir essa velocidade.
 - **Chifres/cristas/espinhos:** PENDENTE
 - **Cores principais e secundárias:** PENDENTE — devem refletir os elementos
 - **Padrão de escamas/superfície:** PENDENTE
@@ -450,7 +450,7 @@ As cinco silhuetas já são bem diferentes entre si, o que atende à regra 3.2.
 - **Asas:** Nenhuma (na anatomia tradicional, voa por magia).
 - **Patas e corpo:** Quatro patas curtas com garras; corpo longo e ondulante.
 - **Cauda:** Longa, contínua com o corpo, com tufo ou juba na ponta.
-- **Voo:** PENDENTE — tradicionalmente voa sem asas, ondulando no ar. Definir se usa esse estilo.
+- **Voo:** voa sem asas, ondulando o corpo de um lado para o outro (APROVADO). A animação de voo é a principal marca da espécie.
 - **Chifres/cristas/espinhos:** PENDENTE
 - **Cores principais e secundárias:** PENDENTE — devem refletir os elementos
 - **Padrão de escamas/superfície:** PENDENTE
@@ -523,7 +523,7 @@ Antes de aprovar um modelo, verificar:
 
 1. Confirmar o estilo visual dos dragões: fantasia estilizada e detalhada, cartoon, low-poly ou semirrealista.
 2. ~~Definir os nomes das espécies~~ (resolvido: cinco espécies). Aprovar as silhuetas propostas na seção 11.
-3. ~~Associar elementos às espécies~~ (resolvido). Definir como Wyrm e Dragão Asiático voam sem asas.
+3. ~~Associar elementos às espécies~~ e ~~locomoção do Wyrm e do Dragão Asiático~~ (resolvidos).
 4. Confirmar os sete níveis de raridade, incluindo o nome e o método de obtenção da raridade secreta.
 5. Escolher as silhuetas, cores e características que diferenciam as espécies.
 6. Criar primeiro um modelo de referência de uma espécie em duas fases bem distintas.
