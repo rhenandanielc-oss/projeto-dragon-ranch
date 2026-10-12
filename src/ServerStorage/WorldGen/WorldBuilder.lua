@@ -268,14 +268,47 @@ function WorldBuilder:simpleTree(kind: string, pos: Vector3, scale: number, pare
 	return m
 end
 
+-- Modelos realistas (PBR) por tipo: {nome em WorldAssets, escala base}
+local VARIANTS = {
+	TallPine = { { "Pond1", 2.8 }, { "Pond2", 2.8 }, { "Pond3", 2.7 }, { "Pond4", 2.7 }, { "Pond5", 2.5 }, { "Pond6", 2.6 } },
+	Pine = { { "Pond1", 1.3 }, { "Pond2", 1.3 }, { "Pond3", 1.25 }, { "Pond4", 1.25 } },
+	Oak = { { "RealOak1", 1.4 }, { "RealOak2", 1.2 }, { "RealOak3", 1.3 }, { "RealOak5", 1.3 } },
+	Tree2 = { { "RealOak1", 0.9 }, { "RealOak3", 0.9 }, { "RealOak5", 0.85 } },
+	Bush = { { "RealOak4", 0.17 }, { "RealOak6", 0.15 }, { "Fern", 0.3 }, { "Fern", 0.3 } },
+	Fern = { { "Fern", 0.3 } },
+	Blossom = { { "Sakura", 0.62 } },
+}
+WorldBuilder.VARIANTS = VARIANTS
+
+-- Rocha feita de terreno (2–3 bolas sobrepostas, meio enterradas): natural e leve
+function WorldBuilder:terrainRock(pos: Vector3, scale: number)
+	local rng = self.rng
+	local mat = if rng:NextNumber() < 0.6 then Enum.Material.Rock else Enum.Material.Slate
+	local r = 3.2 * scale
+	Terrain:FillBall(pos + Vector3.new(0, -r * 0.35, 0), r, mat)
+	for _ = 1, rng:NextInteger(1, 2) do
+		local o = Vector3.new(rng:NextNumber(-1, 1), 0, rng:NextNumber(-1, 1)) * r
+		Terrain:FillBall(pos + o + Vector3.new(0, -r * 0.5, 0), r * rng:NextNumber(0.55, 0.8), mat)
+	end
+end
+
 -- Planta árvore/arbusto/rocha no chão (pos já na superfície)
 function WorldBuilder:plant(kind: string, pos: Vector3, scale: number, parent: Instance, leaf: Color3?)
 	local cf = CFrame.new(pos) * CFrame.Angles(0, self.rng:NextNumber(0, math.pi * 2), 0)
-	local useAsset = kind
-	if kind == "Mushroom" then
-		useAsset = "Mushroom"
+	if kind == "Boulder" then
+		self:terrainRock(pos, scale)
+		return nil
 	end
-	local m = self:placeAsset(useAsset, cf, scale, parent, 0.6 * scale)
+	local vs = VARIANTS[kind]
+	if vs then
+		local v = vs[self.rng:NextInteger(1, #vs)]
+		local m = self:placeAsset(v[1], cf, scale * v[2], parent, 0.5)
+		if m then
+			m.Name = kind
+			return m
+		end
+	end
+	local m = self:placeAsset(kind, cf, scale, parent, 0.6 * scale)
 	if m then
 		return m
 	end
@@ -372,7 +405,7 @@ local KITS = {
 }
 -- sub-bosque por kit (arbustos, rochas e flores nas bordas e clareiras)
 local UNDER = {
-	default = { { "Bush", 5, 1.0, 1.6 }, { "Boulder", 2, 0.9, 2.2 }, { "Flowers", 3, 1.2, 2.0 } },
+	default = { { "Bush", 4, 1.0, 1.6 }, { "Fern", 3, 0.8, 1.3 }, { "Boulder", 1, 0.9, 2.2 }, { "Flowers", 3, 1.2, 2.0 } },
 	snow = { { "Boulder", 1, 1.0, 2.4 } },
 	volcanic = { { "Boulder", 1, 1.0, 2.6 } },
 	dark = { { "Boulder", 2, 1.0, 2.6 }, { "Bush", 1, 0.9, 1.3 } },
@@ -1565,7 +1598,7 @@ function WorldBuilder:forestBlock(bi: number, bj: number, parent: Instance): num
 				return
 			end
 			local m = self:plant(e[1], hit.Position, rng:NextNumber(e[3], e[4]), if small then detail else block, e[5])
-			if m and small then
+			if m and m:IsA("Model") and small then
 				for _, d in ipairs(m:GetDescendants()) do
 					if d:IsA("BasePart") then
 						d.CastShadow = false
@@ -1605,10 +1638,10 @@ function WorldBuilder:forestBlock(bi: number, bj: number, parent: Instance): num
 					end
 				end
 				-- sub-bosque: mais na borda da floresta; flores e rochas nos campos, em grupos
-				local u = if m > cfg[1] + 0.3 then 0.12 elseif m > cfg[1] - 0.15 then 0.22 else 0.035
+				local u = if m > cfg[1] + 0.3 then 0.07 elseif m > cfg[1] - 0.15 then 0.12 else 0.02
 				if rng:NextNumber() < u then
 					local e = self:pickAt(under, jx + 300, jy)
-					local count = if e[1] == "Flowers" then rng:NextInteger(3, 6) elseif e[1] == "Boulder" then rng:NextInteger(1, 3) else rng:NextInteger(1, 3)
+					local count = if e[1] == "Flowers" then rng:NextInteger(3, 6) elseif e[1] == "Boulder" then 1 else rng:NextInteger(1, 3)
 					for _ = 1, count do
 						local ox, oy = rng:NextNumber(-9, 9), rng:NextNumber(-9, 9)
 						if hit0 then
