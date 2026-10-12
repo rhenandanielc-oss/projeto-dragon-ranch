@@ -44,7 +44,7 @@ explicitamente adiados pelo responsável.
 | B4 | Combate | 🟡 parcial — espada e arco desde o início; falta: controles, habilidades, comando do dragão |
 | B5 | PvP | ✅ 3 zonas; até 40% dos materiais em zona perigosa; proteção de iniciante; anti-abuso |
 | B6 | Dungeons | ✅ grupo 1–4; morte elimina (mantém loot, sem baú final nem item de missão); baú a cada 20 h |
-| B7 | Inventário e economia: capacidade, empilhamento, moedas, comércio | ⛔ pendente |
+| B7 | Inventário e economia | ✅ mochila 30→60; armazém 100; moeda única; sem comércio entre jogadores |
 | B8 | Dados salvos e proteção contra falha/duplicação | ⛔ pendente |
 | B9 | Mapa: tema, pontos principais, tamanho | ⛔ pendente |
 | B10 | Dispositivos | ✅ PC e celular |
@@ -116,3 +116,4 @@ foi implementado.
 | 12/10/2026 | B2 resolvido: sem marcos obrigatórios |
 | 12/10/2026 | B5 resolvido: regras de PvP e loot |
 | 12/10/2026 | B6 resolvido: regras de dungeon |
+| 12/10/2026 | B7 resolvido: inventário e economia |

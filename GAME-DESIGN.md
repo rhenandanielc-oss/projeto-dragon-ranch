@@ -643,8 +643,14 @@ O inventário deverá distinguir claramente: - Itens protegidos; -
 Materiais; - Alimentos; - Poções; - Equipamentos; - Itens de missão; -
 Itens elegíveis para saque, quando aplicável.
 
-**PENDENTE:** capacidade do inventário, organização, empilhamento e
-limites de transporte.
+**APROVADO (12/10/2026):**
+- **Mochila:** 30 espaços iniciais, ampliável com moedas até 60.
+- **Empilhamento:** materiais 50, alimentos 20, poções 10, equipamentos 1
+  por espaço.
+- **Itens de missão:** aba separada, não ocupam espaço.
+- **Armazém da fazenda:** 100 espaços, totalmente seguro (fora do PvP).
+  Guardar materiais ali evita o risco de perda em zona perigosa.
+- Dragões não ocupam espaço no inventário.
 
 ### 12.2 Poções de batalha
 
@@ -698,8 +704,18 @@ melhorias ou expansões da fazenda, se aprovadas.
 -   Definir preços e recompensas por configuração, facilitando ajustes
     sem reescrever os sistemas.
 
-**PENDENTE:** comércio direto entre jogadores, preços, moeda única ou
-múltiplas moedas, custos de expansão e limites de venda.
+**APROVADO (12/10/2026):**
+- **Moeda única** na V1 (nome temático a definir).
+- **Ganhos:** missões, dungeons e venda de materiais ao mercador.
+- **Gastos:** comida, poções, ampliação da mochila e melhorias da fazenda.
+- **Controle:** pontos de coleta reaparecem após alguns minutos; o
+  mercador paga preço fixo.
+- **Comércio entre jogadores:** fora da V1 (evita transferência de
+  vantagens, golpes e duplicação de itens). Pode entrar em atualização
+  futura.
+
+**PENDENTE (balanceamento, não bloqueia):** preços, valores de
+recompensa, custo das ampliações, tempo de reaparecimento da coleta.
 
 ------------------------------------------------------------------------
 
@@ -782,7 +798,9 @@ Definir tamanho máximo dos grupos, fluxo para formar o grupo na entrada,
 comportamento ao desconectar, derrota dentro da dungeon e distribuição
 de recompensas.
 
-### B7. Economia e inventário
+### B7. Economia e inventário — RESOLVIDO
+
+**Resolvido (12/10/2026):** ver seções 12.1 e 13.4.
 
 Definir a capacidade inicial do inventário, empilhamento de itens,
 fontes principais de moedas e se comércio direto entre jogadores entra
@@ -926,6 +944,10 @@ mecânicas.
                                       não recebe baú final nem item de
                                       missão; limite de 20 h não é gasto.
                                       B6 resolvido.
+
+  0.2.8 (12/10/2026)                  Inventário (mochila 30→60, armazém
+                                      100), moeda única, sem comércio
+                                      entre jogadores na V1. B7 resolvido.
 
   -----------------------------------------------------------------------
 
