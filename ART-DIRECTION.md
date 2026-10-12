@@ -80,7 +80,7 @@ Exemplos de paletas possíveis — ainda não definitivas:
 - Natureza: verde, turquesa e dourado.
 - Magia arcana: violeta, azul e rosa.
 
-As três espécies iniciais ainda precisam ser definidas no `GAME-DESIGN.md`; não presumir que essas paletas determinam quais espécies ou elementos estarão na V1.
+As cinco espécies e seus elementos foram aprovados em 12/10/2026 (ver `GAME-DESIGN.md` §4.2): Fogo, Eletricidade, Vento, Terra, Água e Chuva. As paletas de Gelo, Natureza e Magia arcana acima eram exemplos e não fazem parte dos elementos da V1; as paletas dos elementos aprovados ainda precisam ser definidas.
 
 ### 4.2 Legibilidade durante o combate
 
@@ -228,7 +228,7 @@ Avaliar consistência visual, leitura, desempenho e facilidade de implementaçã
 ## 12. Decisões pendentes
 
 - **PENDENTE:** confirmar oficialmente o estilo visual geral: fantasia estilizada premium, cartoon detalhado, low-poly ou semirrealista.
-- **PENDENTE:** definir as três espécies iniciais e suas silhuetas, cores e elementos.
+- **PENDENTE:** aprovar silhuetas e cores das cinco espécies (nomes e elementos já aprovados).
 - **PENDENTE:** definir tema e subáreas da primeira região.
 - **PENDENTE:** definir os dispositivos suportados na V1.
 - **PENDENTE:** definir a quantidade de detalhe que o desempenho permite após prototipagem.
@@ -249,3 +249,4 @@ Ao usar este documento com `GAME-DESIGN.md`:
 ## 14. Histórico de versões
 
 - **0.1:** documento inicial; incorporadas as preferências aprovadas de cores vibrantes, florestas verdes, magia colorida, paisagens variadas e grandes montanhas com vistas panorâmicas.
+- **0.2 (12/10/2026):** referências às espécies atualizadas para as cinco espécies aprovadas.

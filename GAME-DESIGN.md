@@ -4,7 +4,7 @@
 
 **Projeto:** Jogo de criação e aventura com dragões no Roblox\
 **Nome provisório:** Dragon Ranch\
-**Versão do documento:** 0.1\
+**Versão do documento:** 0.2\
 **Status:** Design em consolidação --- não iniciar programação até
 revisar os bloqueios essenciais\
 **Idioma:** Português (Brasil)
@@ -103,7 +103,10 @@ vigente da V1:
 
   Voo                                 Desbloqueado por uma missão que
                                       envolve obter um item especial,
-                                      como uma poção
+                                      como uma poção. A poção pode ser
+                                      usada a partir do estágio Jovem.
+                                      A missão é feita uma vez por
+                                      dragão
 
   Dungeons                            Entradas físicas no mundo aberto;
                                       podem ser descobertas por
@@ -125,7 +128,26 @@ vigente da V1:
   Poções                              Incluem poções de batalha para
                                       efeitos temporários
 
-  Espécies iniciais                   Três espécies
+  Espécies iniciais                   Cinco espécies: Wyvern, Dragão
+                                      Ocidental, Amphiptere, Wyrm e
+                                      Dragão Asiático (alterado de três
+                                      para cinco em 12/10/2026)
+
+  Elementos por espécie               Wyvern: Fogo/Eletricidade;
+                                      Dragão Ocidental: Fogo;
+                                      Amphiptere: Vento/Fogo;
+                                      Wyrm: Terra/Água;
+                                      Dragão Asiático: Água/Chuva
+
+  Estágio mínimo para voar            Jovem (nessa fase o dragão já é
+                                      bem maior que o jogador)
+
+  Missão de voo                       Uma vez por dragão
+
+  Armas iniciais                      Espada e arco disponíveis desde o
+                                      início
+
+  Dispositivos                        PC e celular desde o início
 
   PvP                                 Combate no mundo aberto, com
                                       proteção inicial para novos
@@ -169,19 +191,30 @@ vigente da V1:
 
 ### 4.2 Espécies iniciais, elementos, nomes e raridades
 
-**APROVADO:** a V1 começa com três espécies. Novas espécies poderão ser adicionadas em atualizações.
+**APROVADO (12/10/2026):** a V1 começa com cinco espécies, cada uma com seus elementos. Novas espécies poderão ser adicionadas em atualizações.
+
+| Espécie | Elementos |
+|---|---|
+| Wyvern | Fogo / Eletricidade |
+| Dragão Ocidental | Fogo |
+| Amphiptere | Vento / Fogo |
+| Wyrm | Terra / Água |
+| Dragão Asiático | Água / Chuva |
+
+Elementos presentes na V1: Fogo, Eletricidade, Vento, Terra, Água e Chuva. A lista candidata anterior (Fogo, Água, Natureza, Gelo e Raio) foi substituída.
+
+**PENDENTE:** confirmar se Água e Chuva são elementos distintos (com efeitos próprios) ou se Chuva é uma variação de Água; definir como funcionam os elementos duplos (dois tipos de ataque, ou um elemento principal e um secundário).
 
 **PROPOSTAS SELECIONADAS PARA AVALIAÇÃO — ainda não tratadas como decisões finais:**
-- **Elementos:** cinco elementos no sistema inicial. Lista candidata para avaliação: Fogo, Água, Natureza, Gelo e Raio. Essa lista é uma sugestão de trabalho, não uma escolha final aprovada.
 - **Raridades:** sete níveis, incluindo uma raridade secreta acima de Mítico. Nomes candidatos: Comum, Incomum, Raro, Épico, Lendário, Mítico e Secreto. Os nomes e a ordem final ainda precisam de confirmação.
 - **Nomes:** cada dragão terá o nome oficial da espécie e poderá receber um nome personalizado pelo jogador.
 - **Função da raridade:** afetará principalmente a dificuldade de obtenção, a aparência e os efeitos visuais. Não deve, por si só, tornar um dragão significativamente mais forte em combate.
 
-**PENDENTE:** definir os nomes das três espécies, a correspondência de cada espécie com os elementos, as aparências, as habilidades e os atributos específicos.
+**PENDENTE:** aparências, habilidades e atributos específicos de cada uma das cinco espécies; como Wyrm (tradicionalmente sem asas) e Dragão Asiático (tradicionalmente voa sem asas) realizam o voo.
 
-**PROPOSTA:** as três espécies iniciais devem ter funções de combate distintas — por exemplo, dano direto, mobilidade/velocidade e defesa/controle —, mas essa distribuição ainda precisa ser aprovada.
+**PROPOSTA:** as cinco espécies iniciais devem ter funções de combate distintas — por exemplo, dano direto, mobilidade/velocidade, defesa/controle, área e suporte —, mas essa distribuição ainda precisa ser aprovada.
 
-As espécies não devem ser apenas recolorações: cada uma deve ter diferenças visuais e de gameplay compreensíveis e balanceáveis. Não considerar a lista candidata de elementos ou raridades como definitiva até confirmação.
+As espécies não devem ser apenas recolorações: cada uma deve ter diferenças visuais e de gameplay compreensíveis e balanceáveis. Não considerar a lista de raridades como definitiva até confirmação.
 
 ### 4.3 Identificação e raridade dos dragões
 
@@ -237,14 +270,15 @@ visualmente quanto em gameplay.
                                       interações
 
   Jovem                               Introdução ao treinamento e às
-                                      habilidades
+                                      habilidades; já é bem maior que o
+                                      jogador e pode receber a poção de
+                                      voo após cumprir a missão
 
   Pré-adulto                          Preparação para desafios avançados
                                       e progressão rumo à maturidade
 
-  Adulto                              Maturidade; pode desbloquear e
-                                      utilizar o voo após cumprir a
-                                      missão necessária
+  Adulto                              Maturidade e identidade completa
+                                      da espécie
 
   Ancião                              Estágio avançado, reservado a
                                       jogadores que investiram tempo e
@@ -337,8 +371,12 @@ imediatamente.
 -   O sistema deve prever futuras manobras e habilidades aéreas sem
     exigir que todas sejam implementadas na V1.
 
-**PENDENTE:** confirmar o estágio mínimo exato para o voo, os controles,
-os limites de voo e se haverá custo de energia.
+**APROVADO (12/10/2026):** o estágio mínimo para voar é **Jovem**. A
+missão de voo é feita **uma vez por dragão**: cada dragão precisa receber
+sua própria poção.
+
+**PENDENTE:** controles de voo (PC e celular), limites de voo e se haverá
+custo de energia.
 
 ------------------------------------------------------------------------
 
@@ -448,9 +486,11 @@ espécies.
 
 **Decisão aprovada:** espada, arco e habilidades simples.
 
-**PENDENTE:** escolher se o jogador começa com todas as armas ou
-desbloqueia algumas por progressão; definir munição, recarga, dano,
-alcance, esquiva e controles para PC e dispositivos móveis.
+**APROVADO (12/10/2026):** espada e arco estão disponíveis desde o
+início.
+
+**PENDENTE:** munição, recarga, dano, alcance, esquiva e controles para
+PC e celular.
 
 ### 10.4 Balanceamento
 
@@ -604,9 +644,14 @@ Estas são as decisões ainda não resolvidas que afetam diretamente a
 arquitetura ou o escopo. O responsável pelo projeto deve respondê-las ou
 autorizar explicitamente uma decisão provisória antes da implementação.
 
-### B1. Detalhes das três espécies iniciais e dos elementos
+### B1. Detalhes das cinco espécies iniciais e dos elementos — PARCIALMENTE RESOLVIDO
 
-O número de espécies na V1 está aprovado: três. Confirmar a lista final dos cinco elementos, nome e identidade visual de cada espécie, relação espécie/elemento, função no combate e habilidade exclusiva. Confirmar também os sete níveis de raridade e o nome/regra de obtenção da raridade secreta.
+**Resolvido (12/10/2026):** cinco espécies e seus elementos (ver seção 4.2).
+
+**Ainda falta:** se Água e Chuva são elementos distintos; como funcionam
+os elementos duplos; como Wyrm e Dragão Asiático voam sem asas; identidade
+visual, função no combate e habilidade exclusiva de cada espécie; os sete
+níveis de raridade e a regra da raridade secreta.
 
 ### B2. Regra exata de crescimento
 
@@ -615,16 +660,17 @@ esperado, missões, treinamento, cuidados e possíveis itens. Não é
 necessário definir tempos rígidos offline, pois o jogo não deve exigir
 isso.
 
-### B3. Limite de idade para voar
+### B3. Limite de idade para voar — RESOLVIDO
 
-Confirmar em qual estágio o voo fica disponível e se a missão de
-desbloqueio é única por jogador, por espécie ou por dragão.
+**Resolvido (12/10/2026):** voo a partir do estágio Jovem; missão de voo
+uma vez por dragão.
 
-### B4. Escopo do combate da V1
+### B4. Escopo do combate da V1 — PARCIALMENTE RESOLVIDO
 
-Definir os controles essenciais, o conjunto inicial de habilidades, como
-o jogador comanda o dragão e se espada e arco estarão disponíveis desde
-o começo.
+**Resolvido (12/10/2026):** espada e arco disponíveis desde o começo.
+
+**Ainda falta:** controles essenciais, conjunto inicial de habilidades e
+como o jogador comanda o dragão.
 
 ### B5. Regras de PvP e loot
 
@@ -656,10 +702,10 @@ Definir o tema da região inicial, os pontos principais e o tamanho
 aproximado da área jogável. Não é necessário desenhar todo o mapa em
 detalhe antes de prototipar.
 
-### B10. Dispositivos de controle
+### B10. Dispositivos de controle — RESOLVIDO
 
-Confirmar se a V1 deve suportar PC, celular e console desde o início.
-Isso afeta a interface, os controles de combate, voo e interação.
+**Resolvido (12/10/2026):** PC e celular desde o início. Console fica
+fora da V1.
 
 ------------------------------------------------------------------------
 
@@ -713,7 +759,7 @@ Esta seção define princípios, não código nem arquitetura final.
 
 **Não começar a programar ainda.**
 
-Primeiro, resolver os bloqueios B1 a B10, priorizando: 1. As três
+Primeiro, resolver os bloqueios B1 a B10, priorizando: 1. As cinco
 espécies e suas funções; 2. Crescimento e desbloqueio do voo; 3. Regras
 de combate e PvP/loot; 4. Fluxo de grupos e instâncias de dungeon; 5.
 Salvamento e inventário; 6. Dispositivos suportados.
@@ -737,6 +783,15 @@ mecânicas.
                                       jogo, decisões aprovadas, mecânicas
                                       da V1, ideias futuras e bloqueios
                                       de design.
+
+  0.2 (12/10/2026)                    Espécies iniciais alteradas de três
+                                      para cinco (Wyvern, Dragão
+                                      Ocidental, Amphiptere, Wyrm, Dragão
+                                      Asiático) com elementos definidos;
+                                      voo a partir de Jovem, uma vez por
+                                      dragão; espada e arco desde o
+                                      início; PC e celular. B3 e B10
+                                      resolvidos; B1 e B4 parciais.
 
   -----------------------------------------------------------------------
 

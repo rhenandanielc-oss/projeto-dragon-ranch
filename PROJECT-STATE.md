@@ -24,9 +24,9 @@ explicitamente adiados pelo responsável.
 
 | Item | Estado | Observação |
 |---|---|---|
-| `GAME-DESIGN.md` | ✅ | v0.1 — decisões aprovadas + pendências |
-| `ART-DIRECTION.md` | ✅ | v0.1 |
-| `DRAGON-VISUAL-DESIGN.md` | ✅ | v0.1 — fichas das espécies vazias |
+| `GAME-DESIGN.md` | ✅ | v0.2 — 5 espécies, voo, armas e dispositivos atualizados |
+| `ART-DIRECTION.md` | ✅ | v0.2 |
+| `DRAGON-VISUAL-DESIGN.md` | ✅ | v0.2 — 5 fichas com anatomia-base proposta |
 | `PROJECT-STATE.md` | ✅ | este arquivo |
 | `MASTER-PROMPT.md` | ⬜ | regras de trabalho para o Claude |
 | `V1-ROADMAP.md` | ⬜ | fases e dependências — depende dos bloqueios |
@@ -38,16 +38,16 @@ explicitamente adiados pelo responsável.
 
 | Código | Decisão | Estado |
 |---|---|---|
-| B1 | Três espécies: nomes, elementos (5), funções, raridades (7) | ⛔ pendente |
+| B1 | Espécies e elementos | 🟡 parcial — 5 espécies e elementos aprovados; falta: Água vs Chuva, elementos duplos, voo do Wyrm e do Dragão Asiático, funções, raridades |
 | B2 | Requisitos de crescimento entre os 6 estágios | ⛔ pendente |
-| B3 | Estágio mínimo para voar; missão por jogador/espécie/dragão | ⛔ pendente |
-| B4 | Escopo do combate: controles, habilidades, comando do dragão, armas iniciais | ⛔ pendente |
+| B3 | Voo | ✅ a partir de Jovem; missão uma vez por dragão |
+| B4 | Combate | 🟡 parcial — espada e arco desde o início; falta: controles, habilidades, comando do dragão |
 | B5 | PvP: proteção inicial, zonas, itens saqueáveis, limite de perda | ⛔ pendente |
 | B6 | Dungeons: tamanho do grupo, formação, desconexão, derrota, recompensas | ⛔ pendente |
 | B7 | Inventário e economia: capacidade, empilhamento, moedas, comércio | ⛔ pendente |
 | B8 | Dados salvos e proteção contra falha/duplicação | ⛔ pendente |
 | B9 | Mapa: tema, pontos principais, tamanho | ⛔ pendente |
-| B10 | Dispositivos: PC / celular / console | ⛔ pendente |
+| B10 | Dispositivos | ✅ PC e celular |
 
 Outras pendências de arte: estilo final dos dragões (ART §12, DRAGON §14).
 
@@ -99,8 +99,8 @@ foi implementado.
 | Mirante com montanhas, vale e cachoeira | ⬜ |
 | Área mágica com cristais | ⬜ |
 | Portão de dungeon com círculo de grupo | ⬜ |
-| Dragão em duas fases | ⛔ depende de B1 e do estilo |
-| Interface em PC e celular | ⛔ depende de B10 |
+| Dragão em duas fases | ⛔ depende do estilo e da aprovação das silhuetas |
+| Interface em PC e celular | ⬜ desbloqueado (B10 resolvido) |
 
 ---
 
@@ -109,3 +109,4 @@ foi implementado.
 | Data | Alteração |
 |---|---|
 | 12/10/2026 | Criação do arquivo; levantamento do place no Studio |
+| 12/10/2026 | B3 e B10 resolvidos; B1 e B4 parciais; espécies passam de 3 para 5 |

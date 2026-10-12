@@ -1,8 +1,8 @@
 # DRAGON-VISUAL-DESIGN.md
 ## Especificação visual dos dragões por fase de crescimento
-**Versão:** 0.1  
+**Versão:** 0.2  
 **Documento relacionado:** `GAME-DESIGN.md` e `ART-DIRECTION.md`  
-**Status:** Estrutura visual inicial; detalhes das três espécies ainda precisam ser aprovados.
+**Status:** Estrutura visual inicial; nomes e elementos das cinco espécies aprovados; aparências ainda precisam ser aprovadas.
 
 ---
 
@@ -26,7 +26,7 @@ Este arquivo complementa a direção de arte geral. Não substitui as regras de 
 - **PENDENTE:** precisa ser definido antes de fechar o design final.
 - **FUTURO:** pode ser desenvolvido depois da V1.
 
-Não apresentar propostas como decisões aprovadas. O número de espécies iniciais (três) está aprovado; a lista final de elementos, os nomes das espécies e a distribuição de raridades ainda precisam ser confirmados.
+Não apresentar propostas como decisões aprovadas. As cinco espécies iniciais e seus elementos estão aprovados; aparências e distribuição de raridades ainda precisam ser confirmadas.
 
 ## 3. Regras gerais de identidade dos dragões
 
@@ -73,14 +73,14 @@ As seis fases devem pertencer claramente à mesma espécie. Ao crescer, o dragã
 ## 3.5 Identificação, elementos e raridade
 
 ### Status das decisões
-- **APROVADO:** três espécies na V1, com possibilidade de adicionar outras em atualizações.
-- **PROPOSTA SELECIONADA PARA AVALIAÇÃO:** cinco elementos no sistema inicial.
+- **APROVADO (12/10/2026):** cinco espécies na V1, com possibilidade de adicionar outras em atualizações.
+- **APROVADO (12/10/2026):** elementos Fogo, Eletricidade, Vento, Terra, Água e Chuva, distribuídos conforme a seção 11.
 - **PROPOSTA SELECIONADA PARA AVALIAÇÃO:** sete níveis de raridade, incluindo uma raridade secreta acima de Mítico.
 - **PROPOSTA SELECIONADA PARA AVALIAÇÃO:** cada indivíduo terá o nome oficial da espécie e um nome personalizado escolhido pelo jogador.
 - **PROPOSTA SELECIONADA PARA AVALIAÇÃO:** raridade influenciará principalmente dificuldade de obtenção, aparência e efeitos visuais, não poder de combate garantido.
 
-### Elementos candidatos
-A lista abaixo é apenas uma proposta de trabalho, não uma decisão final: **Fogo, Água, Natureza, Gelo e Raio**. A lista precisa ser confirmada antes de associar elementos às três espécies iniciais.
+### Elementos
+**APROVADO:** Fogo, Eletricidade, Vento, Terra, Água e Chuva. A lista candidata anterior (Fogo, Água, Natureza, Gelo e Raio) foi substituída. **PENDENTE:** se Chuva é distinta de Água e como funcionam os elementos duplos.
 
 ### Raridades candidatas
 A sequência de trabalho é **Comum → Incomum → Raro → Épico → Lendário → Mítico → Secreto**. Os nomes, a ordem, as probabilidades e os métodos de obtenção ainda precisam de aprovação. A raridade secreta deve ser descoberta de maneira especial, mas sua regra concreta permanece pendente.
@@ -96,7 +96,7 @@ A sequência de trabalho é **Comum → Incomum → Raro → Épico → Lendári
 A interface deverá distinguir o nome da espécie do apelido do indivíduo. Exemplo de apresentação: **[Nome personalizado] — [Nome da espécie]**. O formato exato da interface ainda é uma proposta. O nome personalizado não substitui nem altera a espécie, o elemento ou a raridade.
 
 ### Consequência para as fichas das espécies
-Cada uma das três fichas deve incluir: nome oficial da espécie, elemento proposto/aprovado, silhueta, cores, traços anatômicos, efeito característico e como esses elementos visuais evoluem nas seis fases. Até a lista final ser aprovada, não atribuir definitivamente um dos cinco elementos candidatos a uma espécie específica.
+Cada uma das cinco fichas deve incluir: nome oficial da espécie, elementos, silhueta, cores, traços anatômicos, efeito característico e como esses elementos visuais evoluem nas seis fases.
 
 ## 4. Fase 1 — Ovo
 
@@ -123,7 +123,7 @@ Cada ovo deve usar as cores associadas à sua espécie. A cor não deve ser a ú
 - O efeito de eclosão deve ser legível, breve e otimizado.
 
 ### Critérios de aprovação
-- É possível distinguir os ovos das três espécies sem depender apenas do nome exibido.
+- É possível distinguir os ovos das cinco espécies sem depender apenas do nome exibido.
 - O ovo é visualmente interessante mesmo parado.
 - O padrão do ovo combina com a aparência futura do dragão.
 
@@ -321,81 +321,146 @@ Esses sinais não devem transformar todos os anciões em dragões brancos ou cin
 
 ---
 
-## 11. Fichas das três espécies iniciais
+## 11. Fichas das cinco espécies iniciais
 
-As três espécies iniciais estão aprovadas como quantidade; os nomes, elementos definitivos e aparências ainda estão **PENDENTES**. Preencher cada ficha depois de confirmar a lista final de elementos e o conceito de cada espécie.
+**APROVADO (12/10/2026):** cinco espécies com seus elementos. As silhuetas abaixo seguem a anatomia tradicional de cada tipo e são **PROPOSTA** até aprovação; a referência de anatomia é a imagem enviada pelo responsável (usar só como referência de forma, sem copiar a arte).
 
-### Espécie 1 — [nome pendente]
+| Espécie | Elementos | Asas | Patas |
+|---|---|---|---|
+| Wyvern | Fogo / Eletricidade | Sim (são os braços) | 2 |
+| Dragão Ocidental | Fogo | Sim | 4 |
+| Amphiptere | Vento / Fogo | Sim | 0 |
+| Wyrm | Terra / Água | Não | 0 |
+| Dragão Asiático | Água / Chuva | Não | 4 |
 
-- **Nome oficial da espécie:** PENDENTE
+As cinco silhuetas já são bem diferentes entre si, o que atende à regra 3.2.
+
+### Espécie 1 — Wyvern
+
+- **Nome oficial da espécie:** Wyvern (APROVADO)
 - **Nome personalizado pelo jogador:** permitido para cada indivíduo; formato de interface PENDENTE
-- **Elemento/poder principal:** PENDENTE — escolher somente após aprovação da lista final de elementos
+- **Elementos:** Fogo / Eletricidade (APROVADO)
 - **Raridade:** definida na obtenção conforme tabela de raridades a aprovar
-- **Silhueta:** PENDENTE
-- **Cabeça e focinho:** PENDENTE
-- **Asas:** PENDENTE
-- **Patas e corpo:** PENDENTE
-- **Cauda:** PENDENTE
+- **Silhueta (PROPOSTA, baseada na anatomia tradicional do tipo):** bípede; as asas funcionam como membros dianteiros; postura inclinada para a frente.
+- **Cabeça e focinho:** PROPOSTA: cabeça angulosa, com chifres voltados para trás.
+- **Asas:** Grandes asas membranosas, que também servem de apoio no chão.
+- **Patas e corpo:** Duas patas traseiras fortes; tronco compacto.
+- **Cauda:** Longa, fina, possivelmente com ponta em espinho.
+- **Voo:** Asas — voo convencional.
 - **Chifres/cristas/espinhos:** PENDENTE
-- **Cores principais e secundárias:** PENDENTE
+- **Cores principais e secundárias:** PENDENTE — devem refletir os elementos
 - **Padrão de escamas/superfície:** PENDENTE
-- **Efeito mágico característico:** PENDENTE
+- **Efeito mágico característico:** PENDENTE — ligado aos elementos
 - **Animação ou postura característica:** PENDENTE
 
 **Progressão visual por fase**
 - Ovo: definir padrão da casca ligado à espécie.
 - Bebê: definir versão compacta e expressiva dos traços principais.
-- Jovem: definir crescimento de corpo, membros e detalhes.
+- Jovem: já bem maior que o jogador; precisa ter porte crível para voar com o jogador.
 - Pré-adulto: definir transição para as proporções adultas.
 - Adulto: definir modelo de referência principal da espécie.
 - Ancião: definir marcas de idade que preservem sua identidade.
 
-### Espécie 2 — [nome pendente]
+### Espécie 2 — Dragão Ocidental
 
-- **Nome oficial da espécie:** PENDENTE
+- **Nome oficial da espécie:** Dragão Ocidental (APROVADO)
 - **Nome personalizado pelo jogador:** permitido para cada indivíduo; formato de interface PENDENTE
-- **Elemento/poder principal:** PENDENTE — escolher somente após aprovação da lista final de elementos
+- **Elementos:** Fogo (APROVADO)
 - **Raridade:** definida na obtenção conforme tabela de raridades a aprovar
-- **Silhueta:** PENDENTE
-- **Cabeça e focinho:** PENDENTE
-- **Asas:** PENDENTE
-- **Patas e corpo:** PENDENTE
-- **Cauda:** PENDENTE
+- **Silhueta (PROPOSTA, baseada na anatomia tradicional do tipo):** quadrúpede robusto com um par de asas nas costas; silhueta clássica de dragão.
+- **Cabeça e focinho:** PROPOSTA: cabeça grande, mandíbula forte, chifres e cristas proeminentes.
+- **Asas:** Par de asas membranosas grandes, separado das patas.
+- **Patas e corpo:** Quatro patas fortes; peito largo.
+- **Cauda:** Longa e grossa, com espinhos ou placas.
+- **Voo:** Asas — voo convencional.
 - **Chifres/cristas/espinhos:** PENDENTE
-- **Cores principais e secundárias:** PENDENTE
+- **Cores principais e secundárias:** PENDENTE — devem refletir os elementos
 - **Padrão de escamas/superfície:** PENDENTE
-- **Efeito mágico característico:** PENDENTE
+- **Efeito mágico característico:** PENDENTE — ligado aos elementos
 - **Animação ou postura característica:** PENDENTE
 
 **Progressão visual por fase**
 - Ovo: definir padrão da casca ligado à espécie.
 - Bebê: definir versão compacta e expressiva dos traços principais.
-- Jovem: definir crescimento de corpo, membros e detalhes.
+- Jovem: já bem maior que o jogador; precisa ter porte crível para voar com o jogador.
 - Pré-adulto: definir transição para as proporções adultas.
 - Adulto: definir modelo de referência principal da espécie.
 - Ancião: definir marcas de idade que preservem sua identidade.
 
-### Espécie 3 — [nome pendente]
+### Espécie 3 — Amphiptere
 
-- **Nome oficial da espécie:** PENDENTE
+- **Nome oficial da espécie:** Amphiptere (APROVADO)
 - **Nome personalizado pelo jogador:** permitido para cada indivíduo; formato de interface PENDENTE
-- **Elemento/poder principal:** PENDENTE — escolher somente após aprovação da lista final de elementos
+- **Elementos:** Vento / Fogo (APROVADO)
 - **Raridade:** definida na obtenção conforme tabela de raridades a aprovar
-- **Silhueta:** PENDENTE
-- **Cabeça e focinho:** PENDENTE
-- **Asas:** PENDENTE
-- **Patas e corpo:** PENDENTE
-- **Cauda:** PENDENTE
+- **Silhueta (PROPOSTA, baseada na anatomia tradicional do tipo):** corpo de serpente com asas; sem patas.
+- **Cabeça e focinho:** PROPOSTA: cabeça pequena e aerodinâmica, cristas leves.
+- **Asas:** Um par de asas (membranosas ou emplumadas), principal traço da silhueta.
+- **Patas e corpo:** Sem patas; corpo longo e esguio.
+- **Cauda:** Longa, contínua com o corpo.
+- **Voo:** Asas — voo ágil, combina com o elemento Vento.
 - **Chifres/cristas/espinhos:** PENDENTE
-- **Cores principais e secundárias:** PENDENTE
+- **Cores principais e secundárias:** PENDENTE — devem refletir os elementos
 - **Padrão de escamas/superfície:** PENDENTE
-- **Efeito mágico característico:** PENDENTE
+- **Efeito mágico característico:** PENDENTE — ligado aos elementos
 - **Animação ou postura característica:** PENDENTE
 
 **Progressão visual por fase**
 - Ovo: definir padrão da casca ligado à espécie.
 - Bebê: definir versão compacta e expressiva dos traços principais.
-- Jovem: definir crescimento de corpo, membros e detalhes.
+- Jovem: já bem maior que o jogador; precisa ter porte crível para voar com o jogador.
+- Pré-adulto: definir transição para as proporções adultas.
+- Adulto: definir modelo de referência principal da espécie.
+- Ancião: definir marcas de idade que preservem sua identidade.
+
+### Espécie 4 — Wyrm
+
+- **Nome oficial da espécie:** Wyrm (APROVADO)
+- **Nome personalizado pelo jogador:** permitido para cada indivíduo; formato de interface PENDENTE
+- **Elementos:** Terra / Água (APROVADO)
+- **Raridade:** definida na obtenção conforme tabela de raridades a aprovar
+- **Silhueta (PROPOSTA, baseada na anatomia tradicional do tipo):** serpente gigante, corpo grosso e enrolado; sem asas e sem patas.
+- **Cabeça e focinho:** PROPOSTA: cabeça massiva, mandíbula larga, aspecto de criatura escavadora.
+- **Asas:** Nenhuma (na anatomia tradicional).
+- **Patas e corpo:** Sem patas; corpo grosso e pesado.
+- **Cauda:** Contínua com o corpo.
+- **Voo:** PENDENTE — não tem asas. Definir como voa (magia elemental, mudança de forma, ou se usa outro tipo de deslocamento).
+- **Chifres/cristas/espinhos:** PENDENTE
+- **Cores principais e secundárias:** PENDENTE — devem refletir os elementos
+- **Padrão de escamas/superfície:** PENDENTE
+- **Efeito mágico característico:** PENDENTE — ligado aos elementos
+- **Animação ou postura característica:** PENDENTE
+
+**Progressão visual por fase**
+- Ovo: definir padrão da casca ligado à espécie.
+- Bebê: definir versão compacta e expressiva dos traços principais.
+- Jovem: já bem maior que o jogador; precisa ter porte crível para voar com o jogador.
+- Pré-adulto: definir transição para as proporções adultas.
+- Adulto: definir modelo de referência principal da espécie.
+- Ancião: definir marcas de idade que preservem sua identidade.
+
+### Espécie 5 — Dragão Asiático
+
+- **Nome oficial da espécie:** Dragão Asiático (APROVADO)
+- **Nome personalizado pelo jogador:** permitido para cada indivíduo; formato de interface PENDENTE
+- **Elementos:** Água / Chuva (APROVADO)
+- **Raridade:** definida na obtenção conforme tabela de raridades a aprovar
+- **Silhueta (PROPOSTA, baseada na anatomia tradicional do tipo):** corpo serpentino muito longo, com quatro patas curtas; sem asas.
+- **Cabeça e focinho:** PROPOSTA: focinho alongado, bigodes, chifres ramificados, juba.
+- **Asas:** Nenhuma (na anatomia tradicional, voa por magia).
+- **Patas e corpo:** Quatro patas curtas com garras; corpo longo e ondulante.
+- **Cauda:** Longa, contínua com o corpo, com tufo ou juba na ponta.
+- **Voo:** PENDENTE — tradicionalmente voa sem asas, ondulando no ar. Definir se usa esse estilo.
+- **Chifres/cristas/espinhos:** PENDENTE
+- **Cores principais e secundárias:** PENDENTE — devem refletir os elementos
+- **Padrão de escamas/superfície:** PENDENTE
+- **Efeito mágico característico:** PENDENTE — ligado aos elementos
+- **Animação ou postura característica:** PENDENTE
+
+**Progressão visual por fase**
+- Ovo: definir padrão da casca ligado à espécie.
+- Bebê: definir versão compacta e expressiva dos traços principais.
+- Jovem: já bem maior que o jogador; precisa ter porte crível para voar com o jogador.
 - Pré-adulto: definir transição para as proporções adultas.
 - Adulto: definir modelo de referência principal da espécie.
 - Ancião: definir marcas de idade que preservem sua identidade.
@@ -457,19 +522,19 @@ Antes de aprovar um modelo, verificar:
 ## 14. Próximas decisões necessárias
 
 1. Confirmar o estilo visual dos dragões: fantasia estilizada e detalhada, cartoon, low-poly ou semirrealista.
-2. Definir os nomes e os conceitos das três espécies iniciais.
-3. Confirmar a lista final dos cinco elementos e associar um elemento a cada espécie (ou definir se haverá combinações).
+2. ~~Definir os nomes das espécies~~ (resolvido: cinco espécies). Aprovar as silhuetas propostas na seção 11.
+3. ~~Associar elementos às espécies~~ (resolvido). Definir como Wyrm e Dragão Asiático voam sem asas.
 4. Confirmar os sete níveis de raridade, incluindo o nome e o método de obtenção da raridade secreta.
 5. Escolher as silhuetas, cores e características que diferenciam as espécies.
 6. Criar primeiro um modelo de referência de uma espécie em duas fases bem distintas.
-7. Validar o estilo e o desempenho no Roblox Studio antes de produzir as seis fases das três espécies.
+7. Validar o estilo e o desempenho no Roblox Studio antes de produzir as seis fases das cinco espécies.
 
 ## 15. Instruções para assistentes de programação e arte
 
 Ao usar este arquivo:
 - Respeitar as seis fases aprovadas e as decisões de `GAME-DESIGN.md`.
 - Usar `ART-DIRECTION.md` para manter coerência com o mundo.
-- Não inventar os detalhes pendentes das três espécies como se tivessem sido aprovados.
+- Não inventar os detalhes pendentes das cinco espécies como se tivessem sido aprovados.
 - Apresentar propostas de design para aprovação antes de multiplicar modelos e animações.
 - Garantir continuidade visual entre fases.
 - Recomendar protótipos pequenos antes de criar todos os recursos.
@@ -479,3 +544,4 @@ Ao usar este arquivo:
 ## 16. Histórico de versões
 
 - **0.1:** criada a estrutura de design visual para as seis fases; detalhes finais das três espécies permanecem pendentes.
+- **0.2 (12/10/2026):** cinco espécies (Wyvern, Dragão Ocidental, Amphiptere, Wyrm, Dragão Asiático) com elementos aprovados; fichas reescritas com anatomia-base proposta.
