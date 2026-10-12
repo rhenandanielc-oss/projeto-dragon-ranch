@@ -19,7 +19,7 @@ local STONE = Color3.fromRGB(150, 146, 138)
 local BASE_SCALE = {
 	Pine = 2.2, Tree2 = 1.6, Arch = 1.6, QuestBoard = 1.4, Blossom = 1.1, Boulder = 1.6,
 	Waypoint = 1.3, Camp = 1.4, Castle = 2.8, Lighthouse = 1.5, Ruins = 2.2, Cottage = 1.3, Crystal = 1.0,
-	SnowPine = 1.8, DeadTree = 1.5, FruitBush = 1.0, Mushroom = 1.0,
+	SnowPine = 1.8, DeadTree = 1.5, FruitBush = 1.0, Mushroom = 1.0, TallPine = 1.25, Flowers = 1.0,
 }
 
 --------------------------------------------------------------------------
@@ -279,6 +279,15 @@ function WorldBuilder:plant(kind: string, pos: Vector3, scale: number, parent: I
 	if m then
 		return m
 	end
+	if kind == "Flowers" then
+		local mm = Instance.new("Model")
+		mm.Name = "Flowers"
+		self:flowers(pos, 2.5 * scale, 6, mm)
+		mm.Parent = parent
+		return mm
+	elseif kind == "TallPine" then
+		return self:simpleTree("Pine", pos, scale * 2, parent, leaf)
+	end
 	if kind == "Boulder" then
 		local r = part({ Name = "Boulder", Shape = Enum.PartType.Ball, Size = Vector3.new(9, 6, 8) * scale, CFrame = cf * CFrame.new(0, 1.5 * scale, 0), Material = Enum.Material.Slate, Color = Color3.fromRGB(118, 118, 112) }, parent)
 		return r
@@ -341,25 +350,35 @@ end
 --------------------------------------------------------------------------
 -- {tipo, peso, escala mín, escala máx, cor da folha opcional}
 local KITS = {
-	meadow = { { "Oak", 5, 0.8, 1.2 }, { "Tree2", 3, 0.8, 1.1 }, { "Blossom", 1, 0.8, 1.0 }, { "Bush", 3, 0.8, 1.3 } },
-	pine = { { "Pine", 8, 0.9, 1.4 }, { "Oak", 2, 0.8, 1.1 }, { "Bush", 2, 0.8, 1.2 }, { "Boulder", 1, 0.8, 1.6 } },
-	lake = { { "Tree2", 6, 0.9, 1.3 }, { "Oak", 3, 0.8, 1.1 }, { "Bush", 3, 0.8, 1.2 } },
-	blossom = { { "Blossom", 6, 0.8, 1.15 }, { "Oak", 3, 0.7, 1.0 }, { "Tree2", 1, 0.8, 1.0 }, { "Bush", 3, 0.8, 1.1 } },
-	orchard = { { "Oak", 4, 0.7, 1.0 }, { "Tree2", 4, 0.8, 1.0 }, { "Blossom", 2, 0.8, 1.0 }, { "FruitBush", 2, 0.9, 1.2 } },
-	oak = { { "Oak", 9, 1.2, 1.9 }, { "Bush", 3, 1.0, 1.5 }, { "Boulder", 1, 1.0, 1.8 } },
-	rainforest = { { "Tree2", 5, 1.0, 1.5 }, { "Oak", 3, 1.0, 1.4 }, { "Pine", 2, 1.0, 1.4 }, { "Bush", 5, 1.0, 1.6 } },
-	enchanted = { { "Blossom", 4, 1.0, 1.5, LEAF.enchanted }, { "Tree2", 3, 1.0, 1.4 }, { "Mushroom", 3, 0.8, 1.6 }, { "Bush", 2, 0.9, 1.3 } },
-	fir = { { "Pine", 9, 0.9, 1.5 }, { "Boulder", 2, 1.0, 2.0 }, { "Bush", 1, 0.8, 1.1 } },
-	swamp = { { "Tree2", 6, 1.0, 1.5, LEAF.swamp }, { "DeadTree", 2, 0.9, 1.3 }, { "Bush", 4, 0.9, 1.4, LEAF.swamp } },
-	coast = { { "Pine", 6, 0.8, 1.2 }, { "Bush", 4, 0.8, 1.2 }, { "Boulder", 1, 0.8, 1.5 } },
-	redrock = { { "Pine", 6, 0.8, 1.3, Color3.fromRGB(46, 70, 48) }, { "Boulder", 4, 1.0, 2.2 }, { "DeadTree", 1, 0.9, 1.2 } },
-	snow = { { "SnowPine", 9, 0.9, 1.5 }, { "Boulder", 2, 1.0, 2.0 } },
-	volcanic = { { "DeadTree", 5, 0.9, 1.4 }, { "Tree2", 2, 0.8, 1.1 }, { "Boulder", 4, 1.0, 2.4 } },
-	crystal = { { "CrystalPine", 6, 0.9, 1.4 }, { "Crystal", 2, 0.5, 1.0 }, { "Boulder", 2, 1.0, 1.8 } },
-	ruins = { { "Oak", 5, 1.0, 1.6 }, { "Tree2", 3, 1.0, 1.4 }, { "Boulder", 3, 1.0, 2.0 }, { "Bush", 3, 0.9, 1.3 } },
-	hidden = { { "Oak", 5, 1.4, 2.2 }, { "Blossom", 3, 1.0, 1.4 }, { "Bush", 3, 1.0, 1.5 } },
-	dark = { { "DeadTree", 5, 1.0, 1.6 }, { "Pine", 3, 0.9, 1.3, Color3.fromRGB(36, 52, 40) }, { "Boulder", 4, 1.2, 2.6 } },
-	mixed = { { "Oak", 4, 0.8, 1.3 }, { "Pine", 3, 0.9, 1.3 }, { "Tree2", 3, 0.8, 1.2 }, { "Bush", 3, 0.8, 1.2 } },
+	meadow = { { "Oak", 5, 1.2, 1.6 }, { "Tree2", 3, 1.6, 2.1 }, { "Blossom", 1, 1.1, 1.4 }, { "TallPine", 2, 0.9, 1.2 } },
+	pine = { { "TallPine", 8, 0.9, 1.3 }, { "Pine", 2, 1.6, 2.1 }, { "Oak", 1, 1.2, 1.5 } },
+	lake = { { "Tree2", 6, 1.6, 2.2 }, { "Oak", 3, 1.2, 1.6 }, { "TallPine", 1, 0.9, 1.1 } },
+	blossom = { { "Blossom", 6, 1.1, 1.5 }, { "Oak", 3, 1.1, 1.5 }, { "Tree2", 1, 1.5, 1.9 } },
+	orchard = { { "Oak", 4, 1.0, 1.3 }, { "Tree2", 4, 1.4, 1.8 }, { "Blossom", 2, 1.0, 1.3 }, { "FruitBush", 2, 1.3, 1.8 } },
+	oak = { { "Oak", 9, 1.6, 2.4 }, { "Tree2", 2, 1.6, 2.0 } },
+	rainforest = { { "Tree2", 5, 1.8, 2.4 }, { "Oak", 3, 1.5, 2.0 }, { "TallPine", 3, 1.0, 1.4 } },
+	enchanted = { { "Blossom", 4, 1.4, 2.0, LEAF.enchanted }, { "Tree2", 3, 1.6, 2.2 }, { "Mushroom", 3, 1.2, 2.4 } },
+	fir = { { "TallPine", 7, 0.9, 1.3 }, { "Pine", 3, 1.5, 2.0 } },
+	swamp = { { "Tree2", 6, 1.6, 2.2, LEAF.swamp }, { "DeadTree", 3, 1.4, 2.0 } },
+	coast = { { "TallPine", 4, 0.8, 1.1 }, { "Pine", 4, 1.3, 1.8 }, { "Oak", 1, 1.0, 1.3 } },
+	redrock = { { "TallPine", 5, 0.8, 1.1 }, { "DeadTree", 2, 1.3, 1.8 }, { "Pine", 2, 1.3, 1.7 } },
+	snow = { { "SnowPine", 9, 1.6, 2.4 } },
+	volcanic = { { "DeadTree", 6, 1.4, 2.2 }, { "Tree2", 1, 1.4, 1.8 } },
+	crystal = { { "CrystalPine", 5, 1.4, 2.0 }, { "TallPine", 3, 0.9, 1.2 }, { "Crystal", 2, 0.6, 1.2 } },
+	ruins = { { "Oak", 5, 1.5, 2.2 }, { "Tree2", 3, 1.6, 2.2 }, { "TallPine", 2, 0.9, 1.2 } },
+	hidden = { { "Oak", 5, 1.8, 2.6 }, { "Blossom", 3, 1.4, 1.9 }, { "TallPine", 2, 1.1, 1.4 } },
+	dark = { { "DeadTree", 5, 1.5, 2.4 }, { "TallPine", 3, 0.9, 1.2, Color3.fromRGB(36, 52, 40) } },
+	mixed = { { "TallPine", 4, 0.9, 1.2 }, { "Oak", 4, 1.2, 1.6 }, { "Tree2", 3, 1.5, 2.0 } },
+}
+-- sub-bosque por kit (arbustos, rochas e flores nas bordas e clareiras)
+local UNDER = {
+	default = { { "Bush", 5, 1.0, 1.6 }, { "Boulder", 2, 0.9, 2.2 }, { "Flowers", 3, 1.2, 2.0 } },
+	snow = { { "Boulder", 1, 1.0, 2.4 } },
+	volcanic = { { "Boulder", 1, 1.0, 2.6 } },
+	dark = { { "Boulder", 2, 1.0, 2.6 }, { "Bush", 1, 0.9, 1.3 } },
+	swamp = { { "Bush", 4, 1.0, 1.6, LEAF.swamp }, { "Mushroom", 1, 0.5, 0.9 } },
+	enchanted = { { "Mushroom", 3, 0.6, 1.2 }, { "Flowers", 4, 1.2, 2.0 }, { "Bush", 2, 1.0, 1.4 } },
+	crystal = { { "Crystal", 1, 0.4, 0.8 }, { "Boulder", 2, 1.0, 2.0 } },
 }
 WorldBuilder.KITS = KITS
 
@@ -977,7 +996,7 @@ function WorldBuilder:buildGrove(f, parent: Instance): number
 	local grove = Instance.new("Model")
 	grove.Name = string.format("Grove%02d", f.id)
 	local n = 0
-	local SP = 17
+	local SP = 22
 	local seed = f.id * 7.31
 	for gx = -380, 380, SP do
 		for gy = -380, 380, SP do
@@ -996,7 +1015,7 @@ function WorldBuilder:buildGrove(f, parent: Instance): number
 					local clump = math.noise(x / 45, y / 45, seed + 17)
 					local p
 					if r < rout then
-						p = 0.62 + 0.3 * clump -- denso com pequenas clareiras
+						p = 0.5 + 0.3 * clump -- denso com pequenas clareiras
 					else
 						p = 0.12 * (1 - (r - rout) / 70) + 0.1 * clump -- árvores soltas além da borda
 					end
@@ -1011,7 +1030,7 @@ function WorldBuilder:buildGrove(f, parent: Instance): number
 							end
 							self:plant(e[1], hit.Position, rng:NextNumber(e[3], e[4]), grove, e[5])
 							n += 1
-							if e[1] ~= "Bush" and rng:NextNumber() < 0.22 then
+							if e[1] ~= "Bush" and rng:NextNumber() < 0.35 then
 								local bx, by = x + rng:NextNumber(-6, 6), y + rng:NextNumber(-6, 6)
 								local bh = self:surface(bx, by)
 								if bh and bh.Material ~= Enum.Material.Water then
@@ -1062,59 +1081,120 @@ end
 --------------------------------------------------------------------------
 -- Acampamentos, waypoints, marcos, castelo, dungeon
 --------------------------------------------------------------------------
+-- Acampamentos para dragões (D10): bebedouro grande, cochos de carne, poleiros,
+-- ninhos de palha e um abrigo alto, tudo em escala de dragão.
 function WorldBuilder:buildCamps()
 	self:status("camps")
 	local folder = self:container("Camps", self:worldFolder())
+	local rng = self.rng
 	for i, c in ipairs(self.data.CAMPS) do
 		local m = Instance.new("Model")
-		m.Name = string.format("Camp%02d", i)
+		m.Name = string.format("DragonCamp%02d", i)
+		local face = rng:NextNumber(0, math.pi * 2)
 		local gy = self:groundY(c.x, c.y)
 		local C = V(c.x, c.y, gy)
-		local face = self.rng:NextNumber(0, math.pi * 2)
-		if not self:placeAsset("Camp", CFrame.new(C) * CFrame.Angles(0, face, 0), 1, m, 0.3) then
-			part({ Name = "Tent", Size = Vector3.new(12, 8, 10), CFrame = CFrame.new(C + Vector3.new(0, 4, 0)), Material = Enum.Material.Fabric, Color = Color3.fromRGB(200, 180, 140) }, m)
+		local R = CFrame.new(C) * CFrame.Angles(0, face, 0)
+		local function at(dx: number, dz: number): Vector3
+			local p = (R * CFrame.new(dx, 0, dz)).Position
+			return Vector3.new(p.X, self:groundY(p.X, -p.Z), p.Z)
 		end
-		-- fogueira acesa
-		local fireBase = CFrame.new(C) * CFrame.Angles(0, face, 0) * CFrame.new(0, 0, 18)
-		local fp = fireBase.Position
-		fp = Vector3.new(fp.X, self:groundY(fp.X, -fp.Z), fp.Z)
-		local logs = part({ Name = "Campfire", Shape = Enum.PartType.Cylinder, Size = Vector3.new(1, 5, 5), CFrame = CFrame.new(fp + Vector3.new(0, 0.4, 0)) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Wood, Color = DARKWOOD }, m)
+		-- chão batido e anel de pedras
+		self:paintDisc(c.x, c.y, 58, Enum.Material.Ground)
+		for k = 0, 17 do
+			local a = k / 18 * math.pi * 2
+			local p = at(math.cos(a) * 62, math.sin(a) * 62)
+			self:plant("Boulder", p, rng:NextNumber(0.8, 1.4), m)
+		end
+		-- bebedouro: lagoa de pedra para dragões beberem
+		local wp = at(-26, 6)
+		Terrain:FillCylinder(CFrame.new(wp + Vector3.new(0, -1.5, 0)), 10, 17, Enum.Material.Air)
+		Terrain:FillCylinder(CFrame.new(wp + Vector3.new(0, -5, 0)), 6, 17, Enum.Material.Water)
+		Terrain:FillCylinder(CFrame.new(wp + Vector3.new(0, -9, 0)), 3, 18, Enum.Material.Slate)
+		for k = 0, 13 do
+			local a = k / 14 * math.pi * 2
+			local p = wp + Vector3.new(math.cos(a) * 19, 0, math.sin(a) * 19)
+			part({ Name = "BasinStone", Size = Vector3.new(5, 2.6, 4) * rng:NextNumber(0.9, 1.3), CFrame = CFrame.new(p.X, self:groundY(p.X, -p.Z) + 0.6, p.Z) * CFrame.Angles(0, a, 0), Material = Enum.Material.Slate, Color = Color3.fromRGB(112, 114, 118) }, m)
+		end
+		local basin = part({ Name = "DragonWater", Size = Vector3.new(30, 1, 30), CFrame = CFrame.new(wp), Transparency = 1, CanCollide = false, CanQuery = false }, m)
+		basin:SetAttribute("DragonWater", true)
+		-- cochos de carne (pedra), com pedaços grandes e ossos
+		for t = 0, 1 do
+			local tc = R * CFrame.new(18 + t * 2, 0, -14 + t * 22) * CFrame.Angles(0, math.rad(80 + t * 20), 0)
+			local tp = Vector3.new(tc.Position.X, self:groundY(tc.Position.X, -tc.Position.Z), tc.Position.Z)
+			local base = CFrame.new(tp) * tc.Rotation
+			part({ Name = "TroughBase", Size = Vector3.new(32, 2, 9), CFrame = base * CFrame.new(0, 1, 0), Material = Enum.Material.Slate, Color = Color3.fromRGB(100, 100, 104) }, m)
+			part({ Name = "TroughWallL", Size = Vector3.new(32, 3.5, 1.4), CFrame = base * CFrame.new(0, 3, -3.9), Material = Enum.Material.Slate, Color = Color3.fromRGB(110, 110, 114) }, m)
+			part({ Name = "TroughWallR", Size = Vector3.new(32, 3.5, 1.4), CFrame = base * CFrame.new(0, 3, 3.9), Material = Enum.Material.Slate, Color = Color3.fromRGB(110, 110, 114) }, m)
+			for k = -3, 3 do
+				part({ Name = "Meat", Shape = Enum.PartType.Ball, Size = Vector3.new(5, 3, 4) * rng:NextNumber(0.8, 1.2), CFrame = base * CFrame.new(k * 4.2, 3.4, rng:NextNumber(-1.2, 1.2)) * CFrame.Angles(0, rng:NextNumber(0, 3), 0), Material = Enum.Material.SmoothPlastic, Color = Color3.fromRGB(150, 58, 50), CanCollide = false }, m)
+				if k % 2 == 0 then
+					part({ Name = "Bone", Shape = Enum.PartType.Cylinder, Size = Vector3.new(6, 0.9, 0.9), CFrame = base * CFrame.new(k * 4.2 + 1, 4.6, 0.8) * CFrame.Angles(0, rng:NextNumber(0, 3), 0), Material = Enum.Material.SmoothPlastic, Color = Color3.fromRGB(232, 222, 196), CanCollide = false }, m)
+				end
+			end
+			local food = part({ Name = "DragonFood", Size = Vector3.new(32, 1, 9), CFrame = base * CFrame.new(0, 3, 0), Transparency = 1, CanCollide = false, CanQuery = false }, m)
+			food:SetAttribute("DragonFood", true)
+		end
+		-- varal alto de carne seca
+		do
+			local rp = at(30, 26)
+			local rc = CFrame.new(rp) * R.Rotation
+			for _, sx in ipairs({ -11, 11 }) do
+				part({ Name = "RackPost", Size = Vector3.new(1.8, 22, 1.8), CFrame = rc * CFrame.new(sx, 11, 0), Material = Enum.Material.Wood, Color = DARKWOOD }, m)
+			end
+			part({ Name = "RackBar", Size = Vector3.new(25, 1.4, 1.4), CFrame = rc * CFrame.new(0, 21.5, 0), Material = Enum.Material.Wood, Color = DARKWOOD }, m)
+			for k = -4, 4, 2 do
+				part({ Name = "HangingMeat", Size = Vector3.new(2.6, 6, 1.8), CFrame = rc * CFrame.new(k * 2.2, 17, 0), Material = Enum.Material.SmoothPlastic, Color = Color3.fromRGB(140, 60, 48), CanCollide = false }, m)
+			end
+		end
+		-- abrigo alto e aberto (dragões cabem por baixo)
+		do
+			local sp = at(4, -34)
+			local sc = CFrame.new(sp) * R.Rotation
+			for _, o in ipairs({ { -20, -14 }, { 20, -14 }, { -20, 14 }, { 20, 14 } }) do
+				part({ Name = "ShelterPost", Size = Vector3.new(2.6, 30, 2.6), CFrame = sc * CFrame.new(o[1], 15, o[2]), Material = Enum.Material.Wood, Color = DARKWOOD }, m)
+			end
+			for _, sz in ipairs({ -1, 1 }) do
+				local roof = Instance.new("WedgePart")
+				roof.Name = "ShelterRoof"
+				roof.Anchored = true
+				roof.Size = Vector3.new(46, 7, 18)
+				roof.CFrame = sc * CFrame.new(0, 33.5, sz * 9) * (if sz < 0 then CFrame.Angles(0, math.rad(180), 0) else CFrame.new())
+				roof.Material = Enum.Material.WoodPlanks
+				roof.Color = Color3.fromRGB(120, 86, 56)
+				roof.Parent = m
+			end
+			-- camas de palha (ninhos grandes) sob o abrigo e ao lado
+			for k, o in ipairs({ { -10, -34 }, { 14, -36 }, { -34, -16 } }) do
+				local np = at(o[1] + (if k < 3 then 4 else 0), o[2])
+				if not self:placeAsset("Nest", CFrame.new(np) * CFrame.Angles(0, rng:NextNumber(0, 6), 0), 2.4, m, 0.6) then
+					part({ Name = "StrawBed", Shape = Enum.PartType.Cylinder, Size = Vector3.new(1, 26, 26), CFrame = CFrame.new(np + Vector3.new(0, 0.5, 0)) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Fabric, Color = Color3.fromRGB(214, 184, 110), CanCollide = false }, m)
+				end
+			end
+		end
+		-- poleiros: rochas grandes e uma árvore morta alta
+		for _, o in ipairs({ { 42, -6 }, { -44, -40 }, { -6, 44 } }) do
+			self:plant("Boulder", at(o[1], o[2]), rng:NextNumber(3.2, 4.5), m)
+		end
+		self:plant("DeadTree", at(-46, 30), 3.2, m)
+		-- braseiro grande
+		local bp = at(0, 4)
+		part({ Name = "BrazierBase", Shape = Enum.PartType.Cylinder, Size = Vector3.new(3, 9, 9), CFrame = CFrame.new(bp + Vector3.new(0, 1.5, 0)) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Cobblestone, Color = Color3.fromRGB(96, 92, 88) }, m)
+		local coals = part({ Name = "Coals", Shape = Enum.PartType.Cylinder, Size = Vector3.new(1, 7, 7), CFrame = CFrame.new(bp + Vector3.new(0, 3.3, 0)) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Neon, Color = Color3.fromRGB(255, 110, 40) }, m)
 		local fire = Instance.new("Fire")
-		fire.Size = 5
-		fire.Heat = 6
-		fire.Parent = logs
+		fire.Size = 9
+		fire.Heat = 12
+		fire.Parent = coals
 		local pl = Instance.new("PointLight")
 		pl.Color = Color3.fromRGB(255, 160, 80)
-		pl.Range = 26
-		pl.Brightness = 1.6
+		pl.Range = 40
+		pl.Brightness = 1.8
 		pl.Shadows = false
-		pl.Parent = logs
-		-- cocho de água e comida para os dragões (D10)
-		local tcf = CFrame.new(C) * CFrame.Angles(0, face, 0) * CFrame.new(-16, 0, 8)
-		local tp = Vector3.new(tcf.Position.X, self:groundY(tcf.Position.X, -tcf.Position.Z), tcf.Position.Z)
-		part({ Name = "DragonWaterTrough", Size = Vector3.new(14, 2.4, 4.5), CFrame = CFrame.new(tp + Vector3.new(0, 1.2, 0)) * tcf.Rotation, Material = Enum.Material.Slate, Color = Color3.fromRGB(120, 122, 128) }, m)
-		part({ Name = "Water", Size = Vector3.new(13, 0.3, 3.7), CFrame = CFrame.new(tp + Vector3.new(0, 2.35, 0)) * tcf.Rotation, Material = Enum.Material.Glass, Color = Color3.fromRGB(70, 150, 230), Transparency = 0.25, CanCollide = false }, m)
-		local fcf = CFrame.new(C) * CFrame.Angles(0, face, 0) * CFrame.new(16, 0, 8)
-		local fpp = Vector3.new(fcf.Position.X, self:groundY(fcf.Position.X, -fcf.Position.Z), fcf.Position.Z)
-		part({ Name = "DragonFoodTrough", Size = Vector3.new(14, 2.4, 4.5), CFrame = CFrame.new(fpp + Vector3.new(0, 1.2, 0)) * fcf.Rotation, Material = Enum.Material.WoodPlanks, Color = WOOD }, m)
-		for k = -2, 2 do
-			part({ Name = "Meat", Shape = Enum.PartType.Ball, Size = Vector3.new(2.6, 1.6, 2), CFrame = CFrame.new(fpp + (fcf.RightVector * k * 2.6) + Vector3.new(0, 2.7, 0)), Material = Enum.Material.SmoothPlastic, Color = Color3.fromRGB(170, 70, 60), CanCollide = false }, m)
-		end
+		pl.Parent = coals
 		m:SetAttribute("CampName", c.name)
 		m:SetAttribute("DragonFood", true)
 		m:SetAttribute("DragonWater", true)
-		zoneMarker("SafeZone", "Safe", C, 60, m)
+		zoneMarker("SafeZone", "Safe", C, 70, m)
 		m.Parent = folder
-		-- algumas árvores em volta
-		for k = 1, 10 do
-			local a = k / 10 * math.pi * 2 + self.rng:NextNumber(-0.2, 0.2)
-			local R = self.rng:NextNumber(55, 85)
-			local x, y = c.x + math.cos(a) * R, c.y + math.sin(a) * R
-			local hit = self:surface(x, y)
-			if hit and hit.Material ~= Enum.Material.Water and self:roadDist(x, y) > 12 then
-				self:plant(if k % 3 == 0 then "Bush" else "Oak", hit.Position, self.rng:NextNumber(0.8, 1.1), m)
-			end
-		end
 		task.wait()
 	end
 end
@@ -1425,22 +1505,26 @@ end
 -- Florestas e rochas espalhadas por região
 --------------------------------------------------------------------------
 -- espaçamento da grade, limiar do agrupamento (menor = mais denso), kit, altura máxima
+-- Vegetação "na medida": manchas de floresta alta com clareiras, bordas mais ralas,
+-- árvores solitárias nos campos e sub-bosque de arbustos, rochas e flores.
+-- limiar (maior = menos floresta), kit, altura máxima, sub-bosque
 local FOREST = {
-	land = { 64, 0.22, "mixed", 400 },
-	meadow = { 72, 0.28, "meadow", 400 },
-	forest = { 34, -0.2, "pine", 500 },
-	enchanted = { 38, -0.1, "enchanted", 500 },
-	lakeland = { 60, 0.18, "lake", 300 },
-	coast = { 72, 0.25, "coast", 300 },
-	swamp = { 46, 0.0, "swamp", 200 },
-	swampcore = { 46, 0.05, "swamp", 200 },
-	mountain = { 56, 0.05, "fir", 560 },
-	snow = { 64, 0.15, "snow", 760 },
-	volcanic = { 80, 0.25, "volcanic", 600 },
-	crystal = { 64, 0.15, "crystal", 600 },
-	ruins = { 64, 0.2, "ruins", 500 },
-	castle = { 70, 0.2, "dark", 700 },
+	land = { 0.35, "mixed", 420, "default" },
+	meadow = { 0.55, "meadow", 420, "default" },
+	forest = { -0.05, "pine", 520, "default" },
+	enchanted = { 0.05, "enchanted", 520, "enchanted" },
+	lakeland = { 0.45, "lake", 320, "default" },
+	coast = { 0.5, "coast", 320, "default" },
+	swamp = { 0.2, "swamp", 220, "swamp" },
+	swampcore = { 0.25, "swamp", 220, "swamp" },
+	mountain = { 0.25, "fir", 560, "default" },
+	snow = { 0.35, "snow", 760, "snow" },
+	volcanic = { 0.6, "volcanic", 620, "volcanic" },
+	crystal = { 0.35, "crystal", 620, "crystal" },
+	ruins = { 0.4, "ruins", 520, "default" },
+	castle = { 0.45, "dark", 720, "dark" },
 }
+WorldBuilder.UNDER = UNDER
 
 function WorldBuilder:excluded(x: number, y: number): boolean
 	for _, p in ipairs(self.gen.pads) do
@@ -1461,50 +1545,80 @@ function WorldBuilder:excluded(x: number, y: number): boolean
 	return self:roadDist(x, y) < 16
 end
 
--- Planta a floresta de um bloco de 1024 x 1024 studs (bi, bj = índices de 0 a 15)
+-- Planta a vegetação de um bloco de 1024 x 1024 studs (bi, bj = índices de 0 a 15)
 function WorldBuilder:forestBlock(bi: number, bj: number, parent: Instance): number
 	local rng = self.rng
 	local half = self.data.SIZE / 2
 	local x0, y0 = -half + bi * 1024, -half + bj * 1024
 	local block = Instance.new("Folder")
 	block.Name = string.format("F_%02d_%02d", bi, bj)
+	local detail = Instance.new("Folder")
+	detail.Name = "Detail" -- arbustos, flores e rochas pequenas (a ferramenta de qualidade pode esconder)
+	detail.Parent = block
 	local n = 0
 	local gen = self.gen
-	local y = y0
-	while y < y0 + 1024 do
-		local x = x0
-		local rowStep = 40
-		while x < x0 + 1024 do
-			local t = gen.types[gen:domAt(x, y)]
-			local cfg = FOREST[t]
-			local step = if cfg then cfg[1] else 80
-			rowStep = math.min(rowStep, step)
-			if cfg then
-				local jx = x + rng:NextNumber(-0.45, 0.45) * step
-				local jy = y + rng:NextNumber(-0.45, 0.45) * step
-				local c = math.noise(jx / 320, jy / 320, 31.7) * 1.4 + math.noise(jx / 95, jy / 95, 33.1) * 0.5
-				if c > cfg[2] and not self:excluded(jx, jy) then
-					local hit = self:surface(jx, jy)
-					if hit and hit.Material ~= Enum.Material.Water and hit.Position.Y < cfg[4] and hit.Position.Y > 1 then
-						local steep = hit.Normal.Y < 0.8
-						local e = if steep then { "Boulder", 1, 0.8, 2.0 } else self:pickAt(KITS[cfg[3]], jx, jy)
-						if not steep or rng:NextNumber() < 0.25 then
-							self:plant(e[1], hit.Position, rng:NextNumber(e[3], e[4]), block, e[5])
-							n += 1
+	local STEP = 30
+	local function put(e, x: number, y: number, small: boolean)
+		local hit = self:surface(x, y)
+		if hit and hit.Material ~= Enum.Material.Water and hit.Position.Y > 1 and not self:excluded(x, y) then
+			if hit.Normal.Y < 0.78 and e[1] ~= "Boulder" then
+				return
+			end
+			local m = self:plant(e[1], hit.Position, rng:NextNumber(e[3], e[4]), if small then detail else block, e[5])
+			if m and small then
+				for _, d in ipairs(m:GetDescendants()) do
+					if d:IsA("BasePart") then
+						d.CastShadow = false
+						if e[1] == "Flowers" then
+							d.CanCollide = false
 						end
-					end
-				elseif c < cfg[2] - 0.9 and rng:NextNumber() < 0.04 then
-					-- rochas soltas nas áreas abertas
-					local hit = self:surface(jx, jy)
-					if hit and hit.Material ~= Enum.Material.Water and not self:excluded(jx, jy) then
-						self:plant("Boulder", hit.Position, rng:NextNumber(0.7, 1.8), block)
-						n += 1
 					end
 				end
 			end
-			x += step
+			n += 1
 		end
-		y += rowStep
+	end
+	for y = y0, y0 + 1024 - 1, STEP do
+		for x = x0, x0 + 1024 - 1, STEP do
+			local jx = x + rng:NextNumber(0, STEP)
+			local jy = y + rng:NextNumber(0, STEP)
+			local t = gen.types[gen:domAt(jx, jy)]
+			local cfg = FOREST[t]
+			if cfg then
+				local m = math.noise(jx / 650, jy / 650, 51.3) * 1.5 + math.noise(jx / 210, jy / 210, 52.9) * 0.6
+				local under = UNDER[cfg[4]] or UNDER.default
+				local p
+				if m > cfg[1] + 0.3 then
+					p = 0.62 -- miolo da mancha de floresta
+				elseif m > cfg[1] then
+					p = 0.2 -- borda rala
+				else
+					p = 0.012 -- árvore solitária no campo
+				end
+				local hit0 = nil
+				if rng:NextNumber() < p then
+					hit0 = true
+					local e = self:pickAt(KITS[cfg[2]], jx, jy)
+					local hit = self:surface(jx, jy)
+					if hit and hit.Position.Y < cfg[3] then
+						put(e, jx, jy, false)
+					end
+				end
+				-- sub-bosque: mais na borda da floresta; flores e rochas nos campos, em grupos
+				local u = if m > cfg[1] + 0.3 then 0.12 elseif m > cfg[1] - 0.15 then 0.22 else 0.035
+				if rng:NextNumber() < u then
+					local e = self:pickAt(under, jx + 300, jy)
+					local count = if e[1] == "Flowers" then rng:NextInteger(3, 6) elseif e[1] == "Boulder" then rng:NextInteger(1, 3) else rng:NextInteger(1, 3)
+					for _ = 1, count do
+						local ox, oy = rng:NextNumber(-9, 9), rng:NextNumber(-9, 9)
+						if hit0 then
+							ox, oy = ox + 8, oy + 8
+						end
+						put(e, jx + ox, jy + oy, e[1] ~= "Boulder" or e[4] < 1.6)
+					end
+				end
+			end
+		end
 	end
 	block.Parent = parent
 	return n
