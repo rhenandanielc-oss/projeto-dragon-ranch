@@ -10,6 +10,7 @@ local CollectionService = game:GetService("CollectionService")
 local Theme = require(script.Parent.Theme)
 local NetClient = require(ReplicatedStorage.Shared.Net.NetClient)
 local GraphicsConfig = require(ReplicatedStorage.Shared.Config.Graphics)
+local Wind = require(script.Parent.Parent.World.Wind)
 
 local GraphicsSettings = {}
 
@@ -83,6 +84,7 @@ function GraphicsSettings.Apply(id: string)
 	if atm then
 		atm.Density = base.Density * preset.Atmosphere
 	end
+	Wind.SetEnabled(preset.Wind)
 	local clouds = workspace.Terrain:FindFirstChildOfClass("Clouds")
 	if clouds then
 		clouds.Enabled = preset.Clouds

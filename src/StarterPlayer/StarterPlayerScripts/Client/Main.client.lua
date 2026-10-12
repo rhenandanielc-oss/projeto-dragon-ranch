@@ -18,6 +18,7 @@ local Dialog = require(UI:WaitForChild("Dialog"))
 local FarmChooser = require(UI:WaitForChild("FarmChooser"))
 local Compass = require(UI:WaitForChild("Compass"))
 local GraphicsSettings = require(UI:WaitForChild("GraphicsSettings"))
+local Wind = require(Client:WaitForChild("World"):WaitForChild("Wind"))
 
 -- Tela principal
 local screen = Theme.new("ScreenGui", {
@@ -34,6 +35,7 @@ StarterChooser.Init(screen)
 Dialog.Init(screen)
 FarmChooser.Init(screen)
 Compass.Init(screen)
+Wind.Init()
 GraphicsSettings.Init(screen)
 
 -- Cada jogador só vê as ações dos próprios dragões.

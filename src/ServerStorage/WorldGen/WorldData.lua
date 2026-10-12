@@ -108,15 +108,18 @@ WorldData.FARMS = {
 WorldData.FARM_R0 = 150 -- raio plano (interior de 200 x 200)
 WorldData.FARM_R1 = 330 -- fim da transição para o relevo natural
 
+-- Acampamentos para dragões: ao lado das estradas (o portão fica virado para a estrada)
 WorldData.CAMPS = {
-	{ name = "Acampamento do Rio", x = -3200, y = -1600 },
-	{ name = "Acampamento da Fenda", x = -4900, y = -700 },
-	{ name = "Acampamento do Passo", x = -900, y = 3700 },
-	{ name = "Acampamento do Lago", x = 2700, y = 0 },
-	{ name = "Acampamento do Sul", x = -1000, y = -5000 },
-	{ name = "Acampamento do Brejo", x = 1900, y = -4900 },
-	{ name = "Acampamento do Nordeste", x = 3200, y = 4000 },
+	{ name = "Acampamento do Rio", x = -3297, y = -970 },
+	{ name = "Acampamento da Fenda", x = -4917, y = -814 },
+	{ name = "Acampamento do Passo", x = -1249, y = 3630 },
+	{ name = "Acampamento do Lago", x = 2737, y = -53 },
+	{ name = "Acampamento do Sul", x = -899, y = -5055 },
+	{ name = "Acampamento do Brejo", x = 2530, y = -4179 },
+	{ name = "Acampamento do Nordeste", x = 3372, y = 4190 },
 }
+WorldData.CAMP_R0 = 92 -- área plana do acampamento
+WorldData.CAMP_R1 = 160
 
 WorldData.WAYPOINTS = {
 	{ name = "Pico Branco", x = -4600, y = 6000 },

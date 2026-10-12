@@ -292,8 +292,76 @@ function WorldBuilder:terrainRock(pos: Vector3, scale: number)
 	end
 end
 
+local CollectionService = game:GetService("CollectionService")
+local TREE_KINDS = { TallPine = true, Pine = true, Oak = true, Tree2 = true, Blossom = true, DeadTree = true, SnowPine = true, CrystalPine = true, Mushroom = true }
+local SMALL_KINDS = { Bush = true, Fern = true, Flowers = true, FruitBush = true }
+
+-- Vegetação: folhas sem colisão (dá para atravessar), tronco com colisor simples,
+-- e marcas para o vento do cliente (folhas balançando).
+function WorldBuilder:finishVegetation(m: Instance, kind: string)
+	if not m:IsA("Model") then
+		return
+	end
+	local parts = {}
+	for _, d in ipairs(m:GetDescendants()) do
+		if d:IsA("BasePart") then
+			table.insert(parts, d)
+		end
+	end
+	if #parts == 0 then
+		return
+	end
+	local bcf, size = m:GetBoundingBox()
+	local base = bcf.Position - Vector3.new(0, size.Y / 2, 0)
+	for _, p in ipairs(parts) do
+		p.CanCollide = false
+		p.CanTouch = false
+		p.CanQuery = false
+	end
+	if TREE_KINDS[kind] then
+		local trunk, low = nil, math.huge
+		if #parts >= 2 then
+			for _, p in ipairs(parts) do
+				local b = p.Position.Y - p.Size.Y / 2
+				local foot = p.Size.X * p.Size.Z
+				local score = b + foot * 0.002
+				if p.Name == "Trunk" then
+					score = -math.huge
+				end
+				if score < low then
+					low, trunk = score, p
+				end
+			end
+		end
+		for _, p in ipairs(parts) do
+			if p ~= trunk and #parts >= 2 then
+				p:SetAttribute("SwayBase", base)
+				p:SetAttribute("SwayH", size.Y)
+				CollectionService:AddTag(p, "WindLeaf")
+			end
+		end
+		local w = math.clamp(size.Y * 0.045, 1.6, 8)
+		local ch = math.min(size.Y * 0.5, 45)
+		part({ Name = "TrunkCollider", Shape = Enum.PartType.Cylinder, Size = Vector3.new(ch, w, w), CFrame = CFrame.new(base + Vector3.new(0, ch / 2, 0)) * CFrame.Angles(0, 0, math.rad(90)), Transparency = 1, CanCollide = true, CanQuery = false, CanTouch = false }, m)
+	elseif SMALL_KINDS[kind] then
+		for _, p in ipairs(parts) do
+			p:SetAttribute("SwayBase", base)
+			p:SetAttribute("SwayH", math.max(size.Y, 2))
+			CollectionService:AddTag(p, "WindBush")
+		end
+	end
+end
+
 -- Planta árvore/arbusto/rocha no chão (pos já na superfície)
 function WorldBuilder:plant(kind: string, pos: Vector3, scale: number, parent: Instance, leaf: Color3?)
+	local m = self:plantRaw(kind, pos, scale, parent, leaf)
+	if m then
+		self:finishVegetation(m, kind)
+	end
+	return m
+end
+
+function WorldBuilder:plantRaw(kind: string, pos: Vector3, scale: number, parent: Instance, leaf: Color3?)
 	local cf = CFrame.new(pos) * CFrame.Angles(0, self.rng:NextNumber(0, math.pi * 2), 0)
 	if kind == "Boulder" then
 		self:terrainRock(pos, scale)
@@ -1115,119 +1183,283 @@ end
 --------------------------------------------------------------------------
 -- Acampamentos, waypoints, marcos, castelo, dungeon
 --------------------------------------------------------------------------
--- Acampamentos para dragões (D10): bebedouro grande, cochos de carne, poleiros,
--- ninhos de palha e um abrigo alto, tudo em escala de dragão.
+-- Direção (no mapa) da estrada mais próxima de um ponto
+function WorldBuilder:roadDirection(x: number, y: number): (number, number)
+	local best, bx, by = math.huge, nil, nil
+	local WorldGen = require((self.folder :: any).WorldGen:Clone())
+	for _, road in ipairs(self.data.ROADS) do
+		for _, p in ipairs(WorldGen.sampleOpen(road, 10)) do
+			local d = (p[1] - x) ^ 2 + (p[2] - y) ^ 2
+			if d < best then
+				best, bx, by = d, p[1], p[2]
+			end
+		end
+	end
+	if not bx then
+		return 0, -1
+	end
+	local dx, dy = bx - x, by - y
+	local L = math.max(1, math.sqrt(dx * dx + dy * dy))
+	return dx / L, dy / L
+end
+
+-- Acampamentos para dragões (D10): área cercada de ~180 studs ao lado da estrada, com
+-- portão, círculo de pouso, lagoa-bebedouro, área de alimentação, estábulo aberto com
+-- baias e camas de palha, torres-poleiro, cabana do tratador e braseiros.
 function WorldBuilder:buildCamps()
 	self:status("camps")
 	local folder = self:container("Camps", self:worldFolder())
 	local rng = self.rng
+	local WOODC, DARK = WOOD, DARKWOOD
 	for i, c in ipairs(self.data.CAMPS) do
 		local m = Instance.new("Model")
 		m.Name = string.format("DragonCamp%02d", i)
-		local face = rng:NextNumber(0, math.pi * 2)
+		local ex, ey = self:roadDirection(c.x, c.y)
 		local gy = self:groundY(c.x, c.y)
 		local C = V(c.x, c.y, gy)
-		local R = CFrame.new(C) * CFrame.Angles(0, face, 0)
+		-- -Z local aponta para a estrada (portão)
+		local R = CFrame.lookAt(C, C + Vector3.new(ex, 0, -ey))
 		local function at(dx: number, dz: number): Vector3
 			local p = (R * CFrame.new(dx, 0, dz)).Position
 			return Vector3.new(p.X, self:groundY(p.X, -p.Z), p.Z)
 		end
-		-- chão batido e anel de pedras
-		self:paintDisc(c.x, c.y, 58, Enum.Material.Ground)
-		for k = 0, 17 do
-			local a = k / 18 * math.pi * 2
-			local p = at(math.cos(a) * 62, math.sin(a) * 62)
-			self:plant("Boulder", p, rng:NextNumber(0.8, 1.4), m)
+		local function cfAt(dx: number, dz: number, yaw: number?): CFrame
+			return CFrame.new(at(dx, dz)) * R.Rotation * CFrame.Angles(0, math.rad(yaw or 0), 0)
 		end
-		-- bebedouro: lagoa natural com borda de rochas (terreno)
-		local wp = at(-26, 6)
-		local wg = wp.Y
-		Terrain:FillCylinder(CFrame.new(wp.X, wg + 2, wp.Z), 14, 17, Enum.Material.Air)
-		Terrain:FillCylinder(CFrame.new(wp.X, wg - 7, wp.Z), 4, 19, Enum.Material.Slate)
-		Terrain:FillCylinder(CFrame.new(wp.X, wg - 2.5, wp.Z), 5, 16.5, Enum.Material.Water)
-		for k = 0, 15 do
-			local a = k / 16 * math.pi * 2
-			Terrain:FillBall(Vector3.new(wp.X + math.cos(a) * 18.5, wg - 0.5 + rng:NextNumber(-0.5, 1), wp.Z + math.sin(a) * 18.5), rng:NextNumber(3, 4.2), Enum.Material.Rock)
+		local function p(props)
+			return part(props, m)
 		end
-		local basin = part({ Name = "DragonWater", Size = Vector3.new(30, 1, 30), CFrame = CFrame.new(wp), Transparency = 1, CanCollide = false, CanQuery = false }, m)
-		basin:SetAttribute("DragonWater", true)
-		-- cochos de carne (pedra), com pedaços grandes e ossos
-		for t = 0, 1 do
-			local tc = R * CFrame.new(18 + t * 2, 0, -14 + t * 22) * CFrame.Angles(0, math.rad(80 + t * 20), 0)
-			local tp = Vector3.new(tc.Position.X, self:groundY(tc.Position.X, -tc.Position.Z), tc.Position.Z)
-			local base = CFrame.new(tp) * tc.Rotation
-			part({ Name = "TroughBase", Size = Vector3.new(32, 2, 9), CFrame = base * CFrame.new(0, 1, 0), Material = Enum.Material.Slate, Color = Color3.fromRGB(100, 100, 104) }, m)
-			part({ Name = "TroughWallL", Size = Vector3.new(32, 3.5, 1.4), CFrame = base * CFrame.new(0, 3, -3.9), Material = Enum.Material.Slate, Color = Color3.fromRGB(110, 110, 114) }, m)
-			part({ Name = "TroughWallR", Size = Vector3.new(32, 3.5, 1.4), CFrame = base * CFrame.new(0, 3, 3.9), Material = Enum.Material.Slate, Color = Color3.fromRGB(110, 110, 114) }, m)
-			for k = -3, 3 do
-				part({ Name = "Meat", Shape = Enum.PartType.Ball, Size = Vector3.new(5, 3, 4) * rng:NextNumber(0.8, 1.2), CFrame = base * CFrame.new(k * 4.2, 3.4, rng:NextNumber(-1.2, 1.2)) * CFrame.Angles(rng:NextNumber(-0.4, 0.4), rng:NextNumber(0, 3), 0), Material = Enum.Material.Fabric, Color = Color3.fromRGB(122, 46, 40), CanCollide = false }, m)
-				if k % 2 == 0 then
-					part({ Name = "Bone", Shape = Enum.PartType.Cylinder, Size = Vector3.new(6, 0.9, 0.9), CFrame = base * CFrame.new(k * 4.2 + 1, 4.6, 0.8) * CFrame.Angles(0, rng:NextNumber(0, 3), 0), Material = Enum.Material.SmoothPlastic, Color = Color3.fromRGB(232, 222, 196), CanCollide = false }, m)
+
+		-- chão: terra batida, círculo de pouso de pedra e caminho até o portão
+		self:paintDisc(c.x, c.y, 88, Enum.Material.Ground)
+		self:paintDisc(c.x, c.y, 26, Enum.Material.Cobblestone)
+		self:paintStrip(at(0, -24), at(0, -96), 12, Enum.Material.Cobblestone)
+
+		-- cerca de madeira em volta, com abertura no portão
+		local fence = Instance.new("Model")
+		fence.Name = "Fence"
+		fence.Parent = m
+		local N = 56
+		for k = 0, N - 1 do
+			local a0, a1 = k / N * math.pi * 2, (k + 1) / N * math.pi * 2
+			local mid = (a0 + a1) / 2
+			-- abertura de ~20 studs na frente (-Z local)
+			if math.abs(((mid - math.rad(270)) + math.pi) % (2 * math.pi) - math.pi) > 0.13 then
+				local q0 = at(math.cos(a0) * 90, math.sin(a0) * 90)
+				local q1 = at(math.cos(a1) * 90, math.sin(a1) * 90)
+				local len = (q1 - q0).Magnitude
+				for _, hh in ipairs({ 1.6, 3.3 }) do
+					part({ Name = "Rail", Size = Vector3.new(0.6, 0.5, len + 0.4), CFrame = CFrame.lookAt((q0 + q1) / 2 + Vector3.new(0, hh, 0), q1 + Vector3.new(0, hh, 0)), Material = Enum.Material.Wood, Color = WOODC }, fence)
+				end
+				part({ Name = "Post", Size = Vector3.new(1, 4.6, 1), CFrame = CFrame.new(q0 + Vector3.new(0, 1.8, 0)), Material = Enum.Material.Wood, Color = DARK }, fence)
+			end
+		end
+		-- portão alto com placa
+		for _, sx in ipairs({ -12, 12 }) do
+			p({ Name = "GatePost", Size = Vector3.new(2.6, 24, 2.6), CFrame = cfAt(sx, -90) * CFrame.new(0, 12, 0), Material = Enum.Material.Wood, Color = DARK })
+			local flag = p({ Name = "Banner", Size = Vector3.new(0.3, 9, 4), CFrame = cfAt(sx, -90) * CFrame.new(0, 17, -1.6) * CFrame.Angles(0, math.rad(90), 0), Material = Enum.Material.Fabric, Color = Color3.fromRGB(150, 44, 40) })
+			flag.CastShadow = false
+		end
+		p({ Name = "GateBeam", Size = Vector3.new(30, 2.2, 2.6), CFrame = cfAt(0, -90) * CFrame.new(0, 23, 0), Material = Enum.Material.Wood, Color = WOODC })
+		local sign = p({ Name = "Sign", Size = Vector3.new(20, 4, 0.5), CFrame = cfAt(0, -90) * CFrame.new(0, 19.5, -1.5), Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(150, 108, 66) })
+		for _, face in ipairs({ Enum.NormalId.Front, Enum.NormalId.Back }) do
+			local gui = Instance.new("SurfaceGui")
+			gui.Face = face
+			gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
+			gui.PixelsPerStud = 30
+			gui.Parent = sign
+			local label = Instance.new("TextLabel")
+			label.Size = UDim2.fromScale(1, 1)
+			label.BackgroundTransparency = 1
+			label.Font = Enum.Font.FredokaOne
+			label.TextScaled = true
+			label.TextColor3 = Color3.fromRGB(255, 240, 210)
+			label.TextStrokeTransparency = 0.5
+			label.Text = c.name
+			label.Parent = gui
+		end
+		self:lantern(at(-16, -94), C, m)
+		self:lantern(at(16, -94), C, m)
+
+		-- círculo de pouso: pedras em pé e braseiros
+		for k = 0, 11 do
+			local a = k / 12 * math.pi * 2
+			if k % 3 == 0 then
+				local bp = at(math.cos(a) * 30, math.sin(a) * 30)
+				p({ Name = "BrazierStand", Shape = Enum.PartType.Cylinder, Size = Vector3.new(6, 4, 4), CFrame = CFrame.new(bp + Vector3.new(0, 3, 0)) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Basalt, Color = Color3.fromRGB(62, 58, 58) })
+				local bowl = p({ Name = "Brazier", Shape = Enum.PartType.Cylinder, Size = Vector3.new(1.4, 6, 6), CFrame = CFrame.new(bp + Vector3.new(0, 6.6, 0)) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Neon, Color = Color3.fromRGB(255, 120, 45) })
+				local f = Instance.new("Fire")
+				f.Size = 6
+				f.Heat = 10
+				f.Parent = bowl
+				local pl = Instance.new("PointLight")
+				pl.Color = Color3.fromRGB(255, 160, 80)
+				pl.Range = 32
+				pl.Brightness = 1.5
+				pl.Shadows = false
+				pl.Parent = bowl
+			else
+				p({ Name = "StandingStone", Size = Vector3.new(3.2, rng:NextNumber(7, 11), 2.4), CFrame = cfAt(math.cos(a) * 30, math.sin(a) * 30, math.deg(-a)) * CFrame.new(0, 3.5, 0) * CFrame.Angles(math.rad(rng:NextNumber(-5, 5)), 0, math.rad(rng:NextNumber(-5, 5))), Material = Enum.Material.Slate, Color = Color3.fromRGB(104, 106, 110) })
+			end
+		end
+		local landing = p({ Name = "LandingCircle", Size = Vector3.new(50, 1, 50), CFrame = cfAt(0, 0), Transparency = 1, CanCollide = false, CanQuery = false })
+		landing:SetAttribute("DragonLanding", true)
+
+		-- lagoa-bebedouro grande com borda de rochas, à esquerda
+		do
+			local wp = at(-56, 6)
+			local wg = wp.Y
+			Terrain:FillCylinder(CFrame.new(wp.X, wg + 2, wp.Z), 16, 23, Enum.Material.Air)
+			Terrain:FillCylinder(CFrame.new(wp.X, wg - 8, wp.Z), 4, 25, Enum.Material.Slate)
+			Terrain:FillCylinder(CFrame.new(wp.X, wg - 3, wp.Z), 6, 22.5, Enum.Material.Water)
+			for k = 0, 21 do
+				local a = k / 22 * math.pi * 2
+				Terrain:FillBall(Vector3.new(wp.X + math.cos(a) * 24.5, wg - 0.5 + rng:NextNumber(-0.5, 1.2), wp.Z + math.sin(a) * 24.5), rng:NextNumber(3, 4.6), Enum.Material.Rock)
+			end
+			-- rochas altas atrás da lagoa (de onde cai um fio d'água)
+			local back = at(-80, 14)
+			Terrain:FillBall(back + Vector3.new(0, 4, 0), 11, Enum.Material.Rock)
+			Terrain:FillBall(back + Vector3.new(4, 12, 6), 8, Enum.Material.Rock)
+			local fall = p({ Name = "Trickle", Size = Vector3.new(5, 16, 1), CFrame = CFrame.lookAt(back + Vector3.new(7, 8, 0), wp + Vector3.new(0, 8, 0)), Material = Enum.Material.Glass, Color = Color3.fromRGB(190, 225, 245), Transparency = 0.45, CanCollide = false, CanQuery = false, CastShadow = false })
+			local mist = Instance.new("ParticleEmitter")
+			mist.Texture = "rbxasset://textures/particles/smoke_main.dds"
+			mist.Color = ColorSequence.new(Color3.fromRGB(235, 245, 255))
+			mist.Transparency = NumberSequence.new(0.6, 1)
+			mist.Size = NumberSequence.new(3, 7)
+			mist.Rate = 6
+			mist.Lifetime = NumberRange.new(1.5, 3)
+			mist.Speed = NumberRange.new(2, 4)
+			mist.EmissionDirection = Enum.NormalId.Bottom
+			mist.Parent = fall
+			local water = p({ Name = "DragonWater", Size = Vector3.new(44, 1, 44), CFrame = CFrame.new(wp), Transparency = 1, CanCollide = false, CanQuery = false })
+			water:SetAttribute("DragonWater", true)
+			for k = 1, 10 do
+				local a = rng:NextNumber(0, math.pi * 2)
+				local fp = wp + Vector3.new(math.cos(a) * 28, 0, math.sin(a) * 28)
+				local hit = workspace:Raycast(fp + Vector3.new(0, 40, 0), Vector3.new(0, -80, 0), self.raySolid)
+				if hit then
+					self:plant("Fern", hit.Position, rng:NextNumber(0.7, 1.1), m)
 				end
 			end
-			local food = part({ Name = "DragonFood", Size = Vector3.new(32, 1, 9), CFrame = base * CFrame.new(0, 3, 0), Transparency = 1, CanCollide = false, CanQuery = false }, m)
-			food:SetAttribute("DragonFood", true)
 		end
-		-- varal alto de carne seca
+
+		-- área de alimentação à direita: plataforma de pedra, cochos e varais de carne
 		do
-			local rp = at(30, 26)
-			local rc = CFrame.new(rp) * R.Rotation
-			for _, sx in ipairs({ -11, 11 }) do
-				part({ Name = "RackPost", Size = Vector3.new(1.8, 22, 1.8), CFrame = rc * CFrame.new(sx, 11, 0), Material = Enum.Material.Wood, Color = DARKWOOD }, m)
+			local base = cfAt(52, 4, 90)
+			p({ Name = "FeedingPlatform", Size = Vector3.new(44, 1.6, 26), CFrame = base * CFrame.new(0, 0.6, 0), Material = Enum.Material.Cobblestone, Color = Color3.fromRGB(122, 118, 110) })
+			for t = -1, 1 do
+				local tc = base * CFrame.new(t * 14, 1.4, 0)
+				p({ Name = "TroughBase", Size = Vector3.new(10, 2, 20), CFrame = tc * CFrame.new(0, 1, 0), Material = Enum.Material.Slate, Color = Color3.fromRGB(100, 100, 104) })
+				p({ Name = "TroughWallL", Size = Vector3.new(1.4, 3.6, 20), CFrame = tc * CFrame.new(-4.3, 3, 0), Material = Enum.Material.Slate, Color = Color3.fromRGB(112, 112, 116) })
+				p({ Name = "TroughWallR", Size = Vector3.new(1.4, 3.6, 20), CFrame = tc * CFrame.new(4.3, 3, 0), Material = Enum.Material.Slate, Color = Color3.fromRGB(112, 112, 116) })
+				for k = -3, 3 do
+					p({ Name = "Meat", Shape = Enum.PartType.Ball, Size = Vector3.new(4.5, 3, 5) * rng:NextNumber(0.8, 1.2), CFrame = tc * CFrame.new(rng:NextNumber(-1.5, 1.5), 3.4, k * 2.6) * CFrame.Angles(rng:NextNumber(-0.4, 0.4), rng:NextNumber(0, 3), 0), Material = Enum.Material.Fabric, Color = Color3.fromRGB(122, 46, 40), CanCollide = false })
+				end
+				local food = p({ Name = "DragonFood", Size = Vector3.new(10, 1, 20), CFrame = tc * CFrame.new(0, 3, 0), Transparency = 1, CanCollide = false, CanQuery = false })
+				food:SetAttribute("DragonFood", true)
 			end
-			part({ Name = "RackBar", Size = Vector3.new(25, 1.4, 1.4), CFrame = rc * CFrame.new(0, 21.5, 0), Material = Enum.Material.Wood, Color = DARKWOOD }, m)
-			for k = -4, 4, 2 do
-				part({ Name = "HangingMeat", Size = Vector3.new(2.6, 6, 1.8), CFrame = rc * CFrame.new(k * 2.2, 17, 0), Material = Enum.Material.Fabric, Color = Color3.fromRGB(110, 48, 40), CanCollide = false }, m)
+			for _, dz in ipairs({ -22, 22 }) do
+				local rc = base * CFrame.new(0, 0, dz)
+				for _, sx in ipairs({ -14, 14 }) do
+					p({ Name = "RackPost", Size = Vector3.new(2, 24, 2), CFrame = rc * CFrame.new(sx, 12, 0), Material = Enum.Material.Wood, Color = DARK })
+				end
+				p({ Name = "RackBar", Size = Vector3.new(31, 1.6, 1.6), CFrame = rc * CFrame.new(0, 23, 0), Material = Enum.Material.Wood, Color = DARK })
+				for k = -5, 5, 2 do
+					p({ Name = "HangingMeat", Size = Vector3.new(3, 7, 2.2), CFrame = rc * CFrame.new(k * 2.4, 18, 0) * CFrame.Angles(0, rng:NextNumber(-0.4, 0.4), 0), Material = Enum.Material.Fabric, Color = Color3.fromRGB(110, 48, 40), CanCollide = false })
+				end
+			end
+			-- barris e caixotes de provisões
+			for k = 1, 6 do
+				local q = base * CFrame.new(rng:NextNumber(-20, 20), 0, 16 + rng:NextNumber(0, 6))
+				p({ Name = "Barrel", Shape = Enum.PartType.Cylinder, Size = Vector3.new(3.8, 3.2, 3.2), CFrame = CFrame.new(q.Position.X, self:groundY(q.Position.X, -q.Position.Z) + 1.9, q.Position.Z) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Wood, Color = Color3.fromRGB(116, 80, 48) })
 			end
 		end
-		-- abrigo alto e aberto (dragões cabem por baixo)
+
+		-- estábulo aberto para dragões no fundo: 4 baias com camas de palha
 		do
-			local sp = at(4, -34)
-			local sc = CFrame.new(sp) * R.Rotation
-			for _, o in ipairs({ { -20, -14 }, { 20, -14 }, { -20, 14 }, { 20, 14 } }) do
-				part({ Name = "ShelterPost", Size = Vector3.new(2.6, 30, 2.6), CFrame = sc * CFrame.new(o[1], 15, o[2]), Material = Enum.Material.Wood, Color = DARKWOOD }, m)
+			local sc = cfAt(0, 52)
+			local W2, D2, H = 72, 36, 30
+			p({ Name = "StableBackWall", Size = Vector3.new(W2, H, 1.6), CFrame = sc * CFrame.new(0, H / 2, D2 / 2), Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(116, 84, 56) })
+			for _, sx in ipairs({ -W2 / 2, W2 / 2 }) do
+				p({ Name = "StableSideWall", Size = Vector3.new(1.6, H, D2), CFrame = sc * CFrame.new(sx, H / 2, 0), Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(116, 84, 56) })
+			end
+			for k = 0, 4 do
+				local x = -W2 / 2 + k * (W2 / 4)
+				p({ Name = "StablePost", Size = Vector3.new(2.6, H + 2, 2.6), CFrame = sc * CFrame.new(x, (H + 2) / 2, -D2 / 2), Material = Enum.Material.Wood, Color = DARK })
+				if k > 0 and k < 4 then
+					p({ Name = "StallDivider", Size = Vector3.new(1.2, 8, D2 - 4), CFrame = sc * CFrame.new(x, 4, 0), Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(128, 94, 62) })
+				end
 			end
 			for _, sz in ipairs({ -1, 1 }) do
 				local roof = Instance.new("WedgePart")
-				roof.Name = "ShelterRoof"
+				roof.Name = "StableRoof"
 				roof.Anchored = true
-				roof.Size = Vector3.new(46, 7, 18)
-				roof.CFrame = sc * CFrame.new(0, 33.5, sz * 9) * (if sz < 0 then CFrame.Angles(0, math.rad(180), 0) else CFrame.new())
-				roof.Material = Enum.Material.WoodPlanks
-				roof.Color = Color3.fromRGB(120, 86, 56)
+				roof.Size = Vector3.new(W2 + 6, 10, D2 / 2 + 4)
+				roof.CFrame = sc * CFrame.new(0, H + 6, sz * (D2 / 4 + 1)) * (if sz < 0 then CFrame.Angles(0, math.rad(180), 0) else CFrame.new())
+				roof.Material = Enum.Material.Fabric
+				roof.Color = Color3.fromRGB(176, 146, 88)
 				roof.Parent = m
 			end
-			-- camas de palha (ninhos grandes) sob o abrigo e ao lado
-			for k, o in ipairs({ { -10, -34 }, { 14, -36 }, { -34, -16 } }) do
-				local np = at(o[1] + (if k < 3 then 4 else 0), o[2])
-				if not self:placeAsset("Nest", CFrame.new(np) * CFrame.Angles(0, rng:NextNumber(0, 6), 0), 2.4, m, 0.6) then
-					part({ Name = "StrawBed", Shape = Enum.PartType.Cylinder, Size = Vector3.new(1, 26, 26), CFrame = CFrame.new(np + Vector3.new(0, 0.5, 0)) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Fabric, Color = Color3.fromRGB(214, 184, 110), CanCollide = false }, m)
+			for k = 0, 3 do
+				local x = -W2 / 2 + (k + 0.5) * (W2 / 4)
+				local bed = (sc * CFrame.new(x, 0, 2)).Position
+				bed = Vector3.new(bed.X, self:groundY(bed.X, -bed.Z), bed.Z)
+				if not self:placeAsset("Nest", CFrame.new(bed) * CFrame.Angles(0, rng:NextNumber(0, 6), 0), 1.6, m, 0.5) then
+					p({ Name = "StrawBed", Shape = Enum.PartType.Cylinder, Size = Vector3.new(1, 16, 16), CFrame = CFrame.new(bed + Vector3.new(0, 0.5, 0)) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Fabric, Color = Color3.fromRGB(214, 184, 110), CanCollide = false })
+				end
+				local bale = (sc * CFrame.new(x + 6, 0, D2 / 2 - 4)).Position
+				p({ Name = "HayBale", Size = Vector3.new(5, 3.4, 3.4), CFrame = CFrame.new(bale.X, self:groundY(bale.X, -bale.Z) + 1.7, bale.Z) * sc.Rotation, Material = Enum.Material.Fabric, Color = Color3.fromRGB(214, 182, 96) })
+			end
+		end
+
+		-- torres-poleiro nas laterais do fundo
+		for _, sx in ipairs({ -64, 64 }) do
+			local tc = cfAt(sx, 52)
+			for _, o in ipairs({ { -6, -6 }, { 6, -6 }, { -6, 6 }, { 6, 6 } }) do
+				p({ Name = "PerchLeg", Size = Vector3.new(2.2, 34, 2.2), CFrame = tc * CFrame.new(o[1], 17, o[2]), Material = Enum.Material.Wood, Color = DARK })
+			end
+			p({ Name = "PerchPlatform", Size = Vector3.new(18, 1.6, 18), CFrame = tc * CFrame.new(0, 34.6, 0), Material = Enum.Material.WoodPlanks, Color = WOODC })
+			for _, hh in ipairs({ 10, 22 }) do
+				p({ Name = "PerchBrace", Size = Vector3.new(14, 1, 1), CFrame = tc * CFrame.new(0, hh, -6), Material = Enum.Material.Wood, Color = DARK })
+				p({ Name = "PerchBrace", Size = Vector3.new(14, 1, 1), CFrame = tc * CFrame.new(0, hh, 6), Material = Enum.Material.Wood, Color = DARK })
+			end
+			local perch = p({ Name = "Perch", Size = Vector3.new(16, 1, 16), CFrame = tc * CFrame.new(0, 35.8, 0), Transparency = 1, CanCollide = false, CanQuery = false })
+			perch:SetAttribute("DragonPerch", true)
+		end
+		-- rocha-poleiro natural
+		self:terrainRock(at(-62, -48), 4.2)
+
+		-- cabana do tratador perto do portão, com quadro de avisos
+		do
+			local hc = cfAt(44, -60, 200)
+			if not self:placeAsset("Cottage", hc, 0.85, m, 0.5) then
+				p({ Name = "Hut", Size = Vector3.new(16, 10, 12), CFrame = hc * CFrame.new(0, 5, 0), Material = Enum.Material.WoodPlanks, Color = WOODC })
+			end
+			self:placeAsset("QuestBoard", cfAt(26, -70, 160), 1, m)
+			for k = 1, 4 do
+				local q = at(36 + rng:NextNumber(-6, 6), -46 + rng:NextNumber(-4, 4))
+				p({ Name = "Crate", Size = Vector3.new(3.4, 3.4, 3.4), CFrame = CFrame.new(q + Vector3.new(0, 1.7, 0)) * CFrame.Angles(0, rng:NextNumber(0, 3), 0), Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(160, 120, 76) })
+			end
+		end
+
+		-- árvores em volta, do lado de fora da cerca
+		for k = 1, 26 do
+			local a = rng:NextNumber(0, math.pi * 2)
+			local r = rng:NextNumber(100, 135)
+			local dx, dz = math.cos(a) * r, math.sin(a) * r
+			if not (dz < -60 and math.abs(dx) < 40) then
+				local q = (R * CFrame.new(dx, 0, dz)).Position
+				local hit = self:surface(q.X, -q.Z)
+				if hit and hit.Material ~= Enum.Material.Water and self:roadDist(q.X, -q.Z) > 14 then
+					self:plant(if k % 3 == 0 then "Oak" else "TallPine", hit.Position, rng:NextNumber(0.8, 1.1), m)
 				end
 			end
 		end
-		-- poleiros: rochas grandes e uma árvore morta alta
-		for _, o in ipairs({ { 42, -6 }, { -44, -40 }, { -6, 44 } }) do
-			self:plant("Boulder", at(o[1], o[2]), rng:NextNumber(3.2, 4.5), m)
-		end
-		self:plant("DeadTree", at(-46, 30), 2.2, m)
-		-- braseiro grande
-		local bp = at(0, 4)
-		part({ Name = "BrazierBase", Shape = Enum.PartType.Cylinder, Size = Vector3.new(3, 9, 9), CFrame = CFrame.new(bp + Vector3.new(0, 1.5, 0)) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Cobblestone, Color = Color3.fromRGB(96, 92, 88) }, m)
-		local coals = part({ Name = "Coals", Shape = Enum.PartType.Cylinder, Size = Vector3.new(1, 7, 7), CFrame = CFrame.new(bp + Vector3.new(0, 3.3, 0)) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Neon, Color = Color3.fromRGB(255, 110, 40) }, m)
-		local fire = Instance.new("Fire")
-		fire.Size = 9
-		fire.Heat = 12
-		fire.Parent = coals
-		local pl = Instance.new("PointLight")
-		pl.Color = Color3.fromRGB(255, 160, 80)
-		pl.Range = 40
-		pl.Brightness = 1.8
-		pl.Shadows = false
-		pl.Parent = coals
+
 		m:SetAttribute("CampName", c.name)
 		m:SetAttribute("DragonFood", true)
 		m:SetAttribute("DragonWater", true)
-		zoneMarker("SafeZone", "Safe", C, 70, m)
+		zoneMarker("SafeZone", "Safe", C, 95, m)
 		m.Parent = folder
 		task.wait()
 	end
@@ -1543,20 +1775,20 @@ end
 -- árvores solitárias nos campos e sub-bosque de arbustos, rochas e flores.
 -- limiar (maior = menos floresta), kit, altura máxima, sub-bosque
 local FOREST = {
-	land = { 0.35, "mixed", 420, "default" },
-	meadow = { 0.55, "meadow", 420, "default" },
-	forest = { -0.05, "pine", 520, "default" },
-	enchanted = { 0.05, "enchanted", 520, "enchanted" },
-	lakeland = { 0.45, "lake", 320, "default" },
-	coast = { 0.5, "coast", 320, "default" },
-	swamp = { 0.2, "swamp", 220, "swamp" },
-	swampcore = { 0.25, "swamp", 220, "swamp" },
-	mountain = { 0.25, "fir", 560, "default" },
-	snow = { 0.35, "snow", 760, "snow" },
-	volcanic = { 0.6, "volcanic", 620, "volcanic" },
-	crystal = { 0.35, "crystal", 620, "crystal" },
-	ruins = { 0.4, "ruins", 520, "default" },
-	castle = { 0.45, "dark", 720, "dark" },
+	land = { 0.15, "mixed", 420, "default" },
+	meadow = { 0.3, "meadow", 420, "default" },
+	forest = { -0.15, "pine", 520, "default" },
+	enchanted = { -0.05, "enchanted", 520, "enchanted" },
+	lakeland = { 0.25, "lake", 320, "default" },
+	coast = { 0.3, "coast", 320, "default" },
+	swamp = { 0.1, "swamp", 220, "swamp" },
+	swampcore = { 0.15, "swamp", 220, "swamp" },
+	mountain = { 0.15, "fir", 560, "default" },
+	snow = { 0.25, "snow", 760, "snow" },
+	volcanic = { 0.45, "volcanic", 620, "volcanic" },
+	crystal = { 0.25, "crystal", 620, "crystal" },
+	ruins = { 0.25, "ruins", 520, "default" },
+	castle = { 0.35, "dark", 720, "dark" },
 }
 WorldBuilder.UNDER = UNDER
 
@@ -1625,9 +1857,9 @@ function WorldBuilder:forestBlock(bi: number, bj: number, parent: Instance): num
 				if m > cfg[1] + 0.3 then
 					p = 0.62 -- miolo da mancha de floresta
 				elseif m > cfg[1] then
-					p = 0.2 -- borda rala
+					p = 0.25 -- borda rala
 				else
-					p = 0.012 -- árvore solitária no campo
+					p = 0.035 -- árvores soltas no campo
 				end
 				local hit0 = nil
 				if rng:NextNumber() < p then
@@ -1639,7 +1871,7 @@ function WorldBuilder:forestBlock(bi: number, bj: number, parent: Instance): num
 					end
 				end
 				-- sub-bosque: mais na borda da floresta; flores e rochas nos campos, em grupos
-				local u = if m > cfg[1] + 0.3 then 0.07 elseif m > cfg[1] - 0.15 then 0.12 else 0.02
+				local u = if m > cfg[1] + 0.3 then 0.08 elseif m > cfg[1] - 0.15 then 0.18 else 0.06
 				if rng:NextNumber() < u then
 					local e = self:pickAt(under, jx + 300, jy)
 					local count = if e[1] == "Flowers" then rng:NextInteger(3, 6) elseif e[1] == "Boulder" then 1 else rng:NextInteger(1, 3)
@@ -1731,6 +1963,11 @@ function WorldBuilder:setupLighting()
 	clouds.Density = 0.6
 	clouds.Color = Color3.fromRGB(252, 252, 255)
 	clouds.Parent = Terrain
+	workspace.GlobalWind = Vector3.new(7, 0, 4) -- a grama alta balança com o vento
+	-- grama padrão do Roblox (a textura gerada deixava manchas claras repetidas)
+	pcall(function()
+		game:GetService("MaterialService"):SetBaseMaterialOverride(Enum.Material.Grass, "")
+	end)
 	Terrain.WaterColor = Color3.fromRGB(34, 92, 104)
 	Terrain.WaterTransparency = 0.75
 	Terrain.WaterReflectance = 0.7

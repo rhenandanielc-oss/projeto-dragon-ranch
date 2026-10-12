@@ -267,7 +267,7 @@ function WorldGen.new(data, yieldFn: (() -> ())?)
 		table.insert(self.pads, { kind = "farm", id = f.id, biome = f.biome, x = f.x, y = f.y, r0 = data.FARM_R0, r1 = data.FARM_R1, target = f.target })
 	end
 	for _, c in ipairs(data.CAMPS) do
-		table.insert(self.pads, { kind = "camp", x = c.x, y = c.y, r0 = 40, r1 = 100 })
+		table.insert(self.pads, { kind = "camp", x = c.x, y = c.y, r0 = data.CAMP_R0 or 40, r1 = data.CAMP_R1 or 100 })
 	end
 	for _, w in ipairs(data.WAYPOINTS) do
 		table.insert(self.pads, { kind = "waypoint", x = w.x, y = w.y, r0 = 18, r1 = 55 })
