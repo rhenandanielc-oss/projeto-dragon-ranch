@@ -14,7 +14,9 @@ Legenda: ✅ feito · 🟡 parcial · ⬜ não feito · ⛔ bloqueado por decis�
 
 ## 1. Fase atual
 
-**Fase 0 — Design concluída (12/10/2026).** Todos os bloqueios B1–B10 resolvidos.
+**Fase 1 — Fundação concluída (12/10/2026).** Próxima: Fase 2 — Fazenda e ovos (ver `V1-ROADMAP.md`).
+
+Fase 0 — Design concluída (12/10/2026): todos os bloqueios B1–B10 resolvidos.
 
 ~~Fase 0 — Design.~~ Conforme o `GAME-DESIGN.md` (seções 15 e 18), a programação
 dos sistemas só começa depois que os bloqueios B1–B10 forem resolvidos ou
@@ -64,11 +66,11 @@ Levantamento feito em 12/10/2026, em modo Edit.
 | Terreno | ~2.000 × 2.000 studs com terreno esculpido | Pode servir de base para a região inicial (B9) |
 | `Workspace.Foliage` | 26 bordos, 36 pinheiros, 7 arbustos | Aproveitável para florestas |
 | `Workspace.Cabins` | Cabin1, Cabin2, StarterCabin | Conteúdo do modelo do Roblox; pode virar referência para a fazenda |
-| `Workspace.ConstructionZone` | Casas incompletas, materiais, ponte, placas | Conteúdo do modelo do Roblox; sem função no design |
+| `Workspace.ConstructionZone` | ~~Casas incompletas, materiais, ponte, placas~~ | **Removido em 12/10/2026** |
 | `Workspace.Props` / `Billboards` | Cerca, 7 tochas, ponte, 6 placas | Decoração de exemplo |
-| `Workspace.Tools` | 6 baús com ferramentas de exemplo (Gravity Coil, Teleport etc.) | **Não fazem parte do design** — remover ou substituir |
+| `Workspace.Tools` | ~~6 baús com ferramentas de exemplo~~ (e o baú da lanterna na StarterCabin) | **Removidos em 12/10/2026** |
 | `Lighting` | Atmosphere, Sky, Bloom, DepthOfField, SunRays | Base de iluminação já configurada |
-| `ServerScriptService`, `ReplicatedStorage`, `ServerStorage`, `StarterGui` | Vazios | Nenhum sistema implementado |
+| `ServerScriptService`, `ReplicatedStorage`, `StarterPlayerScripts` | Código da Fase 1 (espelhado em `src/`) | Fundação implementada |
 
 **Conclusão:** o place é um mapa-modelo com cenário. Nenhum sistema de jogo
 (dragões, fazenda, crescimento, combate, dungeons, inventário, economia, save)
@@ -106,6 +108,34 @@ foi implementado.
 
 ---
 
+## 8. Código implementado
+
+O código fica em `src/` (espelho exato do Studio). Pastas gerenciadas:
+`ReplicatedStorage.Shared`, `ServerScriptService.Server`,
+`StarterPlayer.StarterPlayerScripts.Client`.
+
+| Módulo | Função | Estado |
+|---|---|---|
+| `Shared/Config/*` | Espécies, elementos, raridades, crescimento, inventário, itens, regras (valores ajustáveis) | ✅ |
+| `Shared/Net/NetDefs` | Lista única de remotes com esquemas de validação | ✅ |
+| `Shared/Net/NetClient` | Acesso do cliente aos remotes | ✅ |
+| `Server/Services/NetService` | Rede protegida: limite de frequência, validação de argumentos, infrações e expulsão | ✅ testado |
+| `Server/Data/DataService` | Salvamento com trava de sessão, autosave, BindToClose, novas tentativas | ✅ testado (memória) |
+| `Server/Data/ProfileTemplate` | Formato do perfil + reconciliação | ✅ |
+
+**Testes da Fase 1 (12/10/2026, Play no Studio):**
+- Perfil carrega e chega ao cliente (50 moedas, mochila 30). ✅
+- Ping com texto, NaN e argumento extra: rejeitados. ✅
+- Cliente tentando disparar remote do servidor (ex.: falsificar moedas): rejeitado. ✅
+- Rajada de 20 pedidos: só 5 aceitos (limite de frequência). ✅
+
+**Pendente do responsável:** ativar *Game Settings > Security > Enable
+Studio Access to API Services* para testar o salvamento real no Studio.
+Sem isso o jogo usa armazenamento em memória durante os testes. Ao publicar,
+definir o máximo de jogadores do servidor como 18.
+
+---
+
 ## 7. Histórico
 
 | Data | Alteração |
@@ -126,3 +156,4 @@ foi implementado.
 | 12/10/2026 | B1 resolvido: raridades e ovos. Todos os bloqueios resolvidos |
 | 12/10/2026 | Criados V1-ROADMAP.md e IDEAS-BACKLOG.md |
 | 12/10/2026 | Servidor de 8 para 18 jogadores; mapa dobrado para ~16.000 × 16.000 |
+| 12/10/2026 | Fase 1 concluída: fundação (config, rede protegida, salvamento) |
