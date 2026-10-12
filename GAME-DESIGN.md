@@ -4,7 +4,7 @@
 
 **Projeto:** Jogo de criação e aventura com dragões no Roblox\
 **Nome provisório:** Dragon Ranch\
-**Versão do documento:** 0.3\
+**Versão do documento:** 0.4\
 **Status:** Bloqueios B1–B10 resolvidos em 12/10/2026 --- liberado para
 implementação por etapas (ver `V1-ROADMAP.md`)\
 **Idioma:** Português (Brasil)
@@ -511,17 +511,27 @@ possam ser descobertos sem depender apenas de marcadores de interface.
 - **Servidor:** até **18 jogadores** (alterado de 8 em 12/10/2026, para haver mais encontros e combates); cada um com terreno de fazenda próprio.
 - **Desempenho:** com até 18 jogadores e 18 dragões ativos, usar níveis de detalhe, limite de partículas por distância e StreamingEnabled; testar no celular.
 
+**Layout detalhado:** `WORLD-DESIGN.md` v0.2 (aprovado em 12/10/2026),
+que substitui a tabela e o anel de fazendas anteriores.
+
 | Área | Posição | Zona |
 |---|---|---|
-| Vila inicial / Hub Central (mercador, NPCs, ponto de partida) | Centro-sul | Protegida |
-| Fazendas (18 terrenos) | Em anel ao redor do Hub, cada uma numa clareira da floresta | Protegida |
-| Prados e bosques | Em volta da vila | Comum |
-| Floresta densa e rio principal | Oeste | Comum |
-| Grande lago e cachoeiras | Leste | Comum |
-| Cordilheira com mirantes | Norte | Comum |
-| Vale dos Cristais | Extremo leste, atrás de penhascos | Perigosa |
-| Cânion vulcânico | Extremo oeste, após a floresta | Perigosa |
+| Hub Central — Ilha do Coração, ilha fluvial ligada por pontes | Centro-sul (0, −1500) | Protegida |
+| 18 fazendas espalhadas pelo continente, cada uma no próprio bosque | Três faixas de distância (≥ ~2.100 studs entre fazendas) | Interior protegido; bosque comum |
+| Prados Centrais, Prados do Sul e Costa, Floresta Densa, Grande Lago, Floresta Encantada, encosta da Cordilheira, borda do Pântano | Regiões intermediárias | Comum |
+| Picos Gelados, Cânion Vulcânico, Vale dos Cristais, coração do Pântano, interior das Ruínas, Coroa do Dragão (castelo) | Regiões distantes | Perigosa |
+| Ilhas flutuantes com comida e água | Céu, 450–1.100 studs de altura | Comum (perigosas sobre regiões perigosas) |
+| 7 acampamentos com comida e água para dragões | Nas estradas | Protegida (pequena) |
+| 8 waypoints | Lugares distantes | Comum/perigosa conforme a região |
 | Portão da dungeon | Vale escondido na cordilheira norte, atrás de uma cachoeira | Comum |
+
+**Fazenda × servidor:** quem ainda não tem dragão Jovem recebe a fazenda
+livre mais próxima do Hub; quem já tem pode escolher um bioma livre de
+sua preferência.
+
+**Navegação:** mapa somente no Hub; bússola na tela apontando para a
+fazenda e o Hub. Waypoints despertados por exploração; mais tarde, um
+equipamento desbloqueável teleporta o jogador para a própria fazenda.
 
 **Descoberta da dungeon:** sem marcador de interface, mesmo com a missão
 ativa; a missão dá apenas uma pista vaga; ruínas com runas apontam a
@@ -529,15 +539,15 @@ direção; dos mirantes é possível ver um brilho mágico no vale.
 
 As zonas perigosas ficam longe da vila, atrás de obstáculos naturais.
 
-### 8.4 Hub Central e fazendas (APROVADO 12/10/2026)
+### 8.4 Hub Central e fazendas (APROVADO 12/10/2026; posições substituídas pela 8.3/WORLD-DESIGN)
 
 - **Hub Central:** praça com chafariz e estátua de dragão, bancos, canteiros
   e lanternas; **4 NPCs**: Tobias (Mercador), Mestra Lira (Missões), Vovó
   Brisa (Cuidadora de Dragões) e Guarda Hilda (Guarda da Vila).
-- **Fazendas em volta do Hub**, bem espalhadas (a ~650 studs do centro),
-  cada uma numa clareira cercada de floresta densa e montes: **não é
-  possível ver a fazenda dos outros**.
-- **Entrada de cada fazenda:** caminho saindo da praça que termina num
+- **Fazendas espalhadas pelo mundo** (não mais em anel), cada uma numa
+  clareira cercada pelo próprio bosque: **não é possível ver a fazenda dos
+  outros** de longe.
+- **Entrada de cada fazenda:** trilha que termina num
   **bosque decorado** (cerejeiras, carvalhos, arbustos, flores e
   lanternas) e num arco de madeira com a placa do dono.
 - **Fazenda decorada:** celeiro, habitat do ovo (ninho de galhos e palha
@@ -1136,6 +1146,15 @@ mecânicas.
   0.3.1 (12/10/2026)                  Servidor passa de 8 para 18
                                       jogadores; 18 terrenos de fazenda;
                                       mapa dobrado para ~16.000 × 16.000.
+
+  0.4 (12/10/2026)                    Mundo aberto aprovado
+                                      (WORLD-DESIGN.md v0.2): fazendas
+                                      espalhadas, Hub em ilha fluvial,
+                                      ilhas flutuantes, Coroa do Dragão,
+                                      waypoints, acampamentos, mapa só no
+                                      Hub + bússola, zona perigosa
+                                      ampliada, regra de atribuição de
+                                      fazenda.
 
   -----------------------------------------------------------------------
 

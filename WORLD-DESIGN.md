@@ -1,11 +1,13 @@
 # WORLD-DESIGN.md
 ## Mundo aberto — Terras de Escamarra
 
-**Versão:** 0.1 (PROPOSTA, aguardando aprovação)
+**Versão:** 0.2 (APROVADO pelo responsável em 12/10/2026, com ajustes)
 **Data:** 12/10/2026
-**Base:** `GAME-DESIGN.md` v0.3.2, `ART-DIRECTION.md`, `DRAGON-VISUAL-DESIGN.md`
-**Status:** nada aqui está construído. Nenhum item substitui decisões
-aprovadas até o responsável confirmar a seção 8 (decisões).
+**Base:** `GAME-DESIGN.md` v0.4, `ART-DIRECTION.md`, `DRAGON-VISUAL-DESIGN.md`
+**Status:** aprovado. Construção do mapa inteiro em andamento no Studio
+(ver `PROJECT-STATE.md`). As respostas às decisões estão na seção 8 e as
+novidades pedidas na aprovação (ilhas flutuantes, castelo dos dragões,
+waypoints, acampamentos com comida e água) na seção 2.1.
 
 Referência de sensação: a exploração, a escala e a descoberta descritas
 pelo responsável (inspiradas em Dystovia). Não foi copiado mapa nem
@@ -37,8 +39,9 @@ mirantes ao norte; Vale dos Cristais no extremo leste atrás de penhascos
 dungeon num vale escondido da cordilheira norte, atrás de uma cachoeira,
 sem marcador.
 
-Novo (precisa de aprovação): Picos Gelados, Floresta Encantada, Pântano,
-Planalto das Ruínas com cavernas, Costa Sul e Vale Oculto.
+Novo (aprovado em D11): Picos Gelados, Floresta Encantada, Pântano,
+Planalto das Ruínas com cavernas, Costa Sul, Vale Oculto e **Coroa do
+Dragão** (bioma do castelo dos dragões, nordeste da cordilheira).
 
 ---
 
@@ -88,6 +91,51 @@ Cachoeira Grande (norte do lago), Pilar de Cristal (extremo leste),
 Árvore de Luz (Floresta Encantada), Farol da Costa (sul), Cúpula das
 Ruínas (nordeste).
 
+### 2.1 Novidades pedidas na aprovação
+
+**Céu e ilhas flutuantes (D1).** Como os jogadores vão voar nos dragões,
+o céu faz parte do mapa. Ilhas de terra e rocha flutuam entre 450 e
+1.100 studs de altura, cada uma com **comida** (arbustos de frutas,
+árvores frutíferas, carne seca em varal) e **água** (lagoa no topo, com
+queda-d'água pela borda). Só são alcançáveis voando. São zona comum,
+exceto as do alto da cordilheira (perigosas).
+
+| Ilha | Posição (x, y) | Altura | Sobre |
+|---|---|---|---|
+| Arquipélago Celeste (3 ilhas) | (1300, 2300) / (1900, 2700) / (900, 2900) | 520 / 640 / 760 | Prados Centrais |
+| Ilha dos Ventos do Sul | (−3000, −4700) | 480 | Prados do Sul |
+| Ilha da Bruma | (2100, −5900) | 500 | Pântano |
+| Ilha do Gelo Eterno | (−5600, 3600) | 950 | Picos Gelados (perigosa) |
+| Ilha das Brasas | (−6600, −2600) | 600 | Cânion Vulcânico (perigosa) |
+| Ilha de Cristal | (6500, −1600) | 700 | Vale dos Cristais (perigosa) |
+| Ilha da Guarda | (2400, 5200) | 1.100 | Coroa do Dragão (perigosa) |
+
+**Coroa do Dragão (D11).** Bioma novo no nordeste da cordilheira: montes
+de basalto escuro, pinheiros-negros, ossadas gigantes e o **Castelo dos
+Dragões** no topo de um rochedo (centro em (3600, 6000), ~700 studs de
+altura). Zona perigosa. Acesso a pé por uma estrada de serpentina vinda
+das Ruínas; do alto, a vista cobre metade do continente. Ponto de
+conteúdo futuro (chefes, ninhos raros).
+
+**Waypoints (D7).** Obeliscos rúnicos em lugares distantes. O jogador
+"desperta" cada um ao tocá-lo; isso desbloqueia viagem entre waypoints
+despertados (regra detalhada na fase de sistemas). Com o tempo, o jogador
+pode desbloquear um **equipamento de retorno** que teleporta para a
+própria fazenda. Posições: Pico Branco (−4600, 6000), Vulcão (−6200,
+−1300), Farol (−900, −6600), Pilar de Cristal (6400, 600), Cúpula das
+Ruínas (5300, 3900), Portão do Castelo (3300, 5500), Coração do Pântano
+(3900, −5600), Cachoeira Grande (3700, 500).
+
+**Acampamentos de viagem com comida e água (D10).** 7 pequenas zonas
+protegidas nas estradas, cada uma com tenda, fogueira, cocho de água e
+varal de comida para os dragões: Rio (−3200, −1600), Fenda (−4900,
+−700), Passo (−900, 3700), Lago (2700, 0), Sul (−1000, −5000), Brejo
+(1900, −4900), Nordeste (3200, 4000).
+
+**Mapa e bússola (D8).** Mapa completo só no Hub (mesa de cartógrafo).
+Fora dele, uma bússola no topo da tela aponta para a fazenda e para o
+Hub.
+
 ---
 
 ## 3. As 18 fazendas
@@ -101,24 +149,32 @@ padrão do Roblox) e um caminho ~30% mais longo que a linha reta.
 
 | # | Fazenda | Região / bioma | Bosque | Entrada | Isolamento | Distância (a pé) | Pontos de interesse próximos |
 |---|---|---|---|---|---|---|---|
-| 1 | Riacho | Prados do Sul | Bétulas e carvalhos jovens, cercas vivas, clareiras floridas | Ponte de madeira sobre um riacho | Baixo | ~2.000 (2,7 min) | Hub, Vau do Sul, campos de coleta |
+| 1 | Riacho | Prados do Sul | Bétulas e carvalhos jovens, cercas vivas, clareiras floridas | Ponte de madeira sobre um riacho | Baixo | ~2.200 (3,0 min) | Hub, Vau do Sul, campos de coleta |
 | 2 | Pinheiral | Borda da Floresta Densa | Pinheiros altos em camadas, chão de agulhas, rochas com musgo | Trilha estreita entre dois pinheiros caídos | Médio | ~2.400 (3,3 min) | Ponte do Rio Principal, Árvore-Mãe |
 | 3 | Beira-Lago | Margem oeste do Grande Lago | Salgueiros, juncos, pedras lisas | Trilha pela margem e um pequeno píer | Baixo | ~2.500 (3,4 min) | Grande Lago, água e pesca |
 | 4 | Colina das Flores | Prados Centrais (norte do Hub) | Cerejeiras e campos de flores em colinas | Arco natural de cerejeiras | Baixo | ~2.200 (3,0 min) | Estrada norte, primeiros mirantes |
-| 5 | Moinho | Prados do sudeste | Pomar e faias, sebes altas | Estrada de cascalho entre sebes | Baixo | ~2.400 (3,3 min) | Borda do Pântano, Hub |
-| 6 | Raízes Antigas | Sudoeste, borda da floresta | Carvalhos gigantes com raízes expostas | Túnel natural de raízes | Médio | ~2.600 (3,5 min) | Rio do Lago, estrada da Garganta |
+| 5 | Moinho | Prados do sudeste | Pomar e faias, sebes altas | Estrada de cascalho entre sebes | Baixo | ~2.100 (2,9 min) | Borda do Pântano, Hub |
+| 6 | Raízes Antigas | Sudoeste, borda da floresta | Carvalhos gigantes com raízes expostas | Túnel natural de raízes | Médio | ~2.950 (4,0 min) | Rio do Lago, estrada da Garganta |
 | 7 | Cascata do Oeste | Vale do Rio Principal | Floresta úmida, samambaias, musgo, quedas-d'água baixas | Ponte de pedra sobre o rio | Médio | ~4.600 (6,2 min) | Árvore-Mãe, Ponte do Rio |
 | 8 | Bosque Encantado | Floresta Encantada | Árvores que brilham, cogumelos gigantes, flores mágicas | Anel de cogumelos que vira trilha | Alto | ~5.100 (6,9 min) | Árvore de Luz, cachoeiras do lago |
 | 9 | Mirante do Penhasco | Encosta sul da Cordilheira | Abetos em terraços entre rochas | Trilha em zigue-zague pela encosta | Médio-alto | ~5.000 (6,7 min) | Passo da Cordilheira, vista do mapa, rota para a dungeon |
 | 10 | Ilha do Lago | Ilha no Grande Lago | Bosque denso cobrindo a ilha | Ponte longa e estreita (único acesso a pé) | Alto | ~4.200 (5,7 min) | Cachoeira Grande, Desfiladeiro |
-| 11 | Brejo | Borda do Pântano | Ciprestes, raízes na água, névoa baixa | Passarelas de madeira | Médio-alto | ~4.100 (5,6 min) | Coração do Pântano (perigoso), ervas raras |
+| 11 | Brejo | Borda do Pântano | Ciprestes, raízes na água, névoa baixa | Passarelas de madeira | Médio-alto | ~4.600 (6,2 min) | Coração do Pântano (perigoso), ervas raras |
 | 12 | Costa | Costa Sul | Pinheiros da costa, dunas com capim | Trilha pela praia, atrás das dunas | Médio | ~5.000 (6,8 min) | Farol, praias, recursos do mar |
 | 13 | Garganta Rubra | Entre a floresta e o cânion | Pinheiros-negros entre rochas avermelhadas | Passagem estreita entre paredões | Alto | ~4.900 (6,6 min) | Borda do Cânion Vulcânico (perigoso) |
 | 14 | Geleira | Picos Gelados | Pinheiros cobertos de neve, gelo, rochas | Túnel de gelo | Muito alto | ~8.000 (10,9 min) | Pico Branco, cristais de gelo |
-| 15 | Fontes Termais | Borda do Cânion Vulcânico | Oásis verde ao redor de fontes quentes, cercado de árvores queimadas | Ponte de pedra sobre fenda de lava | Muito alto | ~5.900 (8,0 min) | Vulcão, Ponte da Fenda |
-| 16 | Cristalina | Antes dos penhascos do leste | Pinheiros azulados e pequenos cristais | Desfiladeiro estreito | Alto | ~5.200 (7,0 min) | Desfiladeiro dos Cristais, Vale dos Cristais (perigoso) |
-| 17 | Ruínas Antigas | Planalto das Ruínas | Árvores crescendo entre colunas e muros caídos | Escadaria de pedra antiga | Alto | ~7.200 (9,8 min) | Cúpula das Ruínas, cavernas |
-| 18 | Vale Oculto | Vale escondido na cordilheira | Bosque antigo, nevoeiro, flores raras | Caverna que atravessa a montanha | Máximo | ~8.000 (10,9 min) | O lugar mais escondido do mapa |
+| 15 | Fontes Termais | Borda do Cânion Vulcânico | Oásis verde ao redor de fontes quentes, cercado de árvores queimadas | Ponte de pedra sobre fenda de lava | Muito alto | ~6.100 (8,3 min) | Vulcão, Ponte da Fenda |
+| 16 | Cristalina | Antes dos penhascos do leste | Pinheiros azulados e pequenos cristais | Desfiladeiro estreito | Alto | ~5.800 (7,9 min) | Desfiladeiro dos Cristais, Vale dos Cristais (perigoso) |
+| 17 | Ruínas Antigas | Planalto das Ruínas | Árvores crescendo entre colunas e muros caídos | Escadaria de pedra antiga | Alto | ~7.850 (10,6 min) | Cúpula das Ruínas, cavernas |
+| 18 | Vale Oculto | Vale escondido na cordilheira | Bosque antigo, nevoeiro, flores raras | Caverna que atravessa a montanha | Máximo | ~7.850 (10,6 min) | O lugar mais escondido do mapa |
+
+Posições aprovadas (x, y): 1 (−300, −3700) · 2 (−2300, −700) · 3 (2300,
+−500) · 4 (−200, 700) · 5 (1700, −2800) · 6 (−2600, −2900) · 7 (−4000,
+700) · 8 (3400, 2300) · 9 (−1300, 3300) · 10 (4200, −1700) · 11 (3300,
+−4700) · 12 (−1800, −6200) · 13 (−4700, −2700) · 14 (−4300, 5300) · 15
+(−6000, −400) · 16 (5500, 300) · 17 (5200, 4400) · 18 (800, 6300). Na
+aprovação as fazendas foram afastadas umas das outras: **a menor
+distância entre duas fazendas é ~2.100 studs** (era ~1.450).
 
 Direções equilibradas: norte 4, 9, 18 · nordeste 8, 17 · leste 3, 10, 16 ·
 sudeste 5, 11 · sul 1, 12 · sudoeste 6, 13 · oeste 2, 7, 15 · noroeste 14.
@@ -197,8 +253,8 @@ esvaziados.
   perigosa. O jogador escolhe o risco.
 - **Nenhum estreitamento obrigatório:** cada ponte ou passo tem um
   desvio mais longo, para ninguém ficar preso por um jogador "pedágio".
-- **Acampamentos de viagem (4):** pequenas zonas protegidas nas estradas
-  principais (Rio, Passo, Lago, Sul), com fogueira. São pontos para
+- **Acampamentos de viagem (7):** pequenas zonas protegidas nas estradas
+  principais, com fogueira, comida e água para os dragões (seção 2.1). São pontos para
   descansar e trocar de dragão ativo, sem viagem rápida.
 
 ### 4.4 Frequência de encontros: estimativa e meta
@@ -339,57 +395,26 @@ tráfego (estradas, destinos); só depois se reduz a escala.
 
 ---
 
-## 8. Decisões para aprovar antes de construir
+## 8. Decisões (respondidas em 12/10/2026)
 
-- **D1 — Estrutura do mundo:** substituir o anel de fazendas pelo mundo
-  descrito aqui (Hub no centro-sul, 18 fazendas espalhadas em três
-  faixas)?
-- **D2 — Escala:** manter 16.000 × 16.000 studs com continente jogável
-  de ~13.000 de diâmetro?
-- **D3 — Fazenda × servidor** (C4):
-  - (a) sempre o primeiro terreno livre (bioma muda entre servidores);
-  - (b) jogadores sem dragão Jovem recebem fazendas da faixa interna;
-    os demais, qualquer uma;
-  - (c) como (b), e o jogador escolhe um bioma favorito, atendido
-    quando estiver livre no servidor.
-  Recomendação: **(c)**.
-- **D4 — PvP "mais intenso"** (C3):
-  - (A) manter as regras e intensificar só pela geografia (rotas,
-    estreitamentos, visão);
-  - (B) como (A) e ampliar a zona perigosa a todas as regiões distantes
-    (Picos Gelados, coração do Pântano, interior das Ruínas, além do
-    Cânion e do Vale dos Cristais);
-  - (C) como (B) e criar perda pequena na zona comum (por exemplo 10%),
-    o que altera uma regra aprovada.
-  Recomendação: **(B)**.
-- **D5 — Bosque das fazendas:** só o interior cercado é protegido e o
-  bosque em volta é zona comum (recomendado), ou o bosque também é
-  protegido?
-- **D6 — "Ilha" inicial:** você mencionou "fora da ilha ou região inicial
-  protegida". Proposta: Hub numa ilha fluvial (Ilha do Coração), ligada
-  por pontes, dentro do continente. Ou prefere uma ilha separada no mar,
-  com travessia (barco ou ponte longa) até o continente?
-- **D7 — Viagem rápida:** nenhuma; ou voltar para a própria fazenda com
-  tempo de recarga (recomendado: 5 min); ou portais descobertos por
-  exploração. Mais viagem rápida = menos encontros.
-- **D8 — Mapa na tela:** sem mapa; bússola com direção da sua fazenda e do
-  Hub; ou mapa que se revela conforme você explora (recomendado), com
-  marcadores só para a sua fazenda, o Hub e os acampamentos. A dungeon
-  continua sem marcador (já aprovado).
-- **D9 — Velocidades provisórias:** montado em terra 45 studs/s (Wyrm 65),
-  voo 70 studs/s mais o bônus de raridade. Ajustáveis nos testes.
-- **D10 — Acampamentos de viagem:** criar os 4 pontos protegidos nas
-  estradas?
-- **D11 — Novos biomas:** aprovar Picos Gelados, Floresta Encantada,
-  Pântano, Planalto das Ruínas, Costa Sul e Vale Oculto.
-- **D12 — Primeiro passo:** começar pela maquete cinza do continente
-  inteiro (só relevo, rios, estradas e marcos) e pelos testes de tempo e
-  de encontros, antes de qualquer arte?
-
----
+| # | Resposta do responsável |
+|---|---|
+| D1 | **Sim.** Mundo aberto no lugar do anel, com boa distância entre fazendas e um céu bonito para voar. **Acrescentar ilhas flutuantes com comida e água** (seção 2.1) |
+| D2 | **Sim, 16.000 × 16.000**, para manter grande distância entre fazendas e a estética realista. Encontros em terra e no ar |
+| D3 | **(b)** Quem ainda não tem dragão Jovem recebe a fazenda livre mais próxima do Hub. Quem já tem pode escolher um bioma livre de sua preferência |
+| D4 | **(B)** Zona perigosa em todas as regiões distantes: Picos Gelados, Cânion Vulcânico, Vale dos Cristais, coração do Pântano, interior das Ruínas e Coroa do Dragão |
+| D5 | Interior da fazenda protegido; bosque em volta é zona comum |
+| D6 | Hub numa ilha fluvial ligada por pontes (Ilha do Coração) |
+| D7 | Waypoints espalhados em lugares distantes; com o tempo, equipamento desbloqueável para se teleportar à própria fazenda |
+| D8 | Mapa somente no Hub; bússola apontando para a fazenda e o Hub |
+| D9 | Velocidades propostas (terra 45, Wyrm 65, voo 70 + raridade); o responsável testa quando o jogo estiver pronto |
+| D10 | Sim, acampamentos com comida e água para os dragões (7, seção 2.1) |
+| D11 | Novos biomas aprovados, mais um bioma com **castelo dos dragões** (Coroa do Dragão) |
+| D12 | Construir o mapa inteiro. Depois: gráficos muito altos para quem pode e ferramenta de otimização no próprio jogo para quem não pode (referência visual: Dystovia e Deepwoken) |
 
 ## 9. Histórico
 
 | Versão | Alteração |
 |---|---|
 | 0.1 (12/10/2026) | Proposta inicial do mundo aberto: estrutura, mapa conceitual, 18 fazendas, encontros, escala, desempenho, conflitos e decisões |
+| 0.2 (12/10/2026) | Aprovado com ajustes: ilhas flutuantes com comida e água, bioma Coroa do Dragão com castelo, waypoints e equipamento de retorno, 7 acampamentos com comida e água, mapa só no Hub + bússola, fazendas afastadas (mínimo ~2.100 studs), regra de atribuição (b), zona perigosa ampliada (B) |

@@ -61,7 +61,8 @@ REGIONS = [
     ("pantano", "Pântano", "swamp", [(1400, -3600), (4900, -3200), (5500, -5300), (3600, -6500), (1500, -5900)], (3700, -5850), False),
     ("pantano_core", "", "swampcore", [(2800, -4600), (4600, -4200), (4800, -5600), (3500, -6100)], None, True),
     ("sul", "Prados do Sul e Costa", "coast", [(-4300, -3500), (1300, -3500), (1400, -5900), (0, -6900), (-3900, -6700)], (-2300, -5250), False),
-    ("ruinas", "Planalto das Ruínas", "ruins", [(4000, 3100), (5700, 3200), (5800, 4900), (4100, 4900)], (5000, 5250), True),
+    ("ruinas", "Planalto das Ruínas", "ruins", [(4000, 3100), (5700, 3200), (5800, 4900), (4100, 4900)], (5250, 4750), True),
+    ("coroa", "Coroa do Dragão", "castle", [(2300, 4900), (4300, 4700), (5000, 5600), (4400, 6800), (2600, 7000), (1900, 6000)], (3150, 5350), True),
 ]
 
 LAKE = [(2900, -1400), (3600, -600), (4600, -650), (5100, -1300), (4700, -2150), (3600, -2250)]
@@ -79,47 +80,50 @@ RIVERS = [
 ROADS = [
     [HUB, (-300, -400), (-200, 700), (-1300, 3300), (-1500, 4300), (-800, 5000)],
     [(-1500, 4300), (-3000, 4800), (-4300, 5300)],
+    [(-800, 5000), (300, 5800), (800, 6300)],
     [HUB, (-1200, -1000), (-2300, -700), (-3600, -900), (-4000, 700)],
-    [(-3600, -900), (-4700, -500), (-5300, 200), (-5600, 300)],
-    [HUB, (1200, -1200), (2300, -500), (3300, 200), (3400, 2300), (4300, 3300), (4600, 4100)],
+    [(-3600, -900), (-4900, -700), (-5300, -300), (-6000, -400)],
+    [HUB, (1200, -1200), (2300, -500), (3300, 200), (3400, 2300), (4300, 3300), (5200, 4400)],
+    [(4300, 3300), (3300, 4100), (3300, 5500), (3600, 6000)],
     [(2300, -500), (2900, -900), (3700, -1550), (4150, -1700)],
-    [(3300, 200), (4600, 100), (5000, -200), (5400, -200), (6400, 300)],
-    [HUB, (900, -2300), (1800, -3100), (2500, -4000), (3000, -4300)],
-    [HUB, (-300, -2600), (-700, -3400), (-1200, -4500), (-1800, -6200), (-700, -6800)],
-    [HUB, (-1100, -2300), (-2100, -3000), (-3400, -3000), (-4700, -2700)],
+    [(3300, 200), (4600, 100), (5000, -200), (5400, -100), (5500, 300), (6400, 600)],
+    [HUB, (900, -2300), (1700, -2800), (2500, -4000), (3300, -4700)],
+    [HUB, (-300, -2600), (-300, -3700), (-1000, -5000), (-1800, -6200), (-900, -6600)],
+    [HUB, (-1100, -2300), (-2600, -2900), (-3400, -3000), (-4700, -2700)],
 ]
 
 # (nº, nome, x, y, faixa)
 FARMS = [
-    (1, "Riacho", -700, -3400, "inner"),
+    (1, "Riacho", -300, -3700, "inner"),
     (2, "Pinheiral", -2300, -700, "inner"),
     (3, "Beira-Lago", 2300, -500, "inner"),
     (4, "Colina das Flores", -200, 700, "inner"),
-    (5, "Moinho", 1800, -3100, "inner"),
-    (6, "Raízes Antigas", -2100, -3000, "inner"),
+    (5, "Moinho", 1700, -2800, "inner"),
+    (6, "Raízes Antigas", -2600, -2900, "inner"),
     (7, "Cascata do Oeste", -4000, 700, "mid"),
     (8, "Bosque Encantado", 3400, 2300, "mid"),
     (9, "Mirante do Penhasco", -1300, 3300, "mid"),
     (10, "Ilha do Lago", 4200, -1700, "mid"),
-    (11, "Brejo", 3000, -4300, "mid"),
+    (11, "Brejo", 3300, -4700, "mid"),
     (12, "Costa", -1800, -6200, "mid"),
     (13, "Garganta Rubra", -4700, -2700, "mid"),
     (14, "Geleira", -4300, 5300, "outer"),
-    (15, "Fontes Termais", -5600, 300, "outer"),
-    (16, "Cristalina", 5000, -200, "outer"),
-    (17, "Ruínas Antigas", 4600, 4100, "outer"),
-    (18, "Vale Oculto", 2600, 6100, "outer"),
+    (15, "Fontes Termais", -6000, -400, "outer"),
+    (16, "Cristalina", 5500, 300, "outer"),
+    (17, "Ruínas Antigas", 5200, 4400, "outer"),
+    (18, "Vale Oculto", 800, 6300, "outer"),
 ]
 
 CHOKEPOINTS = [
     ("Ponte do Rio", -3600, -900, (14, 22)),
-    ("Ponte da Fenda", -5300, 200, (14, -12)),
+    ("Ponte da Fenda", -5300, -300, (14, -12)),
     ("Passo", -1500, 4300, (-10, -14)),
     ("Túnel de Gelo", -3000, 4800, (14, 4)),
     ("Ponte da Ilha", 3700, -1550, (-12, 24)),
-    ("Desfiladeiro", 5400, -200, (14, 22)),
+    ("Desfiladeiro", 5400, -100, (14, 22)),
     ("Passarelas", 2500, -4000, (-14, 20)),
-    ("Caverna", 3500, 5300, (-14, 4)),
+    ("Caverna", 300, 5800, (-14, 4)),
+    ("Serpentina", 3300, 5000, (14, 4)),
 ]
 
 LANDMARKS = [
@@ -130,14 +134,42 @@ LANDMARKS = [
     ("Pilar de Cristal", 6600, 300),
     ("Árvore de Luz", 3300, 2800),
     ("Farol", -700, -6800),
-    ("Cúpula das Ruínas", 5100, 4500),
+    ("Cúpula das Ruínas", 5300, 3900),
+    ("Castelo dos Dragões", 3600, 6000),
 ]
 
 CAMPS = [
     ("Acamp. do Rio", -3200, -1600),
+    ("Acamp. da Fenda", -4900, -700),
     ("Acamp. do Passo", -900, 3700),
     ("Acamp. do Lago", 2700, 0),
     ("Acamp. do Sul", -1000, -5000),
+    ("Acamp. do Brejo", 1900, -4900),
+    ("Acamp. do Nordeste", 3200, 4000),
+]
+
+# (nome, x, y, altura em studs, raio aproximado)
+SKY_ISLANDS = [
+    ("Arquipélago Celeste", 1300, 2300, 520, 170),
+    ("Arquipélago Celeste", 1900, 2700, 640, 130),
+    ("Arquipélago Celeste", 900, 2900, 760, 110),
+    ("Ilha dos Ventos do Sul", -3000, -4700, 480, 160),
+    ("Ilha da Bruma", 2100, -5900, 500, 140),
+    ("Ilha do Gelo Eterno", -5600, 3600, 950, 150),
+    ("Ilha das Brasas", -6600, -2600, 600, 130),
+    ("Ilha de Cristal", 6500, -1600, 700, 140),
+    ("Ilha da Guarda", 2400, 5200, 1100, 120),
+]
+
+WAYPOINTS = [
+    ("Pico Branco", -4600, 6000),
+    ("Vulcão", -6200, -1300),
+    ("Farol", -900, -6600),
+    ("Pilar de Cristal", 6400, 600),
+    ("Cúpula das Ruínas", 5300, 3900),
+    ("Portão do Castelo", 3300, 5500),
+    ("Coração do Pântano", 3900, -5600),
+    ("Cachoeira Grande", 3700, 500),
 ]
 
 DUNGEON = (-700, 5400)
@@ -145,7 +177,7 @@ DUNGEON = (-700, 5400)
 LIGHT = {
     "sea": "#BFD3D6", "land": "#DCE3CF", "forest": "#9DB98A", "meadow": "#D3DDB0", "mountain": "#B9B4A6",
     "snow": "#EEF1F2", "volcanic": "#C9A08C", "enchanted": "#C8B6DA", "crystal": "#B7D3E4", "swamp": "#AFB997",
-    "swampcore": "#8F9C78", "coast": "#E2D6AE", "ruins": "#CFC2A8", "lakeland": "#C5D7B5", "water": "#7FA8BC",
+    "swampcore": "#8F9C78", "coast": "#E2D6AE", "ruins": "#CFC2A8", "castle": "#9A9097", "sky": "#FFFFFF", "waypoint": "#3C6FA8", "lakeland": "#C5D7B5", "water": "#7FA8BC",
     "ink": "#1F2A2B", "muted": "#566362", "road": "#7A5B3A", "danger": "#B5452F", "inner": "#2F6F62",
     "mid": "#B07A1E", "outer": "#8E3B5F", "paper": "#F5F6F1",
 }
@@ -158,7 +190,7 @@ def svg_markup(themed=True):
     out = []
     out.append(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {W}" role="img" aria-labelledby="mapTitle mapDesc" class="worldmap">')
     out.append('<title id="mapTitle">Mapa conceitual das Terras de Escamarra</title>')
-    out.append('<desc id="mapDesc">Continente de cerca de 13 mil studs com o Hub no centro-sul e 18 fazendas espalhadas em três faixas de distância, biomas, rios, estradas, passagens estreitas, marcos e zonas perigosas.</desc>')
+    out.append('<desc id="mapDesc">Continente de cerca de 14 mil studs com o Hub numa ilha fluvial no centro-sul, 18 fazendas espalhadas a pelo menos 2.100 studs umas das outras, biomas, rios, estradas, passagens, marcos, acampamentos, waypoints, ilhas flutuantes, o Castelo dos Dragões e zonas perigosas.</desc>')
     out.append("<defs>")
     out.append(f'<pattern id="hatch" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="14" height="14" fill="none"/><line x1="0" y1="0" x2="0" y2="14" stroke="{c("danger")}" stroke-width="3" stroke-opacity="0.55"/></pattern>')
     out.append(f'<clipPath id="land"><path d="{smooth_path(continent())}"/></clipPath>')
@@ -228,6 +260,18 @@ def svg_markup(themed=True):
     out.append(f'<g><title>Portão da dungeon (sem marcador no jogo)</title><circle cx="{dx_:.1f}" cy="{dy_:.1f}" r="12" fill="{c("paper")}" stroke="{c("danger")}" stroke-width="2.5" stroke-dasharray="3 3"/>')
     out.append(f'<text x="{dx_:.1f}" y="{dy_ + 5:.1f}" class="m-farm" text-anchor="middle" fill="{c("danger")}">?</text>')
     out.append(f'<text x="{dx_ + 18:.1f}" y="{dy_ + 5:.1f}" class="m-small" fill="{c("danger")}">dungeon</text></g>')
+    # waypoints
+    for name, x0, y0 in WAYPOINTS:
+        x, y = P(x0, y0)
+        out.append(f'<g><title>Waypoint: {name}</title><path d="M{x - 5:.1f},{y + 8:.1f} L{x - 3:.1f},{y - 10:.1f} L{x:.1f},{y - 14:.1f} L{x + 3:.1f},{y - 10:.1f} L{x + 5:.1f},{y + 8:.1f} Z" fill="{c("waypoint")}" stroke="{c("paper")}" stroke-width="1.5"/></g>')
+    # ilhas flutuantes
+    for name, x0, y0, alt, r in SKY_ISLANDS:
+        x, y = P(x0, y0)
+        rr = r / 10.0
+        out.append(f'<g><title>{name} · ilha flutuante a {alt} studs, com comida e água</title>')
+        out.append(f'<ellipse cx="{x + 4:.1f}" cy="{y + 7:.1f}" rx="{rr:.1f}" ry="{rr * 0.7:.1f}" fill="{c("ink")}" fill-opacity="0.18"/>')
+        out.append(f'<ellipse cx="{x:.1f}" cy="{y:.1f}" rx="{rr:.1f}" ry="{rr * 0.7:.1f}" fill="{c("sky")}" stroke="{c("waypoint")}" stroke-width="2" stroke-dasharray="4 3"/>')
+        out.append(f'<circle cx="{x + rr * 0.2:.1f}" cy="{y - rr * 0.1:.1f}" r="{max(2.5, rr * 0.28):.1f}" fill="{c("water")}"/></g>')
     # fazendas
     for num, name, x0, y0, ring in FARMS:
         x, y = P(x0, y0)
