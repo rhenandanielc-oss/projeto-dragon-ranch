@@ -504,7 +504,9 @@ possam ser descobertos sem depender apenas de marcadores de interface.
 ### 8.3 Terras de Escamarra (APROVADO 12/10/2026)
 
 - **Nome da região inicial:** Terras de Escamarra.
-- **Tamanho:** ~8.000 × 8.000 studs, com StreamingEnabled (carregamento
+- **Tamanho:** ~16.000 × 16.000 studs (dobrado em 12/10/2026 junto com o
+  aumento para 18 jogadores), centrado na origem para evitar imprecisão
+  de física longe do centro, com StreamingEnabled (carregamento
   por proximidade, necessário para celular).
 - **Servidor:** até **18 jogadores** (alterado de 8 em 12/10/2026, para haver mais encontros e combates); cada um com terreno de fazenda próprio.
 - **Desempenho:** com até 18 jogadores e 18 dragões ativos, usar níveis de detalhe, limite de partículas por distância e StreamingEnabled; testar no celular.
@@ -1110,7 +1112,8 @@ mecânicas.
                                       B1–B10 resolvidos.
 
   0.3.1 (12/10/2026)                  Servidor passa de 8 para 18
-                                      jogadores; 18 terrenos de fazenda.
+                                      jogadores; 18 terrenos de fazenda;
+                                      mapa dobrado para ~16.000 × 16.000.
 
   -----------------------------------------------------------------------
 

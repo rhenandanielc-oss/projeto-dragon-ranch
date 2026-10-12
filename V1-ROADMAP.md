@@ -45,7 +45,7 @@ evita teleportes entre servidores, que só funcionam no jogo publicado.
 | **3. Dragão companheiro** | Dragão ativo segue o jogador; troca de dragão ativo; montaria em terra a partir de Jovem; velocidade do Wyrm | 2 | ⬜ |
 | **4. Inventário e economia** | Mochila 30→60 com empilhamento; armazém 100; barra de 8 itens; coleta no mapa com reaparecimento; mercador; moedas | 1 | ⬜ |
 | **5. Combate** | Espada (combo, Golpe Giratório), arco (tiro carregado, Flecha Tripla), flechas finitas, bloqueio, esquiva; inimigos básicos; comandos do dragão (F, G, Z/X/C); poderes por estágio; poções; dragão recua e volta após 60 s | 3, 4 | ⬜ |
-| **6. Mundo** | Terreno ~8.000 × 8.000 das Terras de Escamarra; vila, fazendas, floresta, lago, cordilheira, Vale dos Cristais, Cânion vulcânico; StreamingEnabled; NPCs e sistema de missões | 1 | ⬜ |
+| **6. Mundo** | Terreno ~16.000 × 16.000 das Terras de Escamarra; vila, fazendas, floresta, lago, cordilheira, Vale dos Cristais, Cânion vulcânico; StreamingEnabled; NPCs e sistema de missões | 1 | ⬜ |
 | **7. Dungeon** | Portão com círculo de grupo (1–4, 30 s); instância por grupo; inimigos, obstáculos e chefe; morte elimina; desconexão de 3 min; loot individual; baú a cada 20 h | 5, 6 | ⬜ |
 | **8. Voo e escavação** | Missão e poção de voo (uma por dragão, a partir de Jovem); voo com asas; voo ondulante do Dragão Asiático; "entrar na terra" do Wyrm | 3, 7 | ⬜ |
 | **9. PvP** | Zonas protegida/comum/perigosa com avisos; perda de até 40% dos materiais em zona perigosa; proteção de iniciante; 2 min ao renascer; anti-abuso de 30 min | 5, 6 | ⬜ |
