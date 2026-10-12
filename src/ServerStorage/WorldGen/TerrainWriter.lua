@@ -85,15 +85,38 @@ function TerrainWriter.writeChunk(gen, WorldGen, mats, ci: number, cj: number)
 	return ny
 end
 
--- Gera o mundo inteiro (ou os blocos de first..last na ordem linear) em segundo plano
-function TerrainWriter.start(folder: Instance, first: number?, last: number?)
+-- Blocos que cobrem um círculo do mapa (x, y, raio): devolve índices lineares
+function TerrainWriter.chunksAround(size: number, x: number, y: number, r: number): { number }
+	local per = math.floor(size / (CHUNK * VOX) + 0.5)
+	local span = CHUNK * VOX
+	local list = {}
+	for ci = math.floor((x - r + size / 2) / span), math.floor((x + r + size / 2) / span) do
+		for cj = math.floor((y - r + size / 2) / span), math.floor((y + r + size / 2) / span) do
+			if ci >= 0 and cj >= 0 and ci < per and cj < per then
+				table.insert(list, cj * per + ci)
+			end
+		end
+	end
+	return list
+end
+
+-- Gera o mundo inteiro (ou os blocos de first..last na ordem linear, ou a lista `only`) em segundo plano
+function TerrainWriter.start(folder: Instance, first: number?, last: number?, only: { number }?)
 	local WorldData = require(folder:FindFirstChild("WorldData"):Clone())
 	local WorldGen = require(folder:FindFirstChild("WorldGen"):Clone())
 	local per = math.floor(WorldData.SIZE / (CHUNK * VOX) + 0.5)
 	local total = per * per
 	first = first or 0
 	last = last or total - 1
-	folder:SetAttribute("TerrainTotal", last - first + 1)
+	local order = {}
+	if only then
+		order = only
+	else
+		for k = first :: number, last :: number do
+			table.insert(order, k)
+		end
+	end
+	folder:SetAttribute("TerrainTotal", #order)
 	folder:SetAttribute("TerrainProgress", 0)
 	folder:SetAttribute("TerrainStatus", "building grid")
 	task.spawn(function()
@@ -105,7 +128,7 @@ function TerrainWriter.start(folder: Instance, first: number?, last: number?)
 			folder:SetAttribute("TerrainStatus", "running")
 			local t0 = os.clock()
 			local budget = os.clock()
-			for k = first :: number, last :: number do
+			for n, k in ipairs(order) do
 				if folder:GetAttribute("TerrainCancel") then
 					folder:SetAttribute("TerrainStatus", "cancelled at " .. k)
 					return
@@ -113,7 +136,7 @@ function TerrainWriter.start(folder: Instance, first: number?, last: number?)
 				local ci = k % per
 				local cj = k // per
 				TerrainWriter.writeChunk(gen, WorldGen, mats, ci, cj)
-				folder:SetAttribute("TerrainProgress", k - (first :: number) + 1)
+				folder:SetAttribute("TerrainProgress", n)
 				if os.clock() - budget > 0.25 then
 					task.wait()
 					budget = os.clock()

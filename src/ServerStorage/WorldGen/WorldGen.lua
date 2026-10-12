@@ -575,7 +575,7 @@ function WorldGen:computeChunk(x0: number, y0: number, n: number, step: number?)
 				wl = 0 -- mar
 			end
 			if cd > 0 and wl < 0 then wl = 0 end
-			if road > 0.5 then flag = if flag == 2 then 2 else 1 end
+			if road > 0.5 and (flag == 0 or flag == 4) then flag = 1 end
 			hA[idx] = h
 			wlA[idx] = wl
 			cutA[idx] = cut
