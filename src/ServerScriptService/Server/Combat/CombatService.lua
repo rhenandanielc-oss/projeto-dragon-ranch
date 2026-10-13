@@ -59,8 +59,9 @@ local states: { [Player]: PlayerState } = {}
 local enemyProvider: ((center: Vector3, radius: number) -> { Target })? = nil
 local dragonProvider: ((center: Vector3, radius: number) -> { Target })? = nil
 local damageHandlers: { [string]: (target: Target, amount: number, source: Source, opts: { [string]: any }?) -> number } = {}
-local onPlayerHurt: ((victim: Player, source: Source) -> ())? = nil
-local onPlayerAttack: ((attacker: Player, target: Target) -> ())? = nil
+local hurtListeners: { (victim: Player, source: Source) -> () } = {}
+local attackListeners: { (attacker: Player, target: Target) -> () } = {}
+local lastHit: { [Player]: { by: Player?, at: number } } = {}
 local pvpRule: (a: Player, b: Player) -> boolean = function()
 	return false
 end
@@ -126,11 +127,20 @@ function CombatService.RegisterDragons(provider: (Vector3, number) -> { Target }
 end
 
 function CombatService.OnPlayerHurt(fn: (Player, Source) -> ())
-	onPlayerHurt = fn
+	table.insert(hurtListeners, fn)
 end
 
 function CombatService.OnPlayerAttack(fn: (Player, Target) -> ())
-	onPlayerAttack = fn
+	table.insert(attackListeners, fn)
+end
+
+-- Último jogador que feriu `victim` nos últimos `window` segundos (para PvP).
+function CombatService.LastAttacker(victim: Player, window: number): Player?
+	local h = lastHit[victim]
+	if h and h.by and h.by.Parent and os.clock() - h.at <= window then
+		return h.by
+	end
+	return nil
 end
 
 function CombatService.PlayerTarget(player: Player): Target?
@@ -213,8 +223,11 @@ local function damagePlayer(target: Target, amount: number, source: Source): num
 	hum:TakeDamage(amount)
 	s.lastCombat = now
 	CombatService.Fx("Hit", hrp.Position, { Pos = hrp.Position, Amount = math.floor(amount + 0.5), Color = Color3.fromRGB(255, 90, 80) })
-	if onPlayerHurt then
-		task.spawn(onPlayerHurt, victim, source)
+	if source.player and source.player ~= victim then
+		lastHit[victim] = { by = source.player, at = now }
+	end
+	for _, fn in ipairs(hurtListeners) do
+		task.spawn(fn, victim, source)
 	end
 	return amount
 end
@@ -226,8 +239,8 @@ function CombatService.Damage(source: Source, target: Target, amount: number, op
 	end
 	if source.kind == "Player" and source.player then
 		state(source.player).lastCombat = os.clock()
-		if onPlayerAttack then
-			task.spawn(onPlayerAttack, source.player, target)
+		for _, fn in ipairs(attackListeners) do
+			task.spawn(fn, source.player, target)
 		end
 	end
 	if target.kind == "Player" then
@@ -546,6 +559,7 @@ function CombatService.Init()
 	Players.PlayerAdded:Connect(hook)
 	Players.PlayerRemoving:Connect(function(player)
 		states[player] = nil
+		lastHit[player] = nil
 	end)
 
 	-- regeneração fora de combate

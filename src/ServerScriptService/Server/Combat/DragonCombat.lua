@@ -202,7 +202,7 @@ end
 --------------------------------------------------------------------------
 -- Ataques e poderes
 --------------------------------------------------------------------------
-local function targetValid(t: CombatService.Target?): boolean
+local function targetValid(t: CombatService.Target?, st: DState?): boolean
 	if not t or not t.model.Parent then
 		return false
 	end
@@ -210,7 +210,19 @@ local function targetValid(t: CombatService.Target?): boolean
 		local h = t.model:GetAttribute("Health")
 		return type(h) == "number" and h > 0
 	end
-	return false -- PvP de dragões entra na Fase 9
+	-- jogadores e dragões de outros: só quando o PvP permitir (zonas, proteções)
+	if not st then
+		return false
+	end
+	if t.kind == "Player" then
+		local hum = t.model:FindFirstChildOfClass("Humanoid")
+		if not hum or hum.Health <= 0 then
+			return false
+		end
+	elseif t.model:GetAttribute("Defeated") then
+		return false
+	end
+	return CombatService.CanHurt(source(st), t)
 end
 
 local function bite(st: DState, t: CombatService.Target)
@@ -359,10 +371,10 @@ local function usePower(st: DState, slot: string, aim: Vector3?)
 	end
 end
 
-local function nearestEnemy(center: Vector3, radius: number, exclude: Model?): CombatService.Target?
+local function nearestEnemy(center: Vector3, radius: number, st: DState?): CombatService.Target?
 	local best, bestD = nil, radius
 	for _, t in ipairs(CombatService.TargetsNear(center, radius)) do
-		if t.kind == "Enemy" and t.model ~= exclude and targetValid(t) then
+		if (st == nil or (t.model ~= st.model and t.player ~= st.player)) and targetValid(t, st) then
 			local d = (t.root.Position - center).Magnitude
 			if d < bestD then
 				best, bestD = t, d
@@ -404,14 +416,14 @@ local function onCommand(player: Player, cmd: string, aim: Vector3?)
 		if CompanionService.IsMounted(player) then
 			-- montado: mordida no inimigo mais próximo à frente
 			local front = st.root.Position + st.root.CFrame.LookVector * (st.size * 0.4)
-			local t = nearestEnemy(front, Combat.DragonBite.Range + st.size * 0.4)
+			local t = nearestEnemy(front, Combat.DragonBite.Range + st.size * 0.4, st)
 			if t then
 				bite(st, t)
 			end
 			return
 		end
 		local center = if aim then aim :: Vector3 else hrp.Position + hrp.CFrame.LookVector * 20
-		local t = nearestEnemy(center, 30)
+		local t = nearestEnemy(center, 30, st)
 		if t and (t.root.Position - hrp.Position).Magnitude <= Combat.CommandRange then
 			st.target = t
 		end
@@ -442,7 +454,7 @@ local function tick(st: DState, now: number)
 	local char = st.player.Character
 	local hrp = char and char:FindFirstChild("HumanoidRootPart") :: BasePart?
 	local t = st.target
-	if not targetValid(t) or not hrp or ((t :: CombatService.Target).root.Position - hrp.Position).Magnitude > Combat.DragonBite.LeashFromOwner then
+	if not targetValid(t, st) or not hrp or ((t :: CombatService.Target).root.Position - hrp.Position).Magnitude > Combat.DragonBite.LeashFromOwner then
 		if st.target then
 			st.target = nil
 			CompanionService.SetGoal(st.player, nil, nil)
@@ -474,7 +486,7 @@ function DragonCombat.Init()
 	-- ajuda automática: quem ataca o dono vira alvo; quem o dono ataca também
 	CombatService.OnPlayerHurt(function(victim: Player, src: CombatService.Source)
 		local st = states[victim]
-		if st and st.canFight and not targetValid(st.target) and src.kind == "Enemy" and src.model then
+		if st and st.canFight and not targetValid(st.target, st) and src.model then
 			for _, t in ipairs(CombatService.TargetsNear(src.position, 4)) do
 				if t.model == src.model then
 					st.target = t
@@ -485,7 +497,7 @@ function DragonCombat.Init()
 	end)
 	CombatService.OnPlayerAttack(function(attacker: Player, target: CombatService.Target)
 		local st = states[attacker]
-		if st and st.canFight and not targetValid(st.target) and target.kind == "Enemy" then
+		if st and st.canFight and not targetValid(st.target, st) and target.model ~= st.model then
 			st.target = target
 		end
 	end)

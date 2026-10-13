@@ -27,6 +27,7 @@ local CombatFolder = Client:WaitForChild("Combat")
 local Fx = require(CombatFolder:WaitForChild("Fx"))
 local CombatController = require(CombatFolder:WaitForChild("CombatController"))
 local CombatHud = require(UI:WaitForChild("CombatHud"))
+local ZoneBanner = require(UI:WaitForChild("ZoneBanner"))
 
 -- Tela principal
 local screen = Theme.new("ScreenGui", {
@@ -52,6 +53,7 @@ MountController.Init()
 Fx.Init()
 CombatController.Init(MountController.IsMounted)
 CombatHud.Init(screen, CombatController.Charging)
+ZoneBanner.Init(screen)
 
 -- Cada jogador só vê as ações dos próprios dragões.
 local function filterPrompt(inst: Instance)
