@@ -124,6 +124,16 @@ local function step(dt: number)
 	local now = os.clock()
 	local c = center()
 	for _, f in ipairs(flyers) do
+		-- jogador viajou para longe: o dragão "reaparece" fora de vista, perto da nova região
+		if (Vector3.new(f.pos.X, 0, f.pos.Z) - Vector3.new(c.X, 0, c.Z)).Magnitude > 2600 then
+			local a = rng:NextNumber(0, math.pi * 2)
+			local start = Vector3.new(c.X + math.cos(a) * 1500, 0, c.Z + math.sin(a) * 1500)
+			start = Vector3.new(start.X, groundBelow(start.X, start.Z) + 250, start.Z)
+			f.pts = { start, newPoint(start, c), newPoint(start, c), newPoint(start, c) }
+			f.t = 0
+			f.restUntil = 0
+			f.pos = start
+		end
 		if now < f.restUntil then
 			continue -- pousado numa ilha
 		end
