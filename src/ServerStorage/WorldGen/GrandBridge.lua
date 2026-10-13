@@ -79,12 +79,15 @@ local function gate(cf: CFrame, spec: Spec, Props: any, statue: any, parent: Ins
 	m.Name = "Gate"
 	m.Parent = parent
 	local W = spec.width
-	local half = W / 2 + 7
+	local half = W / 2 + 10
 	for _, sx in ipairs({ -1, 1 }) do
 		local tcf = cf * CFrame.new(sx * half, 0, 0)
-		Props.roundTower(tcf, 9, 46, m, true)
-		-- faixa de runas e cristal no alto da torre
-		P({ Name = "RuneBand", Shape = Enum.PartType.Cylinder, Size = Vector3.new(1.2, 18.6, 18.6), CFrame = tcf * CFrame.new(0, 30, 0) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Neon, Color = spec.accent, CastShadow = false }, m)
+		Props.roundTower(tcf, 12, 64, m, true)
+		-- faixas de runas e cristal flutuando no alto da torre
+		for _, y in ipairs({ 22, 44 }) do
+			P({ Name = "RuneBand", Shape = Enum.PartType.Cylinder, Size = Vector3.new(1.2, 24.6, 24.6), CFrame = tcf * CFrame.new(0, y, 0) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Neon, Color = spec.accent, CastShadow = false }, m)
+		end
+		crystal(tcf * CFrame.new(0, 64 + 12 * 2.4 + 9, 0), 3, spec.accent, m, true)
 		-- estátua de dragão do lado de fora, sobre pedestal
 		local ped = tcf * CFrame.new(sx * 16, 0, -10)
 		P({ Name = "Pedestal", Size = Vector3.new(12, 8, 16), CFrame = ped * CFrame.new(0, 4, 0), Material = Enum.Material.Slate, Color = DARK2 }, m)
@@ -94,24 +97,32 @@ local function gate(cf: CFrame, spec: Spec, Props: any, statue: any, parent: Ins
 		end
 	end
 	-- arco entre as torres
-	local lintel = P({ Name = "Lintel", Size = Vector3.new(W + 14, 9, 12), CFrame = cf * CFrame.new(0, 38, 0), Material = Enum.Material.Slate, Color = DARK2 }, m)
-	P({ Name = "LintelTrim", Size = Vector3.new(W + 16, 1.4, 13), CFrame = cf * CFrame.new(0, 43, 0), Material = Enum.Material.Slate, Color = TRIM }, m)
+	local lintel = P({ Name = "Lintel", Size = Vector3.new(W + 20, 12, 14), CFrame = cf * CFrame.new(0, 50, 0), Material = Enum.Material.Slate, Color = DARK2 }, m)
+	P({ Name = "LintelTrim", Size = Vector3.new(W + 22, 1.6, 15), CFrame = cf * CFrame.new(0, 56.8, 0), Material = Enum.Material.Slate, Color = TRIM }, m)
+	P({ Name = "LintelRunes", Size = Vector3.new(W + 4, 0.8, 14.4), CFrame = cf * CFrame.new(0, 44.6, 0), Material = Enum.Material.Neon, Color = spec.accent, CastShadow = false }, m)
+	-- ameias e um grande dragão de pedra no alto do arco, olhando para fora
+	for k = -4, 4 do
+		P({ Name = "Merlon", Size = Vector3.new(3.4, 3.6, 3), CFrame = cf * CFrame.new(k * ((W + 16) / 9), 59.4, -5), Material = Enum.Material.Cobblestone, Color = DARK2 }, m)
+	end
+	if statue then
+		statue(cf * CFrame.new(0, 57.6, 0), 26, m)
+	end
 	nameplate(lintel, spec.name, Enum.NormalId.Front, Color3.fromRGB(236, 222, 190))
 	nameplate(lintel, spec.name, Enum.NormalId.Back, Color3.fromRGB(236, 222, 190))
 	-- arco brilhante (portal decorativo, não bloqueia)
 	local segs = 9
 	for i = 0, segs do
 		local a = math.pi * i / segs
-		local x = math.cos(a) * (W / 2 + 1)
-		local y = 18 + math.sin(a) * 15
+		local x = math.cos(a) * (W / 2 + 2)
+		local y = 22 + math.sin(a) * 20
 		P({ Name = "PortalArc", Size = Vector3.new(2.2, 2.2, 1.2), CFrame = cf * CFrame.new(x, y, 0) * CFrame.Angles(0, 0, a), Material = Enum.Material.Neon, Color = spec.accent, CanCollide = false, CastShadow = false }, m)
 	end
-	local glow = P({ Name = "PortalGlow", Size = Vector3.new(1, 1, 1), CFrame = cf * CFrame.new(0, 26, 0), Transparency = 1, CanCollide = false, CanQuery = false }, m)
+	local glow = P({ Name = "PortalGlow", Size = Vector3.new(1, 1, 1), CFrame = cf * CFrame.new(0, 32, 0), Transparency = 1, CanCollide = false, CanQuery = false }, m)
 	light(glow, spec.accent, 46, 2.2)
 	-- estandartes grandes pendurados no arco, dos dois lados
 	for _, sz in ipairs({ -6.2, 6.2 }) do
 		for _, sx in ipairs({ -W / 3, W / 3 }) do
-			Props.wallBanner(cf * CFrame.new(sx, 27, sz) * CFrame.Angles(0, if sz > 0 then 0 else math.pi, 0), 6, 14, m)
+			Props.wallBanner(cf * CFrame.new(sx, 36, sz * 1.15) * CFrame.Angles(0, if sz > 0 then 0 else math.pi, 0), 7, 16, m)
 		end
 	end
 	return m
