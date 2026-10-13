@@ -97,6 +97,13 @@ local function dragonCard(dragon: { [string]: any }, isActive: boolean, order: n
 			NetClient.Fire("SetActiveDragon", dragon.Id)
 		end)
 	end
+	if not isActive and dragon.Stage ~= "Egg" then
+		local roaming = dragon.Roaming == true
+		local b = Theme.button(roaming and "Recolher" or "Soltar", { Size = UDim2.fromOffset(100, 44), TextSize = 16, BackgroundColor3 = roaming and Theme.Colors.ButtonAlt or Theme.Colors.Button, Parent = row })
+		b.Activated:Connect(function()
+			NetClient.Fire("SetRoaming", dragon.Id, not roaming)
+		end)
+	end
 	if isActive and dragon.Stage ~= "Egg" then
 		local out = Players.LocalPlayer:GetAttribute("CompanionOut") == true
 		local b = Theme.button(out and "Guardar" or "Chamar", { Size = UDim2.fromOffset(110, 44), TextSize = 16, Parent = row })

@@ -48,6 +48,7 @@ local NetDefs: { [string]: RemoteDef } = {
 	ExpandDragonSlots = { Kind = "Event", Direction = "C2S", Args = {}, Rate = 0.5, Burst = 2 },
 
 	-- Fase 3: dragão companheiro e montaria
+	SetRoaming = { Kind = "Event", Direction = "C2S", Args = { { Type = "string", MaxLen = 16 }, { Type = "boolean" } }, Rate = 1, Burst = 4 }, -- soltar/recolher dragão para passear
 	ToggleCompanion = { Kind = "Event", Direction = "C2S", Args = {}, Rate = 0.5, Burst = 2 }, -- chamar / guardar na fazenda
 	MountDragon = { Kind = "Event", Direction = "C2S", Args = {}, Rate = 1, Burst = 3 },
 	DismountDragon = { Kind = "Event", Direction = "C2S", Args = {}, Rate = 2, Burst = 4 },

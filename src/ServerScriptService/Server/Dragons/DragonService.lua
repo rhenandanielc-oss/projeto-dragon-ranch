@@ -20,6 +20,7 @@ local FarmService = require(Server.Services.FarmService)
 local InventoryService = require(Server.Services.InventoryService)
 local DragonModels = require(Server.Dragons.DragonModels)
 local CompanionService = require(Server.Dragons.CompanionService)
+local RoamService = require(Server.Dragons.RoamService)
 
 local DragonService = {}
 
@@ -191,7 +192,9 @@ local function buildModel(player: Player, dragonId: string)
 	end
 	local model = DragonModels.Build(dragon, at)
 	local companion = isCompanion(player, data, dragonId)
-	if not companion then
+	-- solto para passear: não é o ativo, já nasceu e o dono marcou "Soltar"
+	local roaming = not companion and dragon.Roaming == true and dragon.Stage ~= "Egg"
+	if not companion and not roaming then
 		local container = plot:FindFirstChild("Dragons")
 		if not container then
 			container = Instance.new("Folder")
@@ -220,7 +223,46 @@ local function buildModel(player: Player, dragonId: string)
 	if companion then
 		CompanionService.Attach(player, model, dragon)
 		player:SetAttribute("CompanionOut", true)
+	elseif roaming then
+		local base = plot:FindFirstChild("Base") :: BasePart?
+		RoamService.Attach(player, model, base and base.Position or nil)
 	end
+end
+
+-- Soltar / recolher um dragão para passear pelo mundo (não luta e não pode ser atacado).
+local function onSetRoaming(player: Player, dragonId: string, on: boolean)
+	local data = DataService.Get(player)
+	local dragon = data and data.Dragons[dragonId]
+	if not data or not dragon then
+		return
+	end
+	if on then
+		if dragon.Stage == "Egg" then
+			notify(player, "Ovos ficam no ninho.")
+			return
+		end
+		if data.ActiveDragonId == dragonId then
+			notify(player, "Esse é o seu dragão ativo: ele já anda com você.")
+			return
+		end
+		local n = 0
+		for _, d in pairs(data.Dragons) do
+			if d.Roaming then
+				n += 1
+			end
+		end
+		if n >= Rules.Roam.MaxPerPlayer then
+			notify(player, string.format("No máximo %d dragões soltos ao mesmo tempo.", Rules.Roam.MaxPerPlayer), "warning")
+			return
+		end
+	end
+	if (dragon.Roaming == true) == on then
+		return
+	end
+	dragon.Roaming = on
+	DataService.MarkChanged(player, "Dragons")
+	buildModel(player, dragonId)
+	notify(player, if on then displayName(dragon) .. " foi solto para passear. Ele fica por perto de você e não luta." else displayName(dragon) .. " voltou para o cercado.")
 end
 
 local function rebuildAll(player: Player)
@@ -593,6 +635,8 @@ function DragonService.Init()
 	NetService.On("SetActiveDragon", onSetActive)
 	NetService.On("ExpandDragonSlots", onExpandSlots)
 	NetService.On("ToggleCompanion", onToggleCompanion)
+	NetService.On("SetRoaming", onSetRoaming)
+	RoamService.Init()
 	NetService.On("MountDragon", function(player: Player)
 		CompanionService.Mount(player)
 	end)

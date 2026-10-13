@@ -22,6 +22,18 @@ Rules.Companion = {
 	MountDistance = 20, -- distância para montar (somada ao tamanho do dragão)
 }
 
+-- Dragões soltos para passear (não lutam, não podem ser atacados). Provisório.
+Rules.Roam = {
+	MaxPerPlayer = 3,
+	FarmRadius = 330, -- dono dentro disso = passeiam pela fazenda
+	NearOwnerRadius = 70, -- dono fora = passeiam até essa distância dele
+	TeleportDistance = 320, -- mais longe que isso: reaparecem perto
+	WalkSpeed = 12,
+	CatchUpSpeed = 42,
+	PauseMin = 4,
+	PauseMax = 10,
+}
+
 Rules.Mount = {
 	-- Velocidade em terra por estágio (o jogador a pé anda a 16).
 	LandSpeedByStage = { Young = 34, Subadult = 40, Adult = 45, Elder = 48 },
