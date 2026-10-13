@@ -2457,7 +2457,8 @@ function WorldBuilder:forestBlock(bi: number, bj: number, parent: Instance): num
 					dens *= 0.12
 				end
 				-- até 2 árvores por célula de 30 studs (copas sobrepostas = céu escondido)
-				local expect = dens * (if grove then 1.85 else 1.4)
+				-- (orçamento de memória: mata comum ~1,1 árvore por célula; bosque especial ~1,6)
+				local expect = dens * (if grove then 1.6 else 1.1)
 				for k = 1, 2 do
 				if rng:NextNumber() < expect - (k - 1) then
 					local tx, ty = jx, jy
@@ -2484,7 +2485,7 @@ function WorldBuilder:forestBlock(bi: number, bj: number, parent: Instance): num
 				end
 				end
 				-- chão da mata: samambaias, arbustos, troncos caídos, tocos e pedras
-				if rng:NextNumber() < (if grove then 0.5 else 0.3) * math.max(dens, 0.3) then
+				if rng:NextNumber() < (if grove then 0.4 else 0.16) * math.max(dens, 0.3) then
 					local e = self:pickAt(under, jx + 300, jy)
 					local ox, oy = rng:NextNumber(-12, 12), rng:NextNumber(-12, 12)
 					put(e, jx + ox, jy + oy, e[1] ~= "Boulder" or e[4] < 1.6)
