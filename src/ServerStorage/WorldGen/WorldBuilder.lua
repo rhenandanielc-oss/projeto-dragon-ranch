@@ -2458,7 +2458,7 @@ function WorldBuilder:forestBlock(bi: number, bj: number, parent: Instance): num
 				end
 				-- até 2 árvores por célula de 30 studs (copas sobrepostas = céu escondido)
 				-- (orçamento de memória: mata comum ~1,1 árvore por célula; bosque especial ~1,6)
-				local expect = dens * (if grove then 1.6 else 1.1)
+				local expect = dens * (if grove then 1.2 else 0.62)
 				for k = 1, 2 do
 				if rng:NextNumber() < expect - (k - 1) then
 					local tx, ty = jx, jy
@@ -2474,9 +2474,9 @@ function WorldBuilder:forestBlock(bi: number, bj: number, parent: Instance): num
 					if e[1] == "Blossom" or e[1] == "Tree2" or e[1] == "Oak" then
 						gm *= 0.75 -- copas largas: gigantes menos exagerados
 					end
-					if r < 0.55 then
+					if r < 0.65 then
 						-- pinheiro gigante (copa grande)
-						put({ e[1], 1, e[3] * 1.3 * gm, e[4] * 1.35 * gm, e[5] }, tx, ty, false)
+						put({ e[1], 1, e[3] * 1.5 * gm, e[4] * 1.6 * gm, e[5] }, tx, ty, false)
 					elseif r < 0.85 then
 						put({ e[1], 1, e[3] * 0.85, e[4] * 1.0, e[5] }, tx, ty, false)
 					else
@@ -2485,7 +2485,7 @@ function WorldBuilder:forestBlock(bi: number, bj: number, parent: Instance): num
 				end
 				end
 				-- chão da mata: samambaias, arbustos, troncos caídos, tocos e pedras
-				if rng:NextNumber() < (if grove then 0.4 else 0.16) * math.max(dens, 0.3) then
+				if rng:NextNumber() < (if grove then 0.3 else 0.08) * math.max(dens, 0.3) then
 					local e = self:pickAt(under, jx + 300, jy)
 					local ox, oy = rng:NextNumber(-12, 12), rng:NextNumber(-12, 12)
 					put(e, jx + ox, jy + oy, e[1] ~= "Boulder" or e[4] < 1.6)
