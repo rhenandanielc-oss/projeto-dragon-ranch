@@ -37,9 +37,16 @@ type Entry = {
 	strikes: number,
 	airSince: number?,
 	conns: { RBXScriptConnection },
+	goal: Vector3?, -- combate: posição para onde o dragão deve ir (em vez de seguir o dono)
+	faceTo: Vector3?,
 }
 
 local entries: { [Player]: Entry } = {}
+
+local attachedEvent = Instance.new("BindableEvent")
+local detachedEvent = Instance.new("BindableEvent")
+CompanionService.Attached = attachedEvent.Event -- (player, model, dragon)
+CompanionService.Detached = detachedEvent.Event -- (player)
 local notifyFn: ((Player, string, string?) -> ())? = nil
 
 local function folder(): Folder
@@ -296,6 +303,8 @@ function CompanionService.Attach(player: Player, model: Model, dragon: { [string
 		strikes = 0,
 		airSince = nil,
 		conns = {},
+		goal = nil,
+		faceTo = nil,
 	}
 	entries[player] = e
 	setServerControl(e)
@@ -319,6 +328,7 @@ function CompanionService.Attach(player: Player, model: Model, dragon: { [string
 			end)
 		)
 	end
+	attachedEvent:Fire(player, model, dragon)
 	return model
 end
 
@@ -340,6 +350,21 @@ function CompanionService.Detach(player: Player)
 	if e.model.Parent then
 		e.model:Destroy()
 	end
+	detachedEvent:Fire(player)
+end
+
+-- Combate: manda o dragão ir até `pos` (nil = volta a seguir o dono) e olhar para `face`.
+function CompanionService.SetGoal(player: Player, pos: Vector3?, face: Vector3?)
+	local e = entries[player]
+	if e then
+		e.goal = pos
+		e.faceTo = face
+	end
+end
+
+function CompanionService.Root(player: Player): BasePart?
+	local e = entries[player]
+	return e and e.root
 end
 
 function CompanionService.Get(player: Player): Model?
@@ -376,7 +401,12 @@ local function follow(e: Entry)
 	local target = behind.Position
 	local toTarget = Vector3.new(target.X - rootPos.X, 0, target.Z - rootPos.Z)
 	-- parado perto do dono: não fica "tremendo" atrás dele
-	if toTarget.Magnitude < 3 or dist < e.size * 0.5 + 4 then
+	if e.goal then
+		target = e.goal :: Vector3
+		if Vector3.new(target.X - rootPos.X, 0, target.Z - rootPos.Z).Magnitude < 2 then
+			target = rootPos
+		end
+	elseif toTarget.Magnitude < 3 or dist < e.size * 0.5 + 4 then
 		target = rootPos
 	end
 	local g = groundAt(target, math.max(hrp.Position.Y, rootPos.Y) + 8, 80) or rootPos.Y
@@ -385,7 +415,13 @@ local function follow(e: Entry)
 	e.align.MaxVelocity = math.clamp(dist * 1.3, 10, math.max(Rules.Companion.FollowCatchUpSpeed, e.speed + 10))
 
 	local move = Vector3.new(target.X - rootPos.X, 0, target.Z - rootPos.Z)
-	if move.Magnitude > 1.5 then
+	local face = e.faceTo
+	if face and move.Magnitude <= 1.5 then
+		local f = Vector3.new(face.X - rootPos.X, 0, face.Z - rootPos.Z)
+		if f.Magnitude > 0.5 then
+			e.orient.CFrame = CFrame.lookAt(Vector3.zero, f.Unit)
+		end
+	elseif move.Magnitude > 1.5 then
 		e.orient.CFrame = CFrame.lookAt(Vector3.zero, move.Unit)
 	elseif dist > 2 then
 		e.orient.CFrame = CFrame.lookAt(Vector3.zero, flat.Unit)

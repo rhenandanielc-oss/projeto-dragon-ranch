@@ -45,6 +45,7 @@ end
 local models: { [Player]: { [string]: Model } } = {}
 local petCooldown: { [string]: number } = {}
 local companionHome: { [Player]: boolean } = {} -- true = o jogador guardou o dragão ativo na fazenda
+local restUntil: { [Player]: number } = {} -- dragão derrotado descansa na fazenda até esse momento
 
 --------------------------------------------------------------------------
 -- Utilidades
@@ -205,8 +206,8 @@ local function buildModel(player: Player, dragonId: string)
 		local isBaby = dragon.Stage == "Baby"
 		addPrompt(model, player, "Feed", "Alimentar", Enum.KeyCode.E, 0)
 		addPrompt(model, player, "Drink", "Dar água", Enum.KeyCode.R, 1)
-		addPrompt(model, player, "Pet", "Carinho", Enum.KeyCode.F, 2)
-		addPrompt(model, player, "Train", isBaby and "Brincar" or "Treinar", Enum.KeyCode.T, 3)
+		addPrompt(model, player, "Pet", "Carinho", Enum.KeyCode.H, 2)
+		addPrompt(model, player, "Train", isBaby and "Brincar" or "Treinar", Enum.KeyCode.Y, 3)
 		for _, prompt in ipairs(model:GetDescendants()) do
 			if prompt:IsA("ProximityPrompt") then
 				prompt.ObjectText = displayName(dragon)
@@ -495,11 +496,40 @@ local function onToggleCompanion(player: Player)
 		notify(player, "Seu dragão ativo ainda é um ovo.")
 		return
 	end
+	local rest = (restUntil[player] or 0) - os.clock()
+	if companionHome[player] and rest > 0 then
+		notify(player, string.format("%s ainda está descansando (%d s).", displayName(dragon), math.ceil(rest)))
+		return
+	end
 	companionHome[player] = not companionHome[player]
 	CompanionService.Detach(player)
 	player:SetAttribute("CompanionOut", false)
 	buildModel(player, id)
 	notify(player, companionHome[player] and (displayName(dragon) .. " voltou para a fazenda.") or (displayName(dragon) .. " está com você."))
+end
+
+DragonService.ToggleCompanion = onToggleCompanion
+
+function DragonService.IsCompanionHome(player: Player): boolean
+	return companionHome[player] == true
+end
+
+-- Dragão derrotado em combate: volta para a fazenda e descansa (GAME-DESIGN §10.5).
+function DragonService.Rest(player: Player, seconds: number)
+	local data = DataService.Get(player)
+	if not data then
+		return
+	end
+	restUntil[player] = os.clock() + seconds
+	player:SetAttribute("DragonRestUntil", workspace:GetServerTimeNow() + seconds)
+	companionHome[player] = true
+	CompanionService.Detach(player)
+	player:SetAttribute("CompanionOut", false)
+	local id = data.ActiveDragonId
+	if id and data.Dragons[id] then
+		buildModel(player, id)
+		notify(player, string.format("%s foi derrotado e voltou para a fazenda para descansar. Chame-o de novo em %d s (G).", displayName(data.Dragons[id]), seconds), "warning")
+	end
 end
 
 local function onExpandSlots(player: Player)
@@ -572,6 +602,7 @@ function DragonService.Init()
 	Players.PlayerRemoving:Connect(function(player)
 		clearModels(player)
 		companionHome[player] = nil
+		restUntil[player] = nil
 	end)
 
 	task.spawn(function()

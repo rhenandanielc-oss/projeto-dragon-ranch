@@ -23,6 +23,10 @@ local ShopPanel = require(UI:WaitForChild("ShopPanel"))
 local TravelPanel = require(UI:WaitForChild("TravelPanel"))
 local Wind = require(Client:WaitForChild("World"):WaitForChild("Wind"))
 local MountController = require(Client:WaitForChild("Dragon"):WaitForChild("MountController"))
+local CombatFolder = Client:WaitForChild("Combat")
+local Fx = require(CombatFolder:WaitForChild("Fx"))
+local CombatController = require(CombatFolder:WaitForChild("CombatController"))
+local CombatHud = require(UI:WaitForChild("CombatHud"))
 
 -- Tela principal
 local screen = Theme.new("ScreenGui", {
@@ -45,6 +49,9 @@ InventoryPanel.Init(screen)
 ShopPanel.Init(screen)
 TravelPanel.Init(screen)
 MountController.Init()
+Fx.Init()
+CombatController.Init(MountController.IsMounted)
+CombatHud.Init(screen, CombatController.Charging)
 
 -- Cada jogador só vê as ações dos próprios dragões.
 local function filterPrompt(inst: Instance)
@@ -83,6 +90,18 @@ end)
 
 NetClient.On("OpenStorage", function()
 	InventoryPanel.OpenStorage()
+end)
+
+NetClient.On("Fx", function(kind: string, data: { [string]: any })
+	Fx.Play(kind, data)
+end)
+
+NetClient.On("SkillUsed", function(name: string, cooldown: number)
+	CombatHud.SkillUsed(name, cooldown)
+end)
+
+NetClient.On("DragonPowers", function(unlocked: { [string]: any }, canFight: boolean)
+	CombatHud.SetDragonPowers(unlocked, canFight)
 end)
 
 NetClient.On("OpenShop", function()

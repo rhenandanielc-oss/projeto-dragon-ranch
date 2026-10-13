@@ -70,6 +70,15 @@ local NetDefs: { [string]: RemoteDef } = {
 	UseItem = { Kind = "Event", Direction = "C2S", Args = { { Type = "string", MaxLen = 24 } }, Rate = 1, Burst = 3 },
 	ChannelStarted = { Kind = "Event", Direction = "S2C" }, -- (segundos, texto) barra de canalização na tela
 
+	-- Fase 5: combate
+	-- (ação, direção da mira unitária, carga do arco 0..1)
+	CombatAction = { Kind = "Event", Direction = "C2S", Args = { { Type = "enum", Values = { "Attack", "Skill", "BlockOn", "BlockOff", "Dodge", "SwitchWeapon" } }, { Type = "Vector3", Optional = true, MaxMagnitude = 1.5 }, { Type = "number", Optional = true, Min = 0, Max = 1.5 } }, Rate = 12, Burst = 20 },
+	-- (comando, ponto mirado no mundo)
+	DragonCommand = { Kind = "Event", Direction = "C2S", Args = { { Type = "enum", Values = { "Attack", "Recall", "Z", "X", "C" } }, { Type = "Vector3", Optional = true, MaxMagnitude = 20000 } }, Rate = 6, Burst = 12 },
+	Fx = { Kind = "Event", Direction = "S2C" }, -- (tipo, dados) efeitos visuais
+	SkillUsed = { Kind = "Event", Direction = "S2C" }, -- (habilidade, recarga) para a interface
+	DragonPowers = { Kind = "Event", Direction = "S2C" }, -- (poderes liberados, pode lutar)
+
 	-- Mundo aberto: escolha do bioma da fazenda (mesa do cartógrafo no Hub).
 	FarmChooser = { Kind = "Event", Direction = "S2C" }, -- (biomas livres, bioma atual, pode escolher)
 	ChooseFarmBiome = { Kind = "Event", Direction = "C2S", Args = { { Type = "enum", Values = { "blossom", "coast", "crystal", "enchanted", "fir", "hidden", "lake", "meadow", "oak", "orchard", "pine", "rainforest", "redrock", "ruins", "snow", "swamp", "volcanic" } } }, Rate = 0.2, Burst = 2 },

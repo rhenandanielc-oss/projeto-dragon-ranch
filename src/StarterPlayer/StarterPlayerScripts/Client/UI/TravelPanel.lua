@@ -92,7 +92,7 @@ function TravelPanel.Init(screen: ScreenGui)
 	channel = Theme.new("Frame", {
 		Name = "ChannelBar",
 		AnchorPoint = Vector2.new(0.5, 1),
-		Position = UDim2.new(0.5, 0, 1, -84),
+		Position = UDim2.new(0.5, 0, 1, -170),
 		Size = UDim2.fromOffset(320, 30),
 		BackgroundColor3 = Color3.fromRGB(20, 16, 24),
 		Visible = false,
