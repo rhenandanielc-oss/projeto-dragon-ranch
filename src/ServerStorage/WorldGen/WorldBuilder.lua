@@ -499,6 +499,17 @@ function WorldBuilder:flowers(center: Vector3, radius: number, count: number, pa
 	end
 end
 
+-- Malha simplificada vista de longe (fora do raio de streaming): mantém florestas,
+-- vila e marcos visíveis quando o jogador voa alto.
+local function farLOD(m: Instance)
+	if m:IsA("Model") then
+		pcall(function()
+			(m :: any).LevelOfDetail = Enum.ModelLevelOfDetail.StreamingMesh
+		end)
+	end
+end
+WorldBuilder.farLOD = farLOD
+
 -- marcador invisível de zona (lido pelos sistemas de PvP/zonas)
 local function zoneMarker(name: string, kind: string, pos: Vector3, radius: number, parent: Instance)
 	local z = part({ Name = name, Shape = Enum.PartType.Ball, Size = Vector3.new(2, 2, 2), CFrame = CFrame.new(pos), Transparency = 1, CanCollide = false, CanQuery = false, CanTouch = false }, parent)
@@ -751,6 +762,7 @@ function WorldBuilder:buildHub()
 			st.Parent = tower
 		end
 	end
+	farLOD(tower)
 	tower.Parent = plaza
 	-- estações dos NPCs (mesmo layout já aprovado)
 	local npcFolder = Instance.new("Folder")
@@ -793,8 +805,9 @@ function WorldBuilder:buildHub()
 	end
 	task.wait()
 	-- casas da vila ao longo das ruas que saem da praça, viradas para a rua
-	local houses = Instance.new("Folder")
+	local houses = Instance.new("Model")
 	houses.Name = "Village"
+	farLOD(houses)
 	houses.Parent = hub
 	local placedAt = {}
 	local placed = 0
@@ -1209,6 +1222,7 @@ function WorldBuilder:buildGrove(f, parent: Instance): number
 			end
 		end
 	end
+	farLOD(grove)
 	grove.Parent = parent
 	return n
 end
@@ -1556,6 +1570,7 @@ function WorldBuilder:buildCamps()
 		m:SetAttribute("DragonFood", true)
 		m:SetAttribute("DragonWater", true)
 		zoneMarker("SafeZone", "Safe", C, 95, m)
+		farLOD(m)
 		m.Parent = folder
 		task.wait()
 	end
@@ -1630,6 +1645,7 @@ function WorldBuilder:buildLandmarks()
 			self:dragonStatue(scf, h, folder)
 		end)
 		castle:SetAttribute("Landmark", "Castelo dos Dragões")
+		farLOD(castle)
 		self:paintDisc(castleShape.x, castleShape.y, castleShape.rTop * 0.68, Enum.Material.Cobblestone)
 		for k = 1, 6 do
 			local a = k / 6 * math.pi * 2
@@ -1648,11 +1664,13 @@ function WorldBuilder:buildLandmarks()
 	local lx, ly = self:findLand(-700, -6850)
 	local lh = self.Props.lighthouse(CFrame.new(V(lx, ly, self:groundY(lx, ly) - 1)), folder)
 	lh:SetAttribute("Landmark", "Farol")
+	farLOD(lh)
 	-- Cúpula das Ruínas e colunas espalhadas
 	local rx, ry = 5300, 4050
 	local ruins = self.Props.ruins(CFrame.new(V(rx, ry, self:groundY(rx, ry))) * CFrame.Angles(0, math.rad(30), 0), folder, rng)
 	ruins.Name = "RuinsDome"
 	ruins:SetAttribute("Landmark", "Cúpula das Ruínas")
+	farLOD(ruins)
 	for k = 1, 26 do
 		local a = rng:NextNumber(0, math.pi * 2)
 		local R = rng:NextNumber(120, 650)
@@ -1943,8 +1961,9 @@ function WorldBuilder:forestBlock(bi: number, bj: number, parent: Instance): num
 	local rng = self.rng
 	local half = self.data.SIZE / 2
 	local x0, y0 = -half + bi * 1024, -half + bj * 1024
-	local block = Instance.new("Folder")
+	local block = Instance.new("Model")
 	block.Name = string.format("F_%02d_%02d", bi, bj)
+	farLOD(block)
 	local detail = Instance.new("Folder")
 	detail.Name = "Detail" -- arbustos, flores e rochas pequenas (a ferramenta de qualidade pode esconder)
 	detail.Parent = block
