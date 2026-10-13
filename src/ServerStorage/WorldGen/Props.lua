@@ -494,6 +494,167 @@ function Props.castle(cf: CFrame, parent, R: number, statue: ((CFrame, number) -
 	return m
 end
 
+-- casa medieval: base de pedra, paredes claras com vigas de madeira, telhado íngreme
+-- style: "thatch" (palha) | "slate" (ardósia) | "wood" (tábuas)
+function Props.house(cf: CFrame, parent, rng: Random, w: number?, d: number?, style: string?)
+	local m = model("House", parent)
+	local W = w or rng:NextNumber(16, 22)
+	local D = d or rng:NextNumber(12, 16)
+	local H = rng:NextNumber(10, 13)
+	local two = rng:NextNumber() < 0.35
+	local wallC = ({ Color3.fromRGB(222, 212, 190), Color3.fromRGB(206, 192, 168), Color3.fromRGB(190, 178, 160) })[rng:NextInteger(1, 3)]
+	local beam = Color3.fromRGB(70, 50, 36)
+	local st = style or ({ "thatch", "slate", "wood" })[rng:NextInteger(1, 3)]
+	part({ Name = "Foundation", Size = Vector3.new(W + 1, 3.4, D + 1), CFrame = cf * CFrame.new(0, 0.7, 0), Material = Enum.Material.Cobblestone, Color = Color3.fromRGB(120, 116, 110) }, m)
+	local wallH = if two then H * 1.6 else H
+	part({ Name = "Walls", Size = Vector3.new(W, wallH, D), CFrame = cf * CFrame.new(0, 2.4 + wallH / 2, 0), Material = Enum.Material.Concrete, Color = wallC }, m)
+	-- vigas aparentes (enxaimel)
+	for _, sz in ipairs({ -1, 1 }) do
+		for i = 0, 4 do
+			local x = -W / 2 + i * W / 4
+			part({ Name = "Beam", Size = Vector3.new(0.7, wallH, 0.4), CFrame = cf * CFrame.new(x, 2.4 + wallH / 2, sz * (D / 2 + 0.15)), Material = Enum.Material.Wood, Color = beam }, m)
+		end
+		for _, y in ipairs(if two then { 2.4 + H * 0.8 } else { 2.4 + wallH - 0.4 }) do
+			part({ Name = "Beam", Size = Vector3.new(W, 0.6, 0.4), CFrame = cf * CFrame.new(0, y, sz * (D / 2 + 0.15)), Material = Enum.Material.Wood, Color = beam }, m)
+		end
+	end
+	for _, sx in ipairs({ -1, 1 }) do
+		part({ Name = "Beam", Size = Vector3.new(0.4, wallH, 0.7), CFrame = cf * CFrame.new(sx * (W / 2 + 0.15), 2.4 + wallH / 2, 0), Material = Enum.Material.Wood, Color = beam }, m)
+	end
+	-- porta e janelas com luz quente
+	part({ Name = "Door", Size = Vector3.new(3.4, 6.4, 0.4), CFrame = cf * CFrame.new(0, 2.4 + 3.2, -D / 2 - 0.25), Material = Enum.Material.Wood, Color = Color3.fromRGB(84, 58, 38) }, m)
+	for _, x in ipairs({ -W / 3, W / 3 }) do
+		part({ Name = "Window", Size = Vector3.new(2.4, 2.6, 0.3), CFrame = cf * CFrame.new(x, 2.4 + 5, -D / 2 - 0.2), Material = Enum.Material.Neon, Color = Color3.fromRGB(255, 196, 120), CastShadow = false }, m)
+		part({ Name = "Shutter", Size = Vector3.new(1.3, 2.8, 0.25), CFrame = cf * CFrame.new(x - 1.9, 2.4 + 5, -D / 2 - 0.3), Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(96, 70, 48) }, m)
+	end
+	-- telhado de duas águas
+	local roofH = D * 0.62
+	local roofMat = if st == "thatch" then Enum.Material.Fabric elseif st == "slate" then Enum.Material.Slate else Enum.Material.WoodPlanks
+	local roofC = if st == "thatch" then Color3.fromRGB(176, 146, 92) elseif st == "slate" then Color3.fromRGB(64, 66, 74) else Color3.fromRGB(110, 74, 52)
+	local ry = 2.4 + wallH
+	for _, sz in ipairs({ -1, 1 }) do
+		wedge({ Name = "Roof", Size = Vector3.new(W + 2.4, roofH, D / 2 + 1.4), CFrame = cf * CFrame.new(0, ry + roofH / 2, sz * (D / 4 + 0.7)) * (if sz < 0 then CFrame.Angles(0, math.rad(180), 0) else CFrame.new()), Material = roofMat, Color = roofC }, m)
+	end
+	-- empena fechada
+	for _, sx in ipairs({ -1, 1 }) do
+		for _, sz in ipairs({ -1, 1 }) do
+			wedge({ Name = "Gable", Size = Vector3.new(0.6, roofH - 0.4, D / 2), CFrame = cf * CFrame.new(sx * (W / 2 - 0.3), ry + (roofH - 0.4) / 2, sz * D / 4) * (if sz < 0 then CFrame.Angles(0, math.rad(180), 0) else CFrame.new()), Material = Enum.Material.Concrete, Color = wallC }, m)
+		end
+	end
+	-- chaminé
+	if rng:NextNumber() < 0.7 then
+		local cx = W / 2 - 2.5
+		part({ Name = "Chimney", Size = Vector3.new(2.6, roofH + 4, 2.6), CFrame = cf * CFrame.new(cx, ry + (roofH + 4) / 2 - 1, D / 4), Material = Enum.Material.Cobblestone, Color = Color3.fromRGB(110, 104, 98) }, m)
+	end
+	return m
+end
+
+-- celeiro de madeira com portão grande
+function Props.barn(cf: CFrame, parent, s: number?)
+	local k = s or 1
+	local m = model("Barn", parent)
+	local W, D, H = 26 * k, 20 * k, 14 * k
+	part({ Name = "Foundation", Size = Vector3.new(W + 1, 2, D + 1), CFrame = cf * CFrame.new(0, 0.4, 0), Material = Enum.Material.Cobblestone, Color = Color3.fromRGB(116, 112, 106) }, m)
+	part({ Name = "Walls", Size = Vector3.new(W, H, D), CFrame = cf * CFrame.new(0, 1.4 + H / 2, 0), Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(128, 58, 44) }, m)
+	part({ Name = "Door", Size = Vector3.new(9 * k, 10 * k, 0.5), CFrame = cf * CFrame.new(0, 1.4 + 5 * k, -D / 2 - 0.3), Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(96, 46, 36) }, m)
+	for _, rot in ipairs({ 40, -40 }) do
+		part({ Name = "DoorBrace", Size = Vector3.new(0.6, 12 * k, 0.3), CFrame = cf * CFrame.new(0, 1.4 + 5 * k, -D / 2 - 0.6) * CFrame.Angles(0, 0, math.rad(rot)), Material = Enum.Material.Wood, Color = Color3.fromRGB(226, 216, 196) }, m)
+	end
+	local roofH = D * 0.55
+	for _, sz in ipairs({ -1, 1 }) do
+		wedge({ Name = "Roof", Size = Vector3.new(W + 2, roofH, D / 2 + 1.2), CFrame = cf * CFrame.new(0, 1.4 + H + roofH / 2, sz * (D / 4 + 0.6)) * (if sz < 0 then CFrame.Angles(0, math.rad(180), 0) else CFrame.new()), Material = Enum.Material.Slate, Color = Color3.fromRGB(62, 64, 70) }, m)
+		wedge({ Name = "Gable", Size = Vector3.new(W - 0.4, roofH - 0.3, D / 2), CFrame = cf * CFrame.new(0, 1.4 + H + (roofH - 0.3) / 2, sz * D / 4) * (if sz < 0 then CFrame.Angles(0, math.rad(180), 0) else CFrame.new()), Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(128, 58, 44) }, m)
+	end
+	return m
+end
+
+-- barraca de mercado com toldo listrado e mercadorias
+function Props.stall(cf: CFrame, parent, rng: Random)
+	local m = model("Stall", parent)
+	local colors = { Color3.fromRGB(160, 48, 44), Color3.fromRGB(44, 86, 140), Color3.fromRGB(196, 150, 60), Color3.fromRGB(60, 110, 70) }
+	local c = colors[rng:NextInteger(1, #colors)]
+	part({ Name = "Counter", Size = Vector3.new(10, 3.4, 4), CFrame = cf * CFrame.new(0, 1.7, 0), Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(130, 96, 62) }, m)
+	for _, o in ipairs({ { -4.8, -1.8 }, { 4.8, -1.8 }, { -4.8, 1.8 }, { 4.8, 1.8 } }) do
+		part({ Name = "Pole", Size = Vector3.new(0.5, 9, 0.5), CFrame = cf * CFrame.new(o[1], 4.5, o[2]), Material = Enum.Material.Wood, Color = DARKWOOD }, m)
+	end
+	for i = 0, 4 do
+		part({ Name = "Awning", Size = Vector3.new(2.2, 0.2, 6.4), CFrame = cf * CFrame.new(-4.4 + i * 2.2, 8.6, -0.6) * CFrame.Angles(math.rad(-14), 0, 0), Material = Enum.Material.Fabric, Color = if i % 2 == 0 then c else Color3.fromRGB(230, 222, 200), CanCollide = false }, m)
+	end
+	for i = -2, 2 do
+		local goods = { Color3.fromRGB(200, 60, 50), Color3.fromRGB(230, 170, 60), Color3.fromRGB(110, 160, 70), Color3.fromRGB(140, 90, 160) }
+		part({ Name = "Goods", Shape = Enum.PartType.Ball, Size = Vector3.new(1.2, 1.2, 1.2), CFrame = cf * CFrame.new(i * 1.8, 4, -0.8), Material = Enum.Material.SmoothPlastic, Color = goods[rng:NextInteger(1, #goods)] }, m)
+	end
+	return m
+end
+
+-- poço de pedra com telhadinho
+function Props.well(cf: CFrame, parent)
+	local m = model("Well", parent)
+	cyl(cf, 3.2, 7, { Name = "Ring", Material = Enum.Material.Cobblestone, Color = Color3.fromRGB(128, 124, 118) }, m)
+	cyl(cf * CFrame.new(0, 2.6, 0), 0.4, 5.6, { Name = "Water", Material = Enum.Material.Glass, Color = Color3.fromRGB(40, 90, 110), Transparency = 0.2 }, m)
+	for _, sx in ipairs({ -1, 1 }) do
+		part({ Name = "Post", Size = Vector3.new(0.6, 7, 0.6), CFrame = cf * CFrame.new(sx * 3.1, 3.5, 0), Material = Enum.Material.Wood, Color = DARKWOOD }, m)
+	end
+	for _, sz in ipairs({ -1, 1 }) do
+		wedge({ Name = "Roof", Size = Vector3.new(8, 1.8, 2.6), CFrame = cf * CFrame.new(0, 7.6, sz * 1.3) * (if sz < 0 then CFrame.Angles(0, math.rad(180), 0) else CFrame.new()), Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(110, 74, 52) }, m)
+	end
+	return m
+end
+
+-- chafariz de pedra em degraus (a água é feita com terreno pelo construtor)
+function Props.fountain(cf: CFrame, parent)
+	local m = model("Fountain", parent)
+	cyl(cf * CFrame.new(0, -0.5, 0), 2.6, 30, { Name = "Basin", Material = Enum.Material.Cobblestone, Color = Color3.fromRGB(150, 146, 138) }, m)
+	cyl(cf * CFrame.new(0, 2.1, 0), 0.4, 27, { Name = "Water", Material = Enum.Material.Glass, Color = Color3.fromRGB(60, 130, 150), Transparency = 0.35, CanCollide = false }, m)
+	cyl(cf, 6, 5, { Name = "Pillar", Material = Enum.Material.Cobblestone, Color = Color3.fromRGB(140, 136, 128) }, m)
+	cyl(cf * CFrame.new(0, 6, 0), 1.2, 12, { Name = "UpperBowl", Material = Enum.Material.Cobblestone, Color = Color3.fromRGB(150, 146, 138) }, m)
+	local spout = cyl(cf * CFrame.new(0, 7.2, 0), 2, 1.4, { Name = "Spout", Material = Enum.Material.Slate, Color = DARKSTONE }, m)
+	local pe = Instance.new("ParticleEmitter")
+	pe.Texture = "rbxasset://textures/particles/sparkles_main.dds"
+	pe.Color = ColorSequence.new(Color3.fromRGB(200, 230, 255))
+	pe.Size = NumberSequence.new(0.5, 0.2)
+	pe.Transparency = NumberSequence.new(0.3, 1)
+	pe.Rate = 40
+	pe.Lifetime = NumberRange.new(0.8, 1.2)
+	pe.Speed = NumberRange.new(8, 10)
+	pe.SpreadAngle = Vector2.new(25, 25)
+	pe.Acceleration = Vector3.new(0, -30, 0)
+	pe.Parent = spout
+	return m
+end
+
+-- ninho de galhos e palha sobre pedras (habitat do ovo / cama de dragão)
+function Props.nest(cf: CFrame, parent, s: number, rng: Random)
+	local m = model("Nest", parent)
+	local r = 5.5 * s
+	cyl(cf * CFrame.new(0, 0.1, 0), 0.9 * s, r * 2, { Name = "Straw", Material = Enum.Material.Fabric, Color = Color3.fromRGB(206, 176, 104) }, m)
+	for k = 0, 17 do
+		local a = k / 18 * math.pi * 2
+		part({ Name = "Twig", Shape = Enum.PartType.Cylinder, Size = Vector3.new(r * 0.9, 0.55 * s, 0.55 * s), CFrame = cf * CFrame.new(math.cos(a) * r, 1 * s, math.sin(a) * r) * CFrame.Angles(0, -a + math.rad(90), 0) * CFrame.Angles(0, 0, math.rad(rng:NextNumber(-25, 25))), Material = Enum.Material.Wood, Color = Color3.fromRGB(96 + rng:NextInteger(-12, 12), 70, 46) }, m)
+	end
+	for k = 0, 11 do
+		local a = k / 12 * math.pi * 2 + 0.2
+		part({ Name = "NestStone", Size = Vector3.new(2.2, 1.6, 1.8) * s * rng:NextNumber(0.8, 1.2), CFrame = cf * CFrame.new(math.cos(a) * (r + 1.6 * s), 0.5 * s, math.sin(a) * (r + 1.6 * s)) * CFrame.Angles(rng:NextNumber(-0.3, 0.3), rng:NextNumber(0, 6), 0), Material = Enum.Material.Slate, Color = Color3.fromRGB(108, 110, 106) }, m)
+	end
+	return m
+end
+
+-- quadro de avisos de madeira
+function Props.noticeBoard(cf: CFrame, parent)
+	local m = model("NoticeBoard", parent)
+	for _, sx in ipairs({ -3.4, 3.4 }) do
+		part({ Name = "Post", Size = Vector3.new(0.7, 8, 0.7), CFrame = cf * CFrame.new(sx, 4, 0), Material = Enum.Material.Wood, Color = DARKWOOD }, m)
+	end
+	part({ Name = "Board", Size = Vector3.new(7, 4.4, 0.4), CFrame = cf * CFrame.new(0, 5, 0), Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(130, 94, 60) }, m)
+	for _, sz in ipairs({ -1, 1 }) do
+		wedge({ Name = "Roof", Size = Vector3.new(8.4, 1.2, 1.3), CFrame = cf * CFrame.new(0, 8.2, sz * 0.65) * (if sz < 0 then CFrame.Angles(0, math.rad(180), 0) else CFrame.new()), Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(100, 68, 48) }, m)
+	end
+	for i = 0, 4 do
+		part({ Name = "Paper", Size = Vector3.new(1.2, 1.5, 0.05), CFrame = cf * CFrame.new(-2.6 + i * 1.3, 5 + (i % 2) * 0.8 - 0.4, -0.24) * CFrame.Angles(0, 0, math.rad((i % 3 - 1) * 6)), Material = Enum.Material.SmoothPlastic, Color = Color3.fromRGB(232, 222, 196), CastShadow = false }, m)
+	end
+	return m
+end
+
 -- aglomerado de cristais mágicos (prismas de vidro com brilho)
 function Props.crystalCluster(cf: CFrame, parent, s: number, rng: Random)
 	local m = model("Crystal", parent)

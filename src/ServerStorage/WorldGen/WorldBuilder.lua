@@ -707,7 +707,7 @@ function WorldBuilder:buildHub()
 	end
 	task.wait()
 	-- chafariz central
-	if not self:placeAsset("Fountain", CFrame.new(C), 1.3, plaza) then
+	if not self.Props.fountain(CFrame.new(C), plaza) then
 		part({ Name = "Fountain", Shape = Enum.PartType.Cylinder, Size = Vector3.new(3, 22, 22), CFrame = CFrame.new(C + Vector3.new(0, 1.5, 0)) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Cobblestone, Color = STONE }, plaza)
 	end
 	-- Torre do Dragão (marco visível de longe), ao norte da praça
@@ -766,8 +766,10 @@ function WorldBuilder:buildHub()
 		local a = math.rad(st.Angle)
 		local pos = C + Vector3.new(math.cos(a) * 52, 0, math.sin(a) * 52)
 		local facing = CFrame.lookAt(pos, C)
-		if st.Asset then
-			self:placeAsset(st.Asset, facing * CFrame.new(0, 0, 5) * CFrame.Angles(0, math.rad(180), 0), 1, plaza)
+		if st.Asset == "Stall" then
+			self.Props.stall(facing * CFrame.new(0, 0, 5), plaza, self.rng)
+		elseif st.Asset == "QuestBoard" then
+			self.Props.noticeBoard(facing * CFrame.new(0, 0, 5) * CFrame.Angles(0, math.rad(180), 0), plaza)
 		end
 		local marker = part({ Name = st.Id, Size = Vector3.new(2, 1, 2), CFrame = facing * CFrame.new(0, 0.5, -2), Transparency = 1, CanCollide = false, CanQuery = false }, npcFolder)
 		marker:SetAttribute("NpcId", st.Id)
@@ -813,7 +815,7 @@ function WorldBuilder:buildHub()
 	local function house(x: number, y: number, faceX: number, faceY: number)
 		local pos = V(x, y, self:groundY(x, y))
 		local cf = CFrame.lookAt(pos, V(faceX, faceY, pos.Y))
-		if not self:placeAsset("Cottage", cf * CFrame.Angles(0, math.rad(180), 0), self.rng:NextNumber(0.78, 0.95), houses, 0.5) then
+		if not self.Props.house(cf * CFrame.new(0, -0.6, 0), houses, self.rng) then
 			part({ Name = "Cottage", Size = Vector3.new(18, 11, 14), CFrame = cf * CFrame.new(0, 5.5, 0), Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(196, 170, 130) }, houses)
 		end
 		table.insert(placedAt, { x, y })
@@ -866,7 +868,7 @@ function WorldBuilder:buildHub()
 		local x, y = H.x + math.cos(a) * 84, H.y + math.sin(a) * 84
 		if self:roadDist(x, y) > 12 and self.rng:NextNumber() < 0.75 then
 			local pos = V(x, y, self:groundY(x, y))
-			self:placeAsset("Stall", CFrame.lookAt(pos, Vector3.new(C.X, pos.Y, C.Z)) * CFrame.Angles(0, math.rad(180), 0), 0.9, decor)
+			self.Props.stall(CFrame.lookAt(pos, Vector3.new(C.X, pos.Y, C.Z)), decor, self.rng)
 		end
 	end
 	task.wait()
@@ -991,7 +993,7 @@ function WorldBuilder:buildFarm(f, parent: Instance): Model
 	-- arco de entrada com placa
 	local archPos = Wraw(0, -HALF - 1)
 	local archCF = CFrame.new(archPos) * F.Rotation
-	if not self:placeAsset("Arch", archCF * CFrame.Angles(0, math.rad(180), 0), 1, model) then
+	do -- arco de madeira (peças com material real)
 		part({ Name = "ArchPillar", Size = Vector3.new(1.6, 14, 1.6), CFrame = archCF * CFrame.new(-10, 7, 0), Material = Enum.Material.Wood, Color = DARKWOOD }, model)
 		part({ Name = "ArchPillar", Size = Vector3.new(1.6, 14, 1.6), CFrame = archCF * CFrame.new(10, 7, 0), Material = Enum.Material.Wood, Color = DARKWOOD }, model)
 		part({ Name = "ArchBeam", Size = Vector3.new(23, 1.6, 2), CFrame = archCF * CFrame.new(0, 14.5, 0), Material = Enum.Material.Wood, Color = WOOD }, model)
@@ -1019,7 +1021,7 @@ function WorldBuilder:buildFarm(f, parent: Instance): Model
 	self:lantern(Wraw(15, -HALF - 5), center, model)
 	-- habitat do ovo
 	local nestPos = W(-38, 38)
-	local nest = self:placeAsset("Nest", CFrame.new(nestPos), 1, model)
+	local nest = self.Props.nest(CFrame.new(nestPos), model, 1.1, rng)
 	local nestTop = nestPos.Y + 2.2
 	if nest then
 		nest.Name = "Nest"
@@ -1056,7 +1058,7 @@ function WorldBuilder:buildFarm(f, parent: Instance): Model
 	self:flowers(nestPos, 14, 10, model)
 	-- celeiro
 	local barnPos = W(40, 44)
-	if not self:placeAsset("Barn", CFrame.new(barnPos) * F.Rotation * CFrame.Angles(0, math.rad(180), 0), 1.15, model) then
+	if not self.Props.barn(CFrame.new(barnPos) * F.Rotation * CFrame.Angles(0, math.rad(180), 0), model, 1.1) then
 		part({ Name = "Barn", Size = Vector3.new(26, 16, 20), CFrame = CFrame.new(barnPos + Vector3.new(0, 8, 0)) * F.Rotation, Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(150, 70, 50) }, model)
 	end
 	-- cocho, bebedouro e baú
@@ -1465,7 +1467,7 @@ function WorldBuilder:buildCamps()
 				local x = -W2 / 2 + (k + 0.5) * (W2 / 4)
 				local bed = (sc * CFrame.new(x, 0, 2)).Position
 				bed = Vector3.new(bed.X, self:groundY(bed.X, -bed.Z), bed.Z)
-				if not self:placeAsset("Nest", CFrame.new(bed) * CFrame.Angles(0, rng:NextNumber(0, 6), 0), 1.6, m, 0.5) then
+				if not self.Props.nest(CFrame.new(bed) * CFrame.Angles(0, rng:NextNumber(0, 6), 0), m, 1.7, rng) then
 					p({ Name = "StrawBed", Shape = Enum.PartType.Cylinder, Size = Vector3.new(1, 16, 16), CFrame = CFrame.new(bed + Vector3.new(0, 0.5, 0)) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Fabric, Color = Color3.fromRGB(214, 184, 110), CanCollide = false })
 				end
 				local bale = (sc * CFrame.new(x + 6, 0, D2 / 2 - 4)).Position
@@ -1493,10 +1495,10 @@ function WorldBuilder:buildCamps()
 		-- cabana do tratador perto do portão, com quadro de avisos
 		do
 			local hc = cfAt(44, -60, 200)
-			if not self:placeAsset("Cottage", hc, 0.85, m, 0.5) then
+			if not self.Props.house(hc * CFrame.new(0, -0.6, 0), m, rng, 18, 14, "thatch") then
 				p({ Name = "Hut", Size = Vector3.new(16, 10, 12), CFrame = hc * CFrame.new(0, 5, 0), Material = Enum.Material.WoodPlanks, Color = WOODC })
 			end
-			self:placeAsset("QuestBoard", cfAt(26, -70, 160), 1, m)
+			self.Props.noticeBoard(cfAt(26, -70, 160), m)
 			for k = 1, 4 do
 				local q = at(36 + rng:NextNumber(-6, 6), -46 + rng:NextNumber(-4, 4))
 				p({ Name = "Crate", Size = Vector3.new(3.4, 3.4, 3.4), CFrame = CFrame.new(q + Vector3.new(0, 1.7, 0)) * CFrame.Angles(0, rng:NextNumber(0, 3), 0), Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(160, 120, 76) })
@@ -1708,7 +1710,7 @@ function WorldBuilder:buildLandmarks()
 		local x, y = 6600 + math.cos(a) * R, 300 + math.sin(a) * R
 		local hit = self:surface(x, y, true)
 		if hit then
-			local c = self:placeAsset("Crystal", CFrame.new(hit.Position) * CFrame.Angles(0, a, 0), if k == 0 then 4 else 2, folder, 2)
+			local c = self.Props.crystalCluster(CFrame.new(hit.Position - Vector3.new(0, 1, 0)) * CFrame.Angles(0, a, 0), folder, if k == 0 then 9 else 4, rng)
 			if not c then
 				local h = if k == 0 then 120 else 50
 				part({ Name = "Crystal", Size = Vector3.new(h * 0.18, h, h * 0.18), CFrame = CFrame.new(hit.Position + Vector3.new(0, h * 0.45, 0)) * CFrame.Angles(math.rad(rng:NextNumber(-12, 12)), a, math.rad(rng:NextNumber(-12, 12))), Material = Enum.Material.Glass, Color = Color3.fromRGB(120, 180, 255), Transparency = 0.15 }, folder)
