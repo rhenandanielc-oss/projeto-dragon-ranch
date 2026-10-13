@@ -209,26 +209,27 @@ function GrandBridge.build(spec: Spec, parent: Instance, Props: any, statue: ((C
 		local h = top.Y - 3 - bottomY
 		if h > 6 then
 			local cf = CFrame.lookAt(Vector3.new(top.X, bottomY + h / 2, top.Z), Vector3.new(top.X, bottomY + h / 2, top.Z) + flatDir)
-			P({ Name = "Pier", Size = Vector3.new(W * 0.62, h, 16), CFrame = cf, Color = DARK2 }, piers)
-			-- quebra-mar (proas) dos dois lados
-			for _, sz in ipairs({ -1, 1 }) do
+			P({ Name = "Pier", Size = Vector3.new(W - 2, h, 18), CFrame = cf, Color = DARK2 }, piers)
+			-- quebra-mar (proas) nas laterais, cortando a água
+			for _, sx in ipairs({ -1, 1 }) do
 				local w = Instance.new("WedgePart")
 				w.Anchored = true
-				w.Size = Vector3.new(W * 0.62, h, 8)
-				w.CFrame = cf * CFrame.new(0, 0, sz * 12) * CFrame.Angles(0, if sz > 0 then math.pi else 0, 0)
+				w.Size = Vector3.new(18, h, 10)
+				w.CFrame = cf * CFrame.new(sx * ((W - 2) / 2 + 5), 0, 0) * CFrame.Angles(0, math.rad(if sx > 0 then -90 else 90), 0)
 				w.Material = Enum.Material.Slate
 				w.Color = DARK2
 				w.Parent = piers
 			end
-			-- anel de pedra na linha d'água
-			P({ Name = "PierBand", Size = Vector3.new(W * 0.66, 1.6, 17), CFrame = CFrame.new(top.X, spec.waterY + 2, top.Z) * cf.Rotation, Color = TRIM }, piers)
+			-- anel de pedra na linha d'água e capitel no alto do pilar
+			P({ Name = "PierBand", Size = Vector3.new(W + 2, 1.6, 20), CFrame = CFrame.new(top.X, spec.waterY + 2, top.Z) * cf.Rotation, Color = TRIM }, piers)
+			P({ Name = "PierCap", Size = Vector3.new(W + 1, 2, 21), CFrame = CFrame.new(top.X, top.Y - 5, top.Z) * cf.Rotation, Color = TRIM }, piers)
 		end
 	end
 	-- arcos entre pilares (anel de pedra + paredes laterais até o tabuleiro)
 	for k = 1, #tPiers - 1 do
 		local ta, tb = tPiers[k], tPiers[k + 1]
 		local segs = 8
-		local spring = math.min(16, (deckAt((ta + tb) / 2).Y - 3) - (spec.waterY + 3))
+		local spring = math.min(38, (deckAt((ta + tb) / 2).Y - 6) - (spec.waterY + 4))
 		if spring > 4 then
 			for s = 0, segs - 1 do
 				local u0, u1 = s / segs, (s + 1) / segs
@@ -243,7 +244,7 @@ function GrandBridge.build(spec: Spec, parent: Instance, Props: any, statue: ((C
 				local m = (q0 + q1) / 2
 				local acf = CFrame.lookAt(m, q1)
 				local alen = (q1 - q0).Magnitude + 0.8
-				P({ Name = "Arch", Size = Vector3.new(W * 0.62, 3.2, alen), CFrame = acf, Color = TRIM }, piers)
+				P({ Name = "Arch", Size = Vector3.new(W - 2, 4, alen), CFrame = acf, Color = TRIM }, piers)
 				-- parede (tímpano) entre o arco e o tabuleiro, nas duas faces
 				local deckY = deckAt(ta + (tb - ta) * (u0 + u1) / 2).Y - 3
 				local hh = deckY - m.Y

@@ -737,13 +737,10 @@ function WorldGen:computeChunk(x0: number, y0: number, n: number, step: number?)
 			if flag == 6 then
 				-- fundo da baía: areia clara no raso (turquesa), pedra escura no fundo (azul profundo)
 				local depth = wl - h
-				local dz = depth + 6 * nz -- borda irregular entre as faixas
-				if dz < 12 then
-					mat = M.Sand
-				elseif dz < 19 then
-					mat = if nz > 0 then M.Sand else M.Sandstone
-				elseif dz < 27 then
-					mat = if nz > 0.1 then M.Sandstone else M.Slate
+				-- areia clara até bem fundo: a própria água escurece com a profundidade (sem mosaico)
+				local dz = depth + 8 * nz
+				if dz < 32 then
+					mat = if nz > 0.75 then M.Sandstone else M.Sand
 				else
 					mat = if nz > 0.45 then M.Basalt else M.Slate
 				end
