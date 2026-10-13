@@ -685,6 +685,14 @@ function DragonService.Init()
 			hook(p)
 		end
 		Players.PlayerAdded:Connect(hook)
+		-- também pelo atributo TestFlight = "Wyvern" | "Wyrm" em ServerScriptService (primeiro jogador)
+		ServerScriptService:GetAttributeChangedSignal("TestFlight"):Connect(function()
+			local sp = ServerScriptService:GetAttribute("TestFlight")
+			local p = Players:GetPlayers()[1]
+			if type(sp) == "string" and sp ~= "" and p then
+				DragonService.TestFlight(p, sp)
+			end
+		end)
 	end
 	NetService.On("ChooseStarter", onChooseStarter)
 	NetService.On("RenameDragon", onRename)
