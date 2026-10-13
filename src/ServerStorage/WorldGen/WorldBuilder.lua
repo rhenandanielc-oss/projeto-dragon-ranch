@@ -296,6 +296,7 @@ end
 local CollectionService = game:GetService("CollectionService")
 local TREE_KINDS = { TallPine = true, Pine = true, Oak = true, Tree2 = true, Blossom = true, DeadTree = true, SnowPine = true, CrystalPine = true, Mushroom = true }
 local SMALL_KINDS = { Bush = true, Fern = true, Flowers = true, FruitBush = true }
+-- Log e Stump: sem vento e com colisão normal
 
 -- Vegetação: folhas sem colisão (dá para atravessar), tronco com colisor simples,
 -- e marcas para o vento do cliente (folhas balançando).
@@ -311,6 +312,9 @@ function WorldBuilder:finishVegetation(m: Instance, kind: string)
 	end
 	if #parts == 0 then
 		return
+	end
+	if kind == "Log" or kind == "Stump" then
+		return -- troncos caídos e tocos continuam sólidos
 	end
 	local bcf, size = m:GetBoundingBox()
 	local base = bcf.Position - Vector3.new(0, size.Y / 2, 0)
@@ -380,6 +384,27 @@ function WorldBuilder:plantRaw(kind: string, pos: Vector3, scale: number, parent
 	local m = self:placeAsset(kind, cf, scale, parent, 0.6 * scale)
 	if m then
 		return m
+	end
+	if kind == "Log" or kind == "Stump" then
+		local mm = Instance.new("Model")
+		mm.Name = kind
+		local bark = Color3.fromRGB(78 + self.rng:NextInteger(-8, 8), 58, 42)
+		if kind == "Log" then
+			local len = self.rng:NextNumber(12, 22) * scale
+			local d = self.rng:NextNumber(2.2, 3.4) * scale
+			local rot = CFrame.Angles(0, self.rng:NextNumber(0, math.pi * 2), 0)
+			part({ Name = "Log", Shape = Enum.PartType.Cylinder, Size = Vector3.new(len, d, d), CFrame = CFrame.new(pos + Vector3.new(0, d * 0.35, 0)) * rot * CFrame.Angles(0, 0, math.rad(self.rng:NextNumber(-4, 4))), Material = Enum.Material.Wood, Color = bark }, mm)
+			part({ Name = "Moss", Size = Vector3.new(len * 0.7, 0.3, d * 0.6), CFrame = CFrame.new(pos + Vector3.new(0, d * 0.82, 0)) * rot, Material = Enum.Material.Grass, Color = Color3.fromRGB(78, 112, 52), CanCollide = false, CastShadow = false }, mm)
+		else
+			local d = self.rng:NextNumber(3, 4.5) * scale
+			part({ Name = "Stump", Shape = Enum.PartType.Cylinder, Size = Vector3.new(d * 0.8, d, d), CFrame = CFrame.new(pos + Vector3.new(0, d * 0.3, 0)) * CFrame.Angles(0, 0, math.rad(90)), Material = Enum.Material.Wood, Color = bark }, mm)
+			for k = 0, 3 do
+				local a = k / 4 * math.pi * 2 + self.rng:NextNumber(0, 1)
+				part({ Name = "Root", Size = Vector3.new(d * 0.7, d * 0.25, d * 0.3), CFrame = CFrame.new(pos + Vector3.new(math.cos(a) * d * 0.55, d * 0.08, math.sin(a) * d * 0.55)) * CFrame.Angles(0, -a, math.rad(-15)), Material = Enum.Material.Wood, Color = bark }, mm)
+			end
+		end
+		mm.Parent = parent
+		return mm
 	end
 	if kind == "Flowers" then
 		local mm = Instance.new("Model")
@@ -502,7 +527,7 @@ local KITS = {
 }
 -- sub-bosque por kit (arbustos, rochas e flores nas bordas e clareiras)
 local UNDER = {
-	default = { { "Bush", 4, 1.0, 1.6 }, { "Fern", 3, 0.8, 1.3 }, { "Boulder", 1, 0.9, 2.2 }, { "Flowers", 3, 1.2, 2.0 } },
+	default = { { "Bush", 4, 1.0, 1.6 }, { "Fern", 4, 0.8, 1.3 }, { "Boulder", 1, 0.9, 2.2 }, { "Flowers", 3, 1.2, 2.0 }, { "Log", 1, 0.9, 1.3 }, { "Stump", 1, 0.8, 1.2 } },
 	snow = { { "Boulder", 1, 1.0, 2.4 } },
 	volcanic = { { "Boulder", 1, 1.0, 2.6 } },
 	dark = { { "Boulder", 2, 1.0, 2.6 }, { "Bush", 1, 0.9, 1.3 } },
@@ -1933,6 +1958,11 @@ function WorldBuilder:forestBlock(bi: number, bj: number, parent: Instance): num
 					local hit = self:surface(jx, jy)
 					if hit and hit.Position.Y < cfg[3] then
 						put(e, jx, jy, false)
+						-- camada intermediária: árvore jovem perto das grandes no miolo da floresta
+						if m > cfg[1] + 0.3 and rng:NextNumber() < 0.3 then
+							local e2 = self:pick(KITS[cfg[2]])
+							put({ e2[1], 1, e2[3] * 0.5, e2[4] * 0.6, e2[5] }, jx + rng:NextNumber(-12, 12), jy + rng:NextNumber(-12, 12), false)
+						end
 					end
 				end
 				-- sub-bosque: mais na borda da floresta; flores e rochas nos campos, em grupos
