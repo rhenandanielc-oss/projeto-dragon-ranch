@@ -305,7 +305,7 @@ local function spin(player: Player, s: PlayerState, hrp: BasePart)
 			CombatService.Damage(src, t, Combat.Sword.Spin.Damage, { Knockback = (if away.Magnitude > 0.1 then away.Unit else Vector3.zero) * 35 })
 		end
 	end
-	CombatService.Fx("Spin", hrp.Position, { Pos = hrp.Position, Radius = Combat.Sword.Spin.Radius })
+	CombatService.Fx("Spin", hrp.Position, { Pos = hrp.Position, Radius = Combat.Sword.Spin.Radius, Player = player })
 	NetService.Fire(player, "SkillUsed", "Spin", Combat.Sword.Spin.Cooldown)
 end
 
@@ -343,7 +343,7 @@ local function fireArrow(player: Player, origin: Vector3, dir: Vector3, damage: 
 	end
 	shotParams.FilterDescendantsInstances = filter
 	local src: Source = { kind = "Player", player = player, model = player.Character, position = origin }
-	CombatService.Fx("Arrow", origin, { Origin = origin, Velocity = vel, Gravity = B.Gravity })
+	CombatService.Fx("Arrow", origin, { Origin = origin, Velocity = vel, Gravity = B.Gravity, Player = player })
 	local conn: RBXScriptConnection? = nil
 	conn = RunService.Heartbeat:Connect(function(dt)
 		local nextVel = vel - Vector3.new(0, B.Gravity * dt, 0)
@@ -427,46 +427,89 @@ local function tripleShot(player: Player, s: PlayerState, hrp: BasePart, aim: Ve
 	NetService.Fire(player, "SkillUsed", "Triple", T.Cooldown)
 end
 
+-- Arma visual na mão. A peça "Grip" fica presa por um Motor6D ("WeaponGrip"): as animações
+-- (no cliente) giram o encaixe para a lâmina seguir o braço e o arco ficar em pé ao mirar.
 local function setWeaponVisual(player: Player, weapon: string)
 	local char = player.Character
 	if not char then
 		return
 	end
 	char:SetAttribute("Weapon", weapon)
+	char:SetAttribute("BowDraw", false)
 	local hand = char:FindFirstChild("RightHand") or char:FindFirstChild("Right Arm")
 	local lhand = char:FindFirstChild("LeftHand") or char:FindFirstChild("Left Arm")
 	local old = char:FindFirstChild("WeaponModel")
 	if old then
 		old:Destroy()
 	end
-	if not hand or not hand:IsA("BasePart") then
+	if not hand or not hand:IsA("BasePart") or not lhand or not lhand:IsA("BasePart") then
 		return
 	end
 	local m = Instance.new("Model")
 	m.Name = "WeaponModel"
-	local function piece(props: { [string]: any }, attachTo: BasePart, offset: CFrame)
+	local holder = if weapon == "Sword" then hand else lhand :: BasePart
+	local grip = Instance.new("Part")
+	grip.Name = "Grip"
+	grip.Size = Vector3.new(0.3, 0.3, 0.3)
+	grip.Transparency = 1
+	grip.CanCollide = false
+	grip.CanQuery = false
+	grip.CanTouch = false
+	grip.Massless = true
+	grip.CFrame = holder.CFrame * CFrame.new(0, -0.55, 0)
+	grip.Parent = m
+	local mot = Instance.new("Motor6D")
+	mot.Name = "WeaponGrip"
+	mot.Part0 = holder
+	mot.Part1 = grip
+	mot.C0 = CFrame.new(0, -0.55, 0)
+	mot.Parent = grip
+	local function piece(props: { [string]: any }, offset: CFrame): BasePart
 		local p = Instance.new("Part")
 		p.CanCollide = false
 		p.CanQuery = false
 		p.CanTouch = false
 		p.Massless = true
+		p.CastShadow = false
 		for k, v in pairs(props) do
 			(p :: any)[k] = v
 		end
-		p.CFrame = attachTo.CFrame * offset
+		p.CFrame = grip.CFrame * offset
 		local w = Instance.new("WeldConstraint")
-		w.Part0 = attachTo
+		w.Part0 = grip
 		w.Part1 = p
 		w.Parent = p
 		p.Parent = m
+		return p
 	end
 	if weapon == "Sword" then
-		piece({ Name = "Blade", Size = Vector3.new(0.25, 4.2, 0.6), Material = Enum.Material.Metal, Color = Color3.fromRGB(200, 204, 210) }, hand, CFrame.new(0, -0.6, -2.6) * CFrame.Angles(math.rad(-90), 0, 0))
-		piece({ Name = "Guard", Size = Vector3.new(0.3, 0.3, 1.6), Material = Enum.Material.Metal, Color = Color3.fromRGB(190, 150, 70) }, hand, CFrame.new(0, -0.6, -0.5) * CFrame.Angles(0, math.rad(90), 0))
-		piece({ Name = "Grip", Size = Vector3.new(0.3, 0.3, 0.9), Material = Enum.Material.Wood, Color = Color3.fromRGB(80, 54, 36) }, hand, CFrame.new(0, -0.6, 0))
-	elseif lhand and lhand:IsA("BasePart") then
-		piece({ Name = "Bow", Size = Vector3.new(0.25, 4.6, 0.35), Material = Enum.Material.Wood, Color = Color3.fromRGB(110, 76, 46) }, lhand, CFrame.new(0, -0.5, -0.4))
-		piece({ Name = "String", Size = Vector3.new(0.05, 4.4, 0.05), Material = Enum.Material.Fabric, Color = Color3.fromRGB(230, 226, 210) }, lhand, CFrame.new(0, -0.5, 0.15))
+		-- lâmina para a frente da mão (o encaixe gira nos golpes para seguir o braço)
+		piece({ Name = "Grip2", Size = Vector3.new(0.28, 0.28, 1.1), Material = Enum.Material.Leather, Color = Color3.fromRGB(70, 46, 30) }, CFrame.new(0, 0, 0))
+		piece({ Name = "Pommel", Shape = Enum.PartType.Ball, Size = Vector3.new(0.45, 0.45, 0.45), Material = Enum.Material.Metal, Color = Color3.fromRGB(190, 150, 70) }, CFrame.new(0, 0, 0.65))
+		piece({ Name = "Guard", Size = Vector3.new(1.7, 0.28, 0.32), Material = Enum.Material.Metal, Color = Color3.fromRGB(190, 150, 70) }, CFrame.new(0, 0, -0.6))
+		piece({ Name = "Blade", Size = Vector3.new(0.5, 0.12, 4.2), Material = Enum.Material.Metal, Color = Color3.fromRGB(205, 210, 218), Reflectance = 0.15 }, CFrame.new(0, 0, -2.8))
+		piece({ Name = "Edge", Size = Vector3.new(0.12, 0.13, 4.0), Material = Enum.Material.Glass, Color = Color3.fromRGB(235, 240, 250), Transparency = 0.2 }, CFrame.new(0, 0, -2.9))
+		local tip = piece({ Name = "Point", Size = Vector3.new(0.5, 0.12, 0.5), Material = Enum.Material.Metal, Color = Color3.fromRGB(205, 210, 218) }, CFrame.new(0, 0, -5) * CFrame.Angles(0, math.rad(45), 0))
+		tip.Size = Vector3.new(0.35, 0.12, 0.35)
+	else
+		-- arco curvo (em pé na mão) + corda
+		local segs = 7
+		local h, depth = 4.8, 0.9
+		for i = 0, segs - 1 do
+			local t0, t1 = i / segs, (i + 1) / segs
+			local function pt(t: number): Vector3
+				local y = (t - 0.5) * h
+				local z = -depth * (2 * t - 1) ^ 2 -- meio na mão, pontas para o arqueiro
+				return Vector3.new(0, y, z)
+			end
+			local a, b = pt(t0), pt(t1)
+			local mid = (a + b) / 2
+			local len = (b - a).Magnitude
+			local thick = 0.32 - math.abs(t0 + t1 - 1) * 0.12
+			piece({ Name = "Limb", Size = Vector3.new(thick, len + 0.08, thick * 1.2), Material = Enum.Material.Wood, Color = Color3.fromRGB(96, 62, 36) }, CFrame.lookAt(mid, mid + (b - a)) * CFrame.Angles(math.rad(-90), 0, 0))
+		end
+		piece({ Name = "Wrap", Size = Vector3.new(0.4, 0.7, 0.45), Material = Enum.Material.Leather, Color = Color3.fromRGB(60, 40, 28) }, CFrame.new(0, 0, 0))
+		piece({ Name = "String", Size = Vector3.new(0.04, h, 0.04), Material = Enum.Material.Fabric, Color = Color3.fromRGB(235, 230, 215) }, CFrame.new(0, 0, -depth))
 	end
 	m.Parent = char
 end
@@ -482,6 +525,11 @@ local function onAction(player: Player, action: string, aim: Vector3?, charge: n
 		s.blocking = false
 		hum.WalkSpeed = StarterPlayer.CharacterWalkSpeed
 		setWeaponVisual(player, s.weapon)
+		return
+	end
+	if action == "DrawOn" or action == "DrawOff" then
+		-- só visual (os outros jogadores veem a pose de mira)
+		char:SetAttribute("BowDraw", action == "DrawOn" and s.weapon == "Bow")
 		return
 	end
 	if action == "Dodge" then

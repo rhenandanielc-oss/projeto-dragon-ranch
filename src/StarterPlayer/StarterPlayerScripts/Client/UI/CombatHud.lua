@@ -51,6 +51,23 @@ local function slot(parent: Instance, key: string, title: string, order: number)
 	skillSlots[key] = { frame = f, shade = shade, label = label, readyAt = 0, total = 1 }
 end
 
+-- linha pequena do painel lateral do dragão montado: "[Z] Bola de Fogo"
+local function rowSlot(parent: Instance, key: string, title: string, order: number): TextLabel
+	local f = Theme.new("Frame", {
+		Name = key,
+		BackgroundColor3 = Theme.Colors.Panel,
+		BackgroundTransparency = 0.35,
+		Size = UDim2.new(1, 0, 0, 20),
+		LayoutOrder = order,
+		Parent = parent,
+	}, { Theme.corner(5) })
+	Theme.label(key, 12, { Font = Theme.BoldFont, TextColor3 = Theme.Colors.Accent, Position = UDim2.fromOffset(5, 0), Size = UDim2.fromOffset(46, 20), TextXAlignment = Enum.TextXAlignment.Left, TextWrapped = false, Parent = f })
+	local label = Theme.label(title, 12, { Position = UDim2.fromOffset(52, 0), Size = UDim2.new(1, -56, 0, 20), TextXAlignment = Enum.TextXAlignment.Left, TextWrapped = false, TextTruncate = Enum.TextTruncate.AtEnd, Parent = f })
+	local shade = Theme.new("Frame", { BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.5, Size = UDim2.fromScale(0, 1), ZIndex = 4, Parent = f }, { Theme.corner(5) })
+	skillSlots[key] = { frame = f, shade = shade, label = label, readyAt = 0, total = 1, horizontal = true } :: any
+	return label
+end
+
 function CombatHud.SkillUsed(name: string, cooldown: number)
 	local key = ({ Spin = "T", Triple = "T", Dodge = "Q", DragonZ = "Z", DragonX = "X", DragonC = "C" } :: any)[name]
 	local s = key and skillSlots[key]
@@ -64,7 +81,7 @@ function CombatHud.SetDragonPowers(unlocked: { [string]: any }, canFight: boolea
 	for _, k in ipairs({ "Z", "X", "C" }) do
 		local s = skillSlots[k]
 		local p = unlocked[k]
-		s.frame.Visible = canFight
+		s.frame.Visible = canFight and p ~= nil
 		s.label.Text = if p then p.Name else "Bloqueado"
 		s.label.TextColor3 = if p then Theme.Colors.Text else Theme.Colors.TextDim
 	end
@@ -108,9 +125,33 @@ function CombatHud.Init(screen: ScreenGui, chargeGetter: () -> number?, aimingGe
 	})
 	slot(row, "T", "Habilidade", 1)
 	slot(row, "Q", "Esquiva", 2)
-	slot(row, "Z", "", 3)
-	slot(row, "X", "", 4)
-	slot(row, "C", "", 5)
+
+	-- painel lateral pequeno: aparece só montado no dragão, com cada tecla e o que ela faz
+	local side = Theme.new("Frame", {
+		Name = "MountControls",
+		AnchorPoint = Vector2.new(1, 0.5),
+		Position = UDim2.new(1, -10, 0.5, 0),
+		Size = UDim2.fromOffset(190, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundTransparency = 1,
+		Visible = false,
+		Parent = screen,
+	}, { Theme.new("UIListLayout", { Padding = UDim.new(0, 3), SortOrder = Enum.SortOrder.LayoutOrder }) })
+	Theme.label("Montado", 12, { Font = Theme.BoldFont, TextColor3 = Theme.Colors.Accent, Size = UDim2.new(1, 0, 0, 16), TextXAlignment = Enum.TextXAlignment.Left, LayoutOrder = 0, TextStrokeTransparency = 0.5, Parent = side })
+	local lines: { [string]: TextLabel } = {}
+	local order = 1
+	local function line(key: string, title: string)
+		lines[key] = rowSlot(side, key, title, order)
+		order += 1
+	end
+	line("W A S D", "Andar / voar")
+	line("Espaço", "Voar")
+	line("Ctrl", "Descer / pousar")
+	line("Clique", "Morder")
+	line("Z", "")
+	line("X", "")
+	line("C", "")
+	line("V", "Descer do dragão")
 	CombatHud.SetDragonPowers({}, false)
 
 	-- vida do dragão (acima da linha de recargas)
@@ -164,9 +205,35 @@ function CombatHud.Init(screen: ScreenGui, chargeGetter: () -> number?, aimingGe
 		local now = os.clock()
 		for _, s in pairs(skillSlots) do
 			local left = s.readyAt - now
-			s.shade.Size = UDim2.fromScale(1, if left > 0 then math.clamp(left / s.total, 0, 1) else 0)
+			local frac = if left > 0 then math.clamp(left / s.total, 0, 1) else 0
+			s.shade.Size = if (s :: any).horizontal then UDim2.fromScale(frac, 1) else UDim2.fromScale(1, frac)
 		end
 		local comp = companion()
+		local mounted = comp ~= nil and comp:GetAttribute("Mounted") == true
+		side.Visible = mounted
+		row.Visible = not mounted
+		weaponLabel.Visible = not mounted
+		if mounted and comp then
+			local mode = comp:GetAttribute("Mode")
+			local canFly = comp:GetAttribute("CanFly") == true
+			local canBurrow = comp:GetAttribute("CanBurrow") == true
+			local space = lines["Espaço"]
+			local ctrl = lines["Ctrl"]
+			if mode == "Fly" then
+				space.Text = "Subir"
+				ctrl.Text = "Descer / pousar"
+				lines["W A S D"].Text = "Voar (segue a câmera)"
+			elseif mode == "Burrow" then
+				space.Text = "Sair da terra (ataque)"
+				ctrl.Text = "—"
+				lines["W A S D"].Text = "Andar por baixo da terra"
+			else
+				space.Text = if canFly then "Decolar" elseif canBurrow then "Entrar na terra" else "Pular"
+				ctrl.Text = "—"
+				lines["W A S D"].Text = "Andar"
+			end
+			ctrl.Parent.Visible = mode == "Fly"
+		end
 		local h = comp and comp:GetAttribute("Health")
 		local mh = comp and comp:GetAttribute("MaxHealth")
 		if type(h) == "number" and type(mh) == "number" and mh > 1 then

@@ -119,32 +119,49 @@ local function clearDrawnArrow()
 end
 
 local function showDrawnArrow()
-	clearDrawnArrow()
-	local char = player.Character
-	local hand = char and (char:FindFirstChild("RightHand") or char:FindFirstChild("Right Arm")) :: BasePart?
-	if not hand then
+	if drawnArrow then
 		return
 	end
+	-- flecha só visual, ancorada (antes ficava solta e caía/sacudia com a física)
 	local m = Instance.new("Model")
 	m.Name = "DrawnArrow"
-	local shaft = Instance.new("Part")
-	shaft.Name = "Shaft"
-	shaft.Size = Vector3.new(0.15, 0.15, 2.6)
-	shaft.Material = Enum.Material.Wood
-	shaft.Color = Color3.fromRGB(150, 110, 70)
-	shaft.CanCollide = false
-	shaft.CanQuery = false
-	shaft.CanTouch = false
-	shaft.Massless = true
-	shaft.Parent = m
-	local tip = shaft:Clone()
-	tip.Name = "Tip"
-	tip.Size = Vector3.new(0.25, 0.25, 0.5)
-	tip.Material = Enum.Material.Metal
-	tip.Color = Color3.fromRGB(200, 200, 205)
-	tip.Parent = m
-	m.Parent = char
+	local function piece(name: string, size: Vector3, mat: Enum.Material, color: Color3)
+		local p = Instance.new("Part")
+		p.Name = name
+		p.Size = size
+		p.Material = mat
+		p.Color = color
+		p.Anchored = true
+		p.CanCollide = false
+		p.CanQuery = false
+		p.CanTouch = false
+		p.CastShadow = false
+		p.Parent = m
+	end
+	piece("Shaft", Vector3.new(0.12, 0.12, 2.8), Enum.Material.Wood, Color3.fromRGB(150, 110, 70))
+	piece("Tip", Vector3.new(0.22, 0.22, 0.45), Enum.Material.Metal, Color3.fromRGB(200, 200, 205))
+	piece("Fletch", Vector3.new(0.04, 0.35, 0.6), Enum.Material.Fabric, Color3.fromRGB(200, 60, 50))
+	m.Parent = workspace:FindFirstChild("ClientFx") or workspace
 	drawnArrow = m
+end
+
+local lastDrawSent = false
+local function sendDraw(on: boolean)
+	if on ~= lastDrawSent then
+		lastDrawSent = on
+		NetClient.Fire("CombatAction", if on then "DrawOn" else "DrawOff")
+	end
+end
+
+-- Estado da mira para as animações: (mirando?, carga 0..1, inclinação vertical da câmera em graus)
+function CombatController.DrawState(): (boolean, number, number)
+	local active = weapon() == "Bow" and not isMountedFn() and (aiming or charging ~= nil) and character() ~= nil
+	if not active then
+		return false, 0, 0
+	end
+	local c = if charging then math.clamp((os.clock() - charging) / Combat.Bow.ChargeSeconds, 0, 1) else 0
+	local look = workspace.CurrentCamera.CFrame.LookVector
+	return true, c, math.deg(math.asin(math.clamp(look.Y, -1, 1)))
 end
 
 local function updateAimPose()
@@ -166,20 +183,28 @@ local function updateAimPose()
 		hum.WalkSpeed = AIM_WALK
 		hum.CameraOffset = hum.CameraOffset:Lerp(if aiming then Vector3.new(2.4, 0.8, 0) else Vector3.new(1.4, 0.5, 0), 0.25)
 		cam.FieldOfView += ((if aiming then AIM_FOV else baseFov - 6) - cam.FieldOfView) * 0.2
-		-- flecha puxada: recua com a carga, apontando para a mira
-		if charging and drawnArrow then
-			local c = math.clamp((os.clock() - charging) / Combat.Bow.ChargeSeconds, 0, 1)
-			local head = char:FindFirstChild("Head") :: BasePart?
-			local from = (if head then head.Position else hrp.Position) + Vector3.new(0, -0.6, 0)
-			local dir = (CombatController.AimPoint() - from)
+		-- flecha encaixada na corda: da mão direita para a mira, recua com a carga
+		showDrawnArrow()
+		local c = if charging then math.clamp((os.clock() - charging) / Combat.Bow.ChargeSeconds, 0, 1) else 0
+		local rh = char:FindFirstChild("RightHand") :: BasePart?
+		local lh = char:FindFirstChild("LeftHand") :: BasePart?
+		if drawnArrow and rh and lh then
+			local aim = CombatController.AimPoint()
+			local dir = aim - lh.Position
 			dir = if dir.Magnitude > 0.1 then dir.Unit else hrp.CFrame.LookVector
-			local base = CFrame.lookAt(from + dir * (2.4 - c * 1.2) + hrp.CFrame.RightVector * 0.4, from + dir * 10)
+			local nock = lh.Position - dir * (1.3 + c * 0.9)
+			local base = CFrame.lookAt(nock + dir * 1.4, nock + dir * 10)
 			local shaft = drawnArrow:FindFirstChild("Shaft") :: BasePart
 			local tip = drawnArrow:FindFirstChild("Tip") :: BasePart
+			local fl = drawnArrow:FindFirstChild("Fletch") :: BasePart
 			shaft.CFrame = base
-			tip.CFrame = base * CFrame.new(0, 0, -1.5)
+			tip.CFrame = base * CFrame.new(0, 0, -1.55)
+			fl.CFrame = base * CFrame.new(0, 0, 1.1)
 		end
+		sendDraw(true)
 	else
+		clearDrawnArrow()
+		sendDraw(false)
 		if not hum.AutoRotate then
 			hum.AutoRotate = true
 			hum.WalkSpeed = game:GetService("StarterPlayer").CharacterWalkSpeed
@@ -220,7 +245,9 @@ local function attackEnd()
 	if charging then
 		local c = math.clamp((os.clock() - charging) / Combat.Bow.ChargeSeconds, 0, 1)
 		charging = nil
-		clearDrawnArrow()
+		if not aiming then
+			clearDrawnArrow()
+		end
 		if chargeChanged then
 			chargeChanged(nil)
 		end

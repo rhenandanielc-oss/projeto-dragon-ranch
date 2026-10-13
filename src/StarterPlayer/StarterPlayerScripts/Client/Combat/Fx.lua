@@ -7,6 +7,12 @@ local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 
 local Elements = require(ReplicatedStorage.Shared.Config.Elements)
+local CharacterAnim = require(script.Parent.CharacterAnim)
+
+local function charOf(d: { [string]: any }): Model?
+	local plr = d.Player
+	return if typeof(plr) == "Instance" and plr:IsA("Player") then plr.Character else nil
+end
 
 local Fx = {}
 
@@ -132,13 +138,27 @@ local HANDLERS: { [string]: (data: { [string]: any }) -> () } = {
 	Slash = function(d)
 		local cf: CFrame = d.CF
 		local combo = d.Combo or 1
-		local w = part({ Size = Vector3.new(7, 0.2, 3.5), Color = Color3.fromRGB(235, 240, 255), Transparency = 0.35, CFrame = cf * CFrame.new(0, 0.5, -4.5) * CFrame.Angles(0, 0, math.rad(if combo == 2 then -25 elseif combo == 3 then 0 else 25)) })
-		fadeOut(w, 0.18, Vector3.new(9, 0.1, 4))
+		CharacterAnim.Play(charOf(d), "Slash", combo)
+		-- rastro curvo da lâmina (aparece em sequência, acompanhando o golpe)
+		local tilt = math.rad(if combo == 2 then -20 elseif combo == 3 then 80 else 20)
+		local from, to = if combo == 2 then -70 else 70, if combo == 2 then 70 else -70
+		local n = 9
+		for i = 0, n - 1 do
+			local t = i / (n - 1)
+			local ang = math.rad(from + (to - from) * t)
+			local seg = cf * CFrame.new(0, 1.2, 0) * CFrame.Angles(0, 0, tilt) * CFrame.Angles(0, ang, 0) * CFrame.new(0, 0, -4.2)
+			task.delay(0.1 + t * 0.12, function()
+				local w = part({ Size = Vector3.new(1.5, 0.08, 1.5 - math.abs(t - 0.5) * 1.6), Color = Color3.fromRGB(225, 235, 255), Transparency = 0.3, CFrame = seg })
+				fadeOut(w, 0.22, Vector3.new(1.6, 0.04, 0.2))
+			end)
+		end
 	end,
 	Spin = function(d)
+		CharacterAnim.Play(charOf(d), "Spin")
 		ring(d.Pos, Color3.fromRGB(235, 240, 255), d.Radius or 11, 0.35, 0.6)
 	end,
 	Arrow = function(d)
+		CharacterAnim.Play(charOf(d), "Shoot")
 		arrow(d.Origin, d.Velocity, d.Gravity or 30)
 	end,
 	Bite = function(d)

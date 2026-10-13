@@ -145,6 +145,9 @@ function CompanionService.Dismount(player: Player, reason: string?)
 	end
 	e.mounted = false
 	e.model:SetAttribute("Mounted", false)
+	if player.Character then
+		player.Character:SetAttribute("Mounted", false)
+	end
 	if e.mode ~= "Ground" then
 		CompanionService.SetMode(player, "Ground", true)
 	end
@@ -242,6 +245,7 @@ function CompanionService.Mount(player: Player)
 	local seat = e.seat :: Seat
 	e.mounted = true
 	e.model:SetAttribute("Mounted", true)
+	char:SetAttribute("Mounted", true)
 	e.align.Enabled = false
 	e.velocity.VectorVelocity = Vector3.zero
 	e.velocity.Enabled = true
@@ -325,10 +329,11 @@ function CompanionService.Attach(player: Player, model: Model, dragon: { [string
 		prompt.ObjectText = ""
 		prompt.KeyboardKeyCode = Enum.KeyCode.V
 		prompt.GamepadKeyCode = Enum.KeyCode.ButtonY
-		prompt.UIOffset = Vector2.new(0, 72)
+		prompt.Style = Enum.ProximityPromptStyle.Custom
+		prompt:SetAttribute("Order", -1)
 		prompt.MaxActivationDistance = 12 + size * 0.4
 		prompt.RequiresLineOfSight = false
-		prompt.HoldDuration = 0.25
+		prompt.HoldDuration = 0
 		prompt:SetAttribute("OwnerUserId", player.UserId)
 		prompt.Parent = promptAtt or root
 		prompt.Triggered:Connect(function(who: Player)

@@ -9,6 +9,9 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
+local DragonRig = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Dragon"):WaitForChild("DragonRig"))
+local DragonAnimator = require(script.Parent.Parent:WaitForChild("Dragon"):WaitForChild("DragonAnimator"))
+
 local AmbientDragons = {}
 
 local COUNT = 7
@@ -17,6 +20,7 @@ local SPEED_MIN, SPEED_MAX = 45, 75
 
 type Flyer = {
 	model: Model,
+	root: BasePart,
 	pts: { Vector3 }, -- pontos de controle da curva
 	seg: number,
 	t: number,
@@ -91,19 +95,35 @@ local function spawnFlyer(templates: { Model })
 	end
 	for _, d in ipairs(m:GetDescendants()) do
 		if d:IsA("BasePart") then
-			d.Anchored = true
-			d.CanCollide = false
-			d.CanQuery = false
-			d.CanTouch = false
 			d.CastShadow = true -- a sombra passa pelas aberturas da floresta
 		end
 	end
+	-- Root invisível ancorado com a frente (-Z) para onde a cabeça aponta; as peças viram
+	-- juntas (asas, cabeça, cauda, patas) que o DragonAnimator faz bater e balançar.
+	local yaw = math.rad((src:GetAttribute("YawDegrees") :: number?) or 0)
+	local root = Instance.new("Part")
+	root.Name = "Root"
+	root.Transparency = 1
+	root.Size = Vector3.new(1, 1, 1)
+	root.Anchored = true
+	root.CanCollide = false
+	root.CanQuery = false
+	root.CanTouch = false
+	local bcf, bsize = m:GetBoundingBox()
+	-- o Root fica nos pés do dragão (para pousar certinho no chão das ilhas)
+	root.CFrame = CFrame.new(bcf.Position - Vector3.new(0, bsize.Y / 2, 0)) * (m:GetPivot() * CFrame.Angles(0, -yaw, 0)).Rotation
+	root.Parent = m
+	DragonRig.Rig(m, root)
+	m.PrimaryPart = root
+	m:SetAttribute("Flying", true)
 	m.Parent = folder
 	local c = center()
 	local start = newPoint(c, c)
 	local pts = { start, newPoint(start, c), newPoint(start, c), newPoint(start, c) }
+	DragonAnimator.Track(m)
 	local f: Flyer = {
 		model = m,
+		root = root,
 		pts = pts,
 		seg = 1,
 		t = rng:NextNumber(0, 1),
@@ -137,6 +157,7 @@ local function step(dt: number)
 		if now < f.restUntil then
 			continue -- pousado numa ilha
 		end
+		f.model:SetAttribute("Flying", true)
 		local p0, p1, p2, p3 = f.pts[1], f.pts[2], f.pts[3], f.pts[4]
 		local segLen = math.max(30, (p2 - p1).Magnitude)
 		f.t += f.speed * dt / segLen
@@ -175,14 +196,15 @@ local function step(dt: number)
 		-- longe da câmera, atualiza menos vezes
 		local dist = (pos - workspace.CurrentCamera.CFrame.Position).Magnitude
 		if dist < 600 or (math.floor(now * 20) + f.phase) % 3 < 1 then
-			f.model:PivotTo(cf)
+			f.root.CFrame = cf
 		end
 		-- pouso: chegou perto de uma ilha marcada como alvo
 		if f.t > 0.95 then
 			for _, s in ipairs(islandSpots()) do
 				if (p2 - s).Magnitude < 1 and now > f.restUntil then
 					f.restUntil = now + rng:NextNumber(12, 30)
-					f.model:PivotTo(CFrame.lookAt(s, s + Vector3.new(f.look.X, 0, f.look.Z)))
+					f.root.CFrame = CFrame.lookAt(s, s + Vector3.new(f.look.X, 0, f.look.Z)) * CFrame.new(0, 0, 0)
+					f.model:SetAttribute("Flying", false)
 					break
 				end
 			end

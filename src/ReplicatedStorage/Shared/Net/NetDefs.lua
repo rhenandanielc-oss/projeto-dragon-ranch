@@ -74,7 +74,7 @@ local NetDefs: { [string]: RemoteDef } = {
 
 	-- Fase 5: combate
 	-- (ação, direção da mira unitária, carga do arco 0..1)
-	CombatAction = { Kind = "Event", Direction = "C2S", Args = { { Type = "enum", Values = { "Attack", "Skill", "BlockOn", "BlockOff", "Dodge", "SwitchWeapon" } }, { Type = "Vector3", Optional = true, MaxMagnitude = 1.5 }, { Type = "number", Optional = true, Min = 0, Max = 1.5 } }, Rate = 12, Burst = 20 },
+	CombatAction = { Kind = "Event", Direction = "C2S", Args = { { Type = "enum", Values = { "Attack", "Skill", "BlockOn", "BlockOff", "Dodge", "SwitchWeapon", "DrawOn", "DrawOff" } }, { Type = "Vector3", Optional = true, MaxMagnitude = 1.5 }, { Type = "number", Optional = true, Min = 0, Max = 1.5 } }, Rate = 12, Burst = 20 },
 	-- (comando, ponto mirado no mundo)
 	DragonCommand = { Kind = "Event", Direction = "C2S", Args = { { Type = "enum", Values = { "Attack", "Recall", "Z", "X", "C" } }, { Type = "Vector3", Optional = true, MaxMagnitude = 20000 } }, Rate = 6, Burst = 12 },
 	Fx = { Kind = "Event", Direction = "S2C" }, -- (tipo, dados) efeitos visuais

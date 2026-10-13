@@ -157,7 +157,9 @@ local function addPrompt(model: Model, owner: Player, name: string, action: stri
 	prompt.ActionText = action
 	prompt.ObjectText = ""
 	prompt.KeyboardKeyCode = key
-	prompt.UIOffset = Vector2.new(0, -order * 72)
+	-- lista pequena desenhada no cliente (UI/CompactPrompts), em vez de 5 caixas grandes empilhadas
+	prompt.Style = Enum.ProximityPromptStyle.Custom
+	prompt:SetAttribute("Order", order)
 	prompt.MaxActivationDistance = 14 + model:GetExtentsSize().Magnitude * 0.3
 	prompt.RequiresLineOfSight = false
 	prompt.HoldDuration = 0

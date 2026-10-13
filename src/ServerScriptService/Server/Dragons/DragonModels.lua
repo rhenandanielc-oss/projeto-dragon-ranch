@@ -12,6 +12,8 @@ local Elements = require(ReplicatedStorage.Shared.Config.Elements)
 local Species = require(ReplicatedStorage.Shared.Config.Species)
 local Rarity = require(ReplicatedStorage.Shared.Config.Rarity)
 local Growth = require(ReplicatedStorage.Shared.Config.Growth)
+local DragonRig = require(ReplicatedStorage.Shared.Dragon.DragonRig)
+local CollectionService = game:GetService("CollectionService")
 
 local DragonModels = {}
 
@@ -343,17 +345,8 @@ local function attachMesh(source: Model, scale: number, root: BasePart): number
 	local bcf, size = mesh:GetBoundingBox()
 	local bottom = bcf.Position - Vector3.new(0, size.Y / 2, 0)
 	mesh:PivotTo(mesh:GetPivot() + (root.Position - bottom))
-	for _, d in ipairs(mesh:GetDescendants()) do
-		if d:IsA("BasePart") then
-			d.Anchored = false
-			d.CanCollide = false
-			d.Massless = true
-			local weld = Instance.new("WeldConstraint")
-			weld.Part0 = root
-			weld.Part1 = d
-			weld.Parent = d
-		end
-	end
+	-- juntas (asas, cabeça, cauda, patas) para o cliente animar
+	DragonRig.Rig(mesh, root)
 	mesh.Name = "Mesh"
 	mesh.Parent = root.Parent
 	return size.Y
@@ -397,6 +390,9 @@ function DragonModels.Build(dragon: { [string]: any }, at: CFrame): Model
 		model:SetAttribute("Height", maxY)
 	end
 
+	if source and stage ~= "Egg" then
+		CollectionService:AddTag(model, "AnimatedDragon")
+	end
 	model:SetAttribute("DragonId", dragon.Id)
 	model:SetAttribute("Species", dragon.Species)
 	model:SetAttribute("Stage", stage)
