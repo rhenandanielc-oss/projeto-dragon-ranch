@@ -70,7 +70,8 @@ local HUB = { 0, -1500 }
 WorldData.ROADS = {
 	{ HUB, { -300, -400 }, { -200, 700 }, { -1300, 3300 }, { -1500, 4300 }, { -800, 5000 } },
 	{ { -1500, 4300 }, { -3000, 4800 }, { -4300, 5300 } },
-	{ { -800, 5000 }, { 300, 5800 }, { 800, 6300 } },
+	{ { -800, 5000 }, { 300, 4500 }, { 990, 4230 } },
+	{ { 750, 5130 }, { 800, 5400 } }, -- dentro do Vale Oculto (saída da caverna)
 	{ HUB, { -1200, -1000 }, { -2300, -700 }, { -3600, -900 }, { -4300, 800 } },
 	{ { -3600, -900 }, { -4900, -700 }, { -5300, -300 }, { -6000, -400 } },
 	{ HUB, { 1200, -1200 }, { 2300, -500 }, { 3300, 200 }, { 3400, 2300 }, { 4300, 3300 }, { 5200, 4400 } },
@@ -103,7 +104,7 @@ WorldData.FARMS = {
 	{ id = 15, name = "Fontes Termais", x = -6000, y = -400, tier = 3, biome = "volcanic" },
 	{ id = 16, name = "Cristalina", x = 5500, y = 300, tier = 3, biome = "crystal" },
 	{ id = 17, name = "Ruínas Antigas", x = 5200, y = 4400, tier = 3, biome = "ruins" },
-	{ id = 18, name = "Vale Oculto", x = 800, y = 6300, tier = 3, biome = "hidden" },
+	{ id = 18, name = "Vale Oculto", x = 800, y = 5400, tier = 3, biome = "hidden" },
 }
 WorldData.FARM_R0 = 150 -- raio plano (interior de 200 x 200)
 WorldData.FARM_R1 = 330 -- fim da transição para o relevo natural
@@ -151,6 +152,12 @@ WorldData.LOOKOUTS = {
 	{ name = "Mirante do Pico Branco", x = -4300, y = 5900, vx = 0.3, vy = -1 },
 	{ name = "Mirante da Encosta", x = 900, y = 4300, vx = 0, vy = -1 },
 	{ name = "Mirante da Serpentina", x = 3100, y = 5150, vx = -0.4, vy = -1 },
+}
+
+-- Túneis escavados na montanha (pontos aproximados nas duas pontas; o construtor acha a boca)
+WorldData.TUNNELS = {
+	{ name = "Túnel de Gelo", a = { -2800, 5000 }, b = { -4200, 5250 }, ice = true },
+	{ name = "Caverna do Vale Oculto", a = { 1000, 4200 }, b = { 700, 5300 }, ice = false },
 }
 
 WorldData.GREAT_WATERFALL = { x = 3738, y = 338, top = 29, bottom = 13, width = 44 }

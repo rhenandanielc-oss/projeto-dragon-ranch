@@ -1625,6 +1625,69 @@ function WorldBuilder:findLand(x: number, y: number): (number, number)
 	return x, y
 end
 
+-- Túnel reto entre as bocas: anda de cada ponta em direção à outra até o terreno
+-- ficar bem mais alto que a boca; escava uma galeria de ~20 studs e põe molduras.
+function WorldBuilder:buildTunnel(T, parent: Instance)
+	local ax, ay, bx, by = T.a[1], T.a[2], T.b[1], T.b[2]
+	local function findMouth(x0, y0, x1, y1)
+		local g0 = self:groundY(x0, y0)
+		local L = math.sqrt((x1 - x0) ^ 2 + (y1 - y0) ^ 2)
+		for d = 0, L, 8 do
+			local t = d / L
+			local x, y = x0 + (x1 - x0) * t, y0 + (y1 - y0) * t
+			if self:groundY(x, y) > g0 + 26 then
+				local tb = math.max(0, (d - 8) / L)
+				local mx, my = x0 + (x1 - x0) * tb, y0 + (y1 - y0) * tb
+				return mx, my, self:groundY(mx, my)
+			end
+		end
+		return nil
+	end
+	local m1x, m1y, m1h = findMouth(ax, ay, bx, by)
+	local m2x, m2y, m2h = findMouth(bx, by, ax, ay)
+	if not m1x or not m2x then
+		return
+	end
+	local m = Instance.new("Model")
+	m.Name = T.name
+	local A = V(m1x, m1y, m1h + 9)
+	local B = V(m2x, m2y, m2h + 9)
+	local len = (B - A).Magnitude
+	local dir = (B - A).Unit
+	local lining = if T.ice then Enum.Material.Glacier else Enum.Material.Rock
+	for d = -6, len + 6, 5 do
+		local c = A + dir * d
+		Terrain:FillBall(c, 14, lining)
+	end
+	for d = -12, len + 12, 5 do
+		local c = A + dir * d
+		Terrain:FillBall(c, 10.5, Enum.Material.Air)
+		-- piso plano
+		Terrain:FillBlock(CFrame.lookAt(c - Vector3.new(0, 11, 0), c - Vector3.new(0, 11, 0) + dir), Vector3.new(18, 4, 6), if T.ice then Enum.Material.Snow else Enum.Material.Ground)
+	end
+	-- molduras de madeira nas bocas e luzes ao longo da galeria
+	for _, e in ipairs({ { A, dir }, { B, -dir } }) do
+		local fcf = CFrame.lookAt(e[1] - Vector3.new(0, 4, 0), e[1] - Vector3.new(0, 4, 0) + e[2])
+		for _, sx in ipairs({ -8, 8 }) do
+			part({ Name = "FramePost", Size = Vector3.new(1.6, 15, 1.6), CFrame = fcf * CFrame.new(sx, 1, 0), Material = Enum.Material.Wood, Color = DARKWOOD }, m)
+		end
+		part({ Name = "FrameBeam", Size = Vector3.new(19, 1.8, 1.8), CFrame = fcf * CFrame.new(0, 9, 0), Material = Enum.Material.Wood, Color = DARKWOOD }, m)
+		self.Props.lanternPost(fcf * CFrame.new(10, -6, -2), m)
+	end
+	for d = 20, len - 10, 30 do
+		local c = A + dir * d + Vector3.new(0, 6, 0)
+		local lamp = part({ Name = "TunnelLight", Size = Vector3.new(1, 1, 1), CFrame = CFrame.new(c), Material = Enum.Material.Neon, Color = if T.ice then Color3.fromRGB(150, 210, 255) else Color3.fromRGB(255, 170, 90), CanCollide = false, CastShadow = false }, m)
+		local l = Instance.new("PointLight")
+		l.Color = lamp.Color
+		l.Range = 24
+		l.Brightness = 1.2
+		l.Shadows = false
+		l.Parent = lamp
+	end
+	m:SetAttribute("Landmark", T.name)
+	m.Parent = parent
+end
+
 function WorldBuilder:buildLandmarks()
 	self:status("landmarks")
 	local folder = self:container("Landmarks", self:worldFolder())
@@ -1746,6 +1809,45 @@ function WorldBuilder:buildLandmarks()
 		end)
 		lo.Name = L.name
 		lo:SetAttribute("Landmark", L.name)
+	end
+
+	-- Túneis: escava a montanha entre as duas bocas, com moldura de madeira e luzes
+	for _, T in ipairs(self.data.TUNNELS or {}) do
+		self:buildTunnel(T, folder)
+	end
+
+	-- Cratera do vulcão com lava brilhante, fumaça e brasas
+	for _, sh in ipairs(self.data.SHAPES) do
+		if sh.crater then
+			local cy = self:groundY(sh.x, sh.y)
+			self:paintDisc(sh.x, sh.y, sh.crater * 0.7, Enum.Material.CrackedLava)
+			local lava = part({ Name = "LavaGlow", Size = Vector3.new(1, 1, 1), CFrame = CFrame.new(V(sh.x, sh.y, cy + 6)), Transparency = 1, CanCollide = false, CanQuery = false }, folder)
+			local l = Instance.new("PointLight")
+			l.Color = Color3.fromRGB(255, 110, 40)
+			l.Range = 60
+			l.Brightness = 4
+			l.Parent = lava
+			local smoke = Instance.new("ParticleEmitter")
+			smoke.Texture = "rbxasset://textures/particles/smoke_main.dds"
+			smoke.Color = ColorSequence.new(Color3.fromRGB(70, 66, 66), Color3.fromRGB(140, 136, 132))
+			smoke.Transparency = NumberSequence.new(0.4, 1)
+			smoke.Size = NumberSequence.new(20, 70)
+			smoke.Rate = 5
+			smoke.Lifetime = NumberRange.new(10, 16)
+			smoke.Speed = NumberRange.new(10, 18)
+			smoke.SpreadAngle = Vector2.new(25, 25)
+			smoke.EmissionDirection = Enum.NormalId.Top
+			smoke.Parent = lava
+			local embers = Instance.new("ParticleEmitter")
+			embers.Color = ColorSequence.new(Color3.fromRGB(255, 160, 60))
+			embers.LightEmission = 1
+			embers.Size = NumberSequence.new(0.6, 0)
+			embers.Rate = 25
+			embers.Lifetime = NumberRange.new(2, 4)
+			embers.Speed = NumberRange.new(8, 20)
+			embers.SpreadAngle = Vector2.new(40, 40)
+			embers.Parent = lava
+		end
 	end
 
 	-- Cachoeira Grande (Rio das Cachoeiras), com rochas dos lados
