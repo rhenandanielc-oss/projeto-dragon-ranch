@@ -2599,7 +2599,7 @@ function WorldBuilder:setupLighting()
 	-- Água azul-turquesa e transparente: no raso (fundo de areia) aparece turquesa e dá para ver
 	-- o fundo; no fundo (pedra escura) vira azul profundo. A cor é uma só para toda a água do Roblox.
 	Terrain.WaterColor = Color3.fromRGB(22, 120, 150)
-	Terrain.WaterTransparency = 0.88
+	Terrain.WaterTransparency = 0.8
 	Terrain.WaterReflectance = 0.45
 	Terrain.WaterWaveSize = 0.12
 	Terrain.WaterWaveSpeed = 8

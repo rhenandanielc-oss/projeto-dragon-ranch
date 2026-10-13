@@ -127,7 +127,7 @@ function GrandBridge.build(spec: Spec, parent: Instance, Props: any, statue: ((C
 	flatDir = flatDir.Unit
 	local right = flatDir:Cross(Vector3.yAxis).Unit
 	-- perfil: sobe em curva suave até o meio (bem acima da água) e desce
-	local midTarget = spec.waterY + 34
+	local midTarget = spec.waterY + 50
 	local base0, base1 = a.Y + 0.5, b.Y + 0.5
 	local rise = math.max(0, midTarget - (base0 + base1) / 2)
 	local function deckAt(t: number): Vector3

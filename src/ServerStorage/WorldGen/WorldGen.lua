@@ -499,6 +499,7 @@ function WorldGen:computeChunk(x0: number, y0: number, n: number, step: number?)
 	local hA, wlA, domA, flagA, cutA = table.create(W * W, 0), table.create(W * W, -1e9), table.create(W * W, 1), table.create(W * W, 0), table.create(W * W, 0)
 	local lakeLevel, swampLevel = data.LAKE_LEVEL, data.SWAMP_LEVEL
 	local BAY = data.BAY
+	local HUBT = data.HUB and data.HUB.target or 16
 	for j = 0, W - 1 do
 		local y = by0 + j * VOX
 		for i = 0, W - 1 do
@@ -605,19 +606,24 @@ function WorldGen:computeChunk(x0: number, y0: number, n: number, step: number?)
 						wl = BAY.level
 					end
 					bayFlag = 6
-				elseif bd >= rS and bd < rS + 80 and not inChannel then
-					-- praia da margem: segura a água e sobe suave
-					local beach = BAY.level + 0.6 + (bd - rS) * 0.09
-					if h < beach then
-						h = beach
+				elseif bd >= rS and bd < rS + 320 and not inChannel then
+					-- margem: praia que sobe suave (sem paredão na beira da água)
+					local u = bd - rS
+					local prof = BAY.level + 0.6 + u * 0.06 + math.max(0, u - 90) * 0.16
+					if h > prof then
+						h = prof + (h - prof) * math.clamp((u - 200) / 120, 0, 1)
+					elseif u < 90 then
+						h = prof -- praia segura a água
 					end
-					bayFlag = 7
-				elseif bd <= rI and bd > BAY.rIsland - 90 then
-					-- praia da ilha
-					local beach = BAY.level + 0.8 + (rI - bd) * 0.1
-					if h < beach then
-						h = beach
+					if u < 110 then
+						bayFlag = 7
 					end
+				elseif bd <= 440 and bd > 300 then
+					-- platô da ilha (sem morro na borda do Hub)
+					h = math.clamp(h, HUBT - 1, HUBT + 1.5)
+				elseif bd <= rI and bd > 440 then
+					-- encosta da ilha descendo até a praia (continua o platô do Hub em 16)
+					h = BAY.level + 0.8 + (rI - bd) * ((HUBT - BAY.level - 0.8) / math.max(rI - 440, 1))
 					bayFlag = 7
 				end
 			end
@@ -731,12 +737,15 @@ function WorldGen:computeChunk(x0: number, y0: number, n: number, step: number?)
 			if flag == 6 then
 				-- fundo da baía: areia clara no raso (turquesa), pedra escura no fundo (azul profundo)
 				local depth = wl - h
-				if depth < 10 then
+				local dz = depth + 6 * nz -- borda irregular entre as faixas
+				if dz < 12 then
 					mat = M.Sand
-				elseif depth < 22 then
-					mat = if nz > 0.2 then M.Sand elseif nz > -0.3 then M.Limestone else M.Slate
+				elseif dz < 19 then
+					mat = if nz > 0 then M.Sand else M.Sandstone
+				elseif dz < 27 then
+					mat = if nz > 0.1 then M.Sandstone else M.Slate
 				else
-					mat = if nz > 0.4 then M.Basalt else M.Slate
+					mat = if nz > 0.45 then M.Basalt else M.Slate
 				end
 			elseif flag == 7 then
 				mat = if h < (BAY and BAY.level or 6) + 5 + 2 * nz then M.Sand elseif nz > 0.5 then M.LeafyGrass else M.Grass
