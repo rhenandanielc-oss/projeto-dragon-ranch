@@ -145,8 +145,8 @@ end
 
 function CombatService.PlayerTarget(player: Player): Target?
 	local char, _, hrp = charParts(player)
-	if not char or not hrp then
-		return nil
+	if not char or not hrp or char:GetAttribute("Burrowed") then
+		return nil -- por baixo da terra ninguém acerta
 	end
 	return { kind = "Player", model = char, root = hrp, radius = 2, player = player, ref = player }
 end

@@ -33,6 +33,9 @@ Rules.Mount = {
 	SpeedTolerance = 1.35,
 	MaxClimbPerSecond = 60,
 	MaxHoverHeight = 14, -- acima disso, sem estar descendo, conta como voo ilegal
+	MaxFlightAltitude = 2600, -- teto do voo (as ilhas flutuantes ficam abaixo disso)
+	BurrowDepth = 7, -- o Wyrm anda esse tanto abaixo da superfície
+	BurrowSurfaceDamage = 1.5, -- × mordida, em área, ao sair do chão
 	StrikesToReset = 3,
 }
 

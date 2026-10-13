@@ -9,12 +9,15 @@
 --    o jogador desmonta e o dragão volta à última posição válida.
 --  * Montar só o próprio dragão, de perto, vivo, a partir do estágio Jovem.
 
+local PhysicsService = game:GetService("PhysicsService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local Growth = require(ReplicatedStorage.Shared.Config.Growth)
 local Rules = require(ReplicatedStorage.Shared.Config.Rules)
+local Rarity = require(ReplicatedStorage.Shared.Config.Rarity)
+local Species = require(ReplicatedStorage.Shared.Config.Species)
 
 local CompanionService = {}
 
@@ -39,6 +42,11 @@ type Entry = {
 	conns: { RBXScriptConnection },
 	goal: Vector3?, -- combate: posição para onde o dragão deve ir (em vez de seguir o dono)
 	faceTo: Vector3?,
+	mode: string, -- montado: "Ground" | "Fly" | "Burrow"
+	canFly: boolean,
+	canBurrow: boolean,
+	flySpeed: number,
+	modeSince: number,
 }
 
 local entries: { [Player]: Entry } = {}
@@ -47,6 +55,10 @@ local attachedEvent = Instance.new("BindableEvent")
 local detachedEvent = Instance.new("BindableEvent")
 CompanionService.Attached = attachedEvent.Event -- (player, model, dragon)
 CompanionService.Detached = detachedEvent.Event -- (player)
+local modeEvent = Instance.new("BindableEvent")
+CompanionService.ModeChanged = modeEvent.Event -- (player, modoAntigo, modoNovo)
+
+local BURROW_GROUP = "Burrowing"
 local notifyFn: ((Player, string, string?) -> ())? = nil
 
 local function folder(): Folder
@@ -63,6 +75,14 @@ local function notify(player: Player, text: string, kind: string?)
 	if notifyFn then
 		notifyFn(player, text, kind)
 	end
+end
+
+-- Velocidade de voo: base × raridade × espécie (Amphiptere é o mais rápido no ar).
+local FLIGHT_SPECIES = { Amphiptere = 1.15, Wyvern = 1.05, WesternDragon = 1.0, AsianDragon = 1.0 }
+function CompanionService.FlightSpeed(dragon: { [string]: any }): number
+	local r = Rarity.Defs[dragon.Rarity] or Rarity.Defs.Common
+	local stageMult = ({ Young = 0.85, Subadult = 0.93, Adult = 1.0, Elder = 1.05 } :: any)[dragon.Stage] or 1
+	return Rules.Mount.FlightBaseSpeed * r.FlightSpeedMult * (FLIGHT_SPECIES[dragon.Species] or 1) * stageMult
 end
 
 -- Velocidade em terra do dragão montado (a raridade muda o voo, não a corrida).
@@ -125,6 +145,9 @@ function CompanionService.Dismount(player: Player, reason: string?)
 	end
 	e.mounted = false
 	e.model:SetAttribute("Mounted", false)
+	if e.mode ~= "Ground" then
+		CompanionService.SetMode(player, "Ground", true)
+	end
 	local seat = e.seat
 	if seat then
 		local weld = seat:FindFirstChild("SeatWeld")
@@ -144,6 +167,57 @@ function CompanionService.Dismount(player: Player, reason: string?)
 	if reason then
 		notify(player, reason, "warning")
 	end
+end
+
+-- Troca o modo do dragão montado: "Ground" (terra), "Fly" (voo) ou "Burrow" (por baixo da terra).
+-- O servidor confere se o dragão liberou o modo pela missão. `force` = servidor (desmontar, reset).
+function CompanionService.SetMode(player: Player, mode: string, force: boolean?)
+	local e = entries[player]
+	if not e or (not e.mounted and not force) or e.mode == mode then
+		return
+	end
+	if not force then
+		if mode == "Fly" and not e.canFly then
+			notify(player, "Seu dragão ainda não voa. Fale com a Mestra Lira sobre a Poção do Voo.")
+			return
+		end
+		if mode == "Burrow" and not e.canBurrow then
+			notify(player, "Seu Wyrm ainda não entra na terra. Fale com a Mestra Lira sobre a Poção da Terra.")
+			return
+		end
+		if os.clock() - e.modeSince < 0.6 then
+			return
+		end
+	end
+	local old = e.mode
+	e.mode = mode
+	e.modeSince = os.clock()
+	e.airSince = nil
+	e.strikes = 0
+	e.lastPos = e.root.Position
+	e.lastCheck = os.clock()
+	e.model:SetAttribute("Mode", mode)
+	-- por baixo da terra o cavaleiro atravessa o terreno e não pode ser atingido
+	local char = player.Character
+	if char then
+		char:SetAttribute("Burrowed", mode == "Burrow")
+		for _, d in ipairs(char:GetDescendants()) do
+			if d:IsA("BasePart") then
+				d.CollisionGroup = if mode == "Burrow" then BURROW_GROUP else "Default"
+			end
+		end
+	end
+	for _, d in ipairs(e.model:GetDescendants()) do
+		if d:IsA("BasePart") then
+			d.CollisionGroup = if mode == "Burrow" then BURROW_GROUP else "Default"
+		end
+	end
+	modeEvent:Fire(player, old, mode)
+end
+
+function CompanionService.Mode(player: Player): string?
+	local e = entries[player]
+	return e and e.mounted and e.mode or nil
 end
 
 function CompanionService.Mount(player: Player)
@@ -265,6 +339,15 @@ function CompanionService.Attach(player: Player, model: Model, dragon: { [string
 	end
 
 	local speed = CompanionService.LandSpeed(dragon)
+	local adult = Growth.StageIndex(dragon.Stage) >= Growth.StageIndex(Growth.FlightStage)
+	local canFly = adult and Species[dragon.Species].CanFly and dragon.FlightUnlocked == true
+	local canBurrow = adult and Species[dragon.Species].CanBurrow and dragon.BurrowUnlocked == true
+	local flySpeed = CompanionService.FlightSpeed(dragon)
+	model:SetAttribute("CanFly", canFly)
+	model:SetAttribute("CanBurrow", canBurrow)
+	model:SetAttribute("FlightSpeed", flySpeed)
+	model:SetAttribute("FlightStyle", Species[dragon.Species].FlightStyle or "")
+	model:SetAttribute("Mode", "Ground")
 	model:SetAttribute("OwnerUserId", player.UserId)
 	model:SetAttribute("Companion", true)
 	model:SetAttribute("MountSpeed", speed)
@@ -305,6 +388,11 @@ function CompanionService.Attach(player: Player, model: Model, dragon: { [string
 		conns = {},
 		goal = nil,
 		faceTo = nil,
+		mode = "Ground",
+		canFly = canFly,
+		canBurrow = canBurrow,
+		flySpeed = flySpeed,
+		modeSince = os.clock(),
 	}
 	entries[player] = e
 	setServerControl(e)
@@ -440,21 +528,44 @@ local function validate(e: Entry)
 	local rise = p.Y - last.Y
 	local M = Rules.Mount
 	local bad = false
-	if horiz > e.speed * dt * M.SpeedTolerance + 4 then
+	local mode = e.mode
+	-- logo depois de trocar de modo, tolerância extra (decolagem/mergulho)
+	local grace = if now - e.modeSince < 1.5 then 1.6 else 1
+	local maxSpeed = if mode == "Fly" then e.flySpeed elseif mode == "Burrow" then e.speed * 1.2 else e.speed
+	if horiz > maxSpeed * dt * M.SpeedTolerance * grace + 4 then
 		bad = true
 	end
-	if rise > M.MaxClimbPerSecond * dt + 6 then
+	local maxClimb = if mode == "Fly" then e.flySpeed * 0.8 else M.MaxClimbPerSecond
+	if rise > maxClimb * dt * grace + 6 then
 		bad = true
 	end
-	-- dragão de terra não voa: muito acima do chão, sem estar descendo, por mais de 2 s
-	local g = groundAt(p, p.Y, 200)
-	if g and p.Y - g > M.MaxHoverHeight and rise > -1 then
-		e.airSince = e.airSince or now
-		if now - (e.airSince :: number) > 2 then
+	if mode == "Fly" then
+		e.airSince = nil
+		if p.Y > M.MaxFlightAltitude then
 			bad = true
 		end
+	elseif mode == "Burrow" then
+		-- precisa continuar por baixo/rente ao chão
+		local g = groundAt(p, p.Y + 40, 120)
+		if g and p.Y > g + 4 and rise > -1 then
+			e.airSince = e.airSince or now
+			if now - (e.airSince :: number) > 1.5 then
+				bad = true
+			end
+		else
+			e.airSince = nil
+		end
 	else
-		e.airSince = nil
+		-- dragão de terra não voa: muito acima do chão, sem estar descendo, por mais de 2 s
+		local g = groundAt(p, p.Y, 200)
+		if g and p.Y - g > M.MaxHoverHeight and rise > -1 then
+			e.airSince = e.airSince or now
+			if now - (e.airSince :: number) > 2 then
+				bad = true
+			end
+		else
+			e.airSince = nil
+		end
 	end
 	if bad then
 		e.strikes += 1
@@ -477,6 +588,10 @@ end
 
 function CompanionService.Init(notify: (Player, string, string?) -> ())
 	notifyFn = notify
+	pcall(function()
+		PhysicsService:RegisterCollisionGroup(BURROW_GROUP)
+		PhysicsService:CollisionGroupSetCollidable(BURROW_GROUP, "Default", false)
+	end)
 	Players.PlayerRemoving:Connect(function(player)
 		CompanionService.Detach(player)
 	end)

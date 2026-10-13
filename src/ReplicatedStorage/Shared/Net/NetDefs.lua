@@ -51,6 +51,7 @@ local NetDefs: { [string]: RemoteDef } = {
 	ToggleCompanion = { Kind = "Event", Direction = "C2S", Args = {}, Rate = 0.5, Burst = 2 }, -- chamar / guardar na fazenda
 	MountDragon = { Kind = "Event", Direction = "C2S", Args = {}, Rate = 1, Burst = 3 },
 	DismountDragon = { Kind = "Event", Direction = "C2S", Args = {}, Rate = 2, Burst = 4 },
+	MountMode = { Kind = "Event", Direction = "C2S", Args = { { Type = "enum", Values = { "Ground", "Fly", "Burrow" } } }, Rate = 2, Burst = 4 }, -- voo / entrar na terra
 
 	-- Fase 4: inventário, armazém e loja
 	OpenStorage = { Kind = "Event", Direction = "S2C" },

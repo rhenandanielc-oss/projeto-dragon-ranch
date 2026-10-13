@@ -14,6 +14,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local Combat = require(ReplicatedStorage.Shared.Config.Combat)
 local Species = require(ReplicatedStorage.Shared.Config.Species)
 local Growth = require(ReplicatedStorage.Shared.Config.Growth)
+local Rules = require(ReplicatedStorage.Shared.Config.Rules)
 
 local Server = ServerScriptService.Server
 local NetService = require(Server.Services.NetService)
@@ -192,7 +193,7 @@ end
 local function provider(center: Vector3, radius: number): { CombatService.Target }
 	local out = {}
 	for _, st in pairs(states) do
-		if st.canFight and st.model.Parent and (st.root.Position - center).Magnitude <= radius + st.size * 0.5 then
+		if st.canFight and st.model.Parent and st.model:GetAttribute("Mode") ~= "Burrow" and (st.root.Position - center).Magnitude <= radius + st.size * 0.5 then
 			table.insert(out, asTarget(st))
 		end
 	end
@@ -226,6 +227,9 @@ local function targetValid(t: CombatService.Target?, st: DState?): boolean
 end
 
 local function bite(st: DState, t: CombatService.Target)
+	if st.model:GetAttribute("Mode") == "Burrow" then
+		return
+	end
 	local now = os.clock()
 	if now - st.lastBite < Combat.DragonBite.Interval then
 		return
@@ -257,6 +261,9 @@ end
 
 local function usePower(st: DState, slot: string, aim: Vector3?)
 	local player = st.player
+	if st.model:GetAttribute("Mode") == "Burrow" then
+		return -- por baixo da terra não usa poderes (sai do chão para atacar)
+	end
 	if not st.canFight then
 		notify(player, "Seu dragão ainda é um bebê: ele não luta.")
 		return
@@ -480,6 +487,22 @@ end
 function DragonCombat.Init()
 	CombatService.RegisterDragons(provider, damageHandler)
 	CompanionService.Attached:Connect(onAttached)
+	-- Wyrm saindo do chão: golpe em área em quem estiver por perto
+	CompanionService.ModeChanged:Connect(function(player: Player, old: string, new: string)
+		local st = states[player]
+		if not st or not st.canFight or old ~= "Burrow" or new ~= "Ground" then
+			return
+		end
+		local stageCfg = Combat.DragonStage[st.stage]
+		local dmg = (if stageCfg then stageCfg.Bite else 12) * st.dmgMult * Rules.Mount.BurrowSurfaceDamage
+		local center = st.root.Position
+		CombatService.Fx("Power", center, { Kind = "Area", Element = "Earth", To = center, Radius = 14 })
+		for _, t in ipairs(CombatService.TargetsNear(center, 14)) do
+			if t.model ~= st.model and t.model ~= player.Character then
+				CombatService.Damage(source(st), t, dmg, { Knockback = Vector3.new(0, 45, 0) })
+			end
+		end
+	end)
 	CompanionService.Detached:Connect(onDetached)
 	NetService.On("DragonCommand", onCommand)
 
