@@ -2445,9 +2445,16 @@ function WorldBuilder:forestBlock(bi: number, bj: number, parent: Instance): num
 				if math.noise(jx / 130, jy / 130, 61.7) > 0.6 then
 					dens *= 0.12
 				end
-				if rng:NextNumber() < dens then
+				-- até 2 árvores por célula de 30 studs (copas sobrepostas = céu escondido)
+				local expect = dens * (if grove then 1.85 else 1.4)
+				for k = 1, 2 do
+				if rng:NextNumber() < expect - (k - 1) then
+					local tx, ty = jx, jy
+					if k == 2 then
+						tx, ty = jx + rng:NextNumber(-14, 14), jy + rng:NextNumber(-14, 14)
+					end
 					local r = rng:NextNumber()
-					local e = self:pickAt(kit, jx, jy)
+					local e = self:pickAt(kit, tx, ty)
 					local gm = if grove then grove.giant else 1
 					if e[1] == "Mushroom" and rng:NextNumber() > 0.12 then
 						e = { "Tree2", 1, 1.6, 2.0, e[5] } -- poucos cogumelos (têm luz)
@@ -2455,17 +2462,18 @@ function WorldBuilder:forestBlock(bi: number, bj: number, parent: Instance): num
 					if e[1] == "Blossom" or e[1] == "Tree2" or e[1] == "Oak" then
 						gm *= 0.75 -- copas largas: gigantes menos exagerados
 					end
-					if r < 0.6 then
+					if r < 0.55 then
 						-- pinheiro gigante (copa grande)
-						put({ e[1], 1, e[3] * 1.3 * gm, e[4] * 1.35 * gm, e[5] }, jx, jy, false)
-					elseif r < 0.9 then
-						put({ e[1], 1, e[3] * 0.85, e[4] * 1.0, e[5] }, jx, jy, false)
+						put({ e[1], 1, e[3] * 1.3 * gm, e[4] * 1.35 * gm, e[5] }, tx, ty, false)
+					elseif r < 0.85 then
+						put({ e[1], 1, e[3] * 0.85, e[4] * 1.0, e[5] }, tx, ty, false)
 					else
-						put({ e[1], 1, e[3] * 0.45, e[4] * 0.6, e[5] }, jx, jy, false)
+						put({ e[1], 1, e[3] * 0.45, e[4] * 0.6, e[5] }, tx, ty, false)
 					end
 				end
+				end
 				-- chão da mata: samambaias, arbustos, troncos caídos, tocos e pedras
-				if rng:NextNumber() < 0.22 then
+				if rng:NextNumber() < (if grove then 0.5 else 0.3) * math.max(dens, 0.3) then
 					local e = self:pickAt(under, jx + 300, jy)
 					local ox, oy = rng:NextNumber(-12, 12), rng:NextNumber(-12, 12)
 					put(e, jx + ox, jy + oy, e[1] ~= "Boulder" or e[4] < 1.6)
