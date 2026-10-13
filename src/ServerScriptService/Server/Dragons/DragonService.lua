@@ -629,7 +629,63 @@ local function tickPlayer(player: Player, dt: number)
 	end
 end
 
+-- SÓ NO STUDIO: dragão Adulto que já voa, para testar o voo sem fazer a missão.
+-- Uso: no modo Play, digite /testevoo no chat (ou /testeterra para um Wyrm que entra na terra).
+function DragonService.TestFlight(player: Player, species: string?)
+	if not RunService:IsStudio() then
+		return
+	end
+	local data = DataService.Get(player)
+	if not data then
+		return
+	end
+	species = species or "Wyvern"
+	local id = DragonService.CreateDragon(player, species :: string, "Rare")
+	if not id then
+		-- fazenda cheia: usa o dragão ativo (ou o primeiro)
+		id = data.ActiveDragonId or next(data.Dragons)
+	end
+	if not id then
+		return
+	end
+	local d = data.Dragons[id]
+	d.GrowthPoints = Growth.Thresholds.Adult
+	d.Stage = "Adult"
+	d.Hunger, d.Thirst = Growth.Needs.Max, Growth.Needs.Max
+	if Species[d.Species].CanFly then
+		d.FlightUnlocked = true
+	end
+	if d.Species == "Wyrm" then
+		d.BurrowUnlocked = true
+	end
+	data.StarterChosen = true
+	data.ActiveDragonId = id
+	companionHome[player] = false
+	DataService.MarkChanged(player, "Dragons")
+	DataService.MarkChanged(player, "ActiveDragonId")
+	DataService.MarkChanged(player, "StarterChosen")
+	CompanionService.Detach(player)
+	buildModel(player, id)
+	notify(player, "[TESTE] " .. displayName(d) .. " Adulto está ao seu lado. Chegue perto e segure V para montar; Espaço decola.", "success")
+end
+
 function DragonService.Init()
+	if RunService:IsStudio() then
+		local function hook(p: Player)
+			p.Chatted:Connect(function(msg: string)
+				local m = string.lower(msg)
+				if m == "/testevoo" then
+					DragonService.TestFlight(p, "Wyvern")
+				elseif m == "/testeterra" then
+					DragonService.TestFlight(p, "Wyrm")
+				end
+			end)
+		end
+		for _, p in ipairs(Players:GetPlayers()) do
+			hook(p)
+		end
+		Players.PlayerAdded:Connect(hook)
+	end
 	NetService.On("ChooseStarter", onChooseStarter)
 	NetService.On("RenameDragon", onRename)
 	NetService.On("SetActiveDragon", onSetActive)
