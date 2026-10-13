@@ -55,7 +55,7 @@ TravelPanel.Init(screen)
 MountController.Init()
 Fx.Init()
 CombatController.Init(MountController.IsMounted)
-CombatHud.Init(screen, CombatController.Charging)
+CombatHud.Init(screen, CombatController.Charging, CombatController.IsAiming)
 ZoneBanner.Init(screen)
 QuestPanel.Init(screen)
 

@@ -83,8 +83,11 @@ local function companion(): Model?
 	return nil
 end
 
-function CombatHud.Init(screen: ScreenGui, chargeGetter: () -> number?)
+function CombatHud.Init(screen: ScreenGui, chargeGetter: () -> number?, aimingGetter: (() -> boolean)?)
 	chargingFn = chargeGetter
+	local isAiming = aimingGetter or function()
+		return false
+	end
 	local root = Theme.new("Frame", {
 		Name = "CombatHud",
 		AnchorPoint = Vector2.new(0.5, 1),
@@ -144,6 +147,16 @@ function CombatHud.Init(screen: ScreenGui, chargeGetter: () -> number?)
 		end
 		local c = chargingFn()
 		crosshair.Visible = w == "Bow"
+		-- mirando (ou no celular): mira no centro da tela; senão acompanha o cursor
+		local UIS = game:GetService("UserInputService")
+		if isAiming() or c ~= nil and UIS.MouseBehavior == Enum.MouseBehavior.LockCenter or (UIS.TouchEnabled and not UIS.MouseEnabled) then
+			crosshair.Position = UDim2.fromScale(0.5, 0.5)
+		else
+			local m = UIS:GetMouseLocation() - game:GetService("GuiService"):GetGuiInset()
+			crosshair.Position = UDim2.fromOffset(m.X, m.Y)
+		end
+		crosshair.Size = if isAiming() then UDim2.fromOffset(8, 8) else UDim2.fromOffset(6, 6)
+		chargeBar.Position = UDim2.new(crosshair.Position.X.Scale, crosshair.Position.X.Offset, crosshair.Position.Y.Scale, crosshair.Position.Y.Offset + 26)
 		chargeBar.Visible = c ~= nil
 		if c then
 			setCharge(c)

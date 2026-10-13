@@ -51,7 +51,7 @@ end
 function CombatController.AimPoint(): Vector3
 	local cam = workspace.CurrentCamera
 	local pos: Vector2
-	if UserInputService.TouchEnabled and not UserInputService.MouseEnabled or UserInputService.MouseBehavior == Enum.MouseBehavior.LockCenter then
+	if aiming or (UserInputService.TouchEnabled and not UserInputService.MouseEnabled) or UserInputService.MouseBehavior == Enum.MouseBehavior.LockCenter then
 		pos = cam.ViewportSize / 2
 	else
 		pos = UserInputService:GetMouseLocation()
@@ -101,6 +101,101 @@ local function faceAim()
 	end
 end
 
+--------------------------------------------------------------------------
+-- Mira do arco (como na maioria dos jogos): segurar o botão direito (ou "Mirar" no celular)
+-- aproxima a câmera por cima do ombro, a mira fica no centro da tela, o personagem gira junto
+-- com a câmera e anda devagar. Segurar o ataque puxa a flecha (carga); soltar dispara.
+--------------------------------------------------------------------------
+local AIM_FOV = 48
+local AIM_WALK = 9
+local drawnArrow: Model? = nil
+local aimStepBound = false
+
+local function clearDrawnArrow()
+	if drawnArrow then
+		drawnArrow:Destroy()
+		drawnArrow = nil
+	end
+end
+
+local function showDrawnArrow()
+	clearDrawnArrow()
+	local char = player.Character
+	local hand = char and (char:FindFirstChild("RightHand") or char:FindFirstChild("Right Arm")) :: BasePart?
+	if not hand then
+		return
+	end
+	local m = Instance.new("Model")
+	m.Name = "DrawnArrow"
+	local shaft = Instance.new("Part")
+	shaft.Name = "Shaft"
+	shaft.Size = Vector3.new(0.15, 0.15, 2.6)
+	shaft.Material = Enum.Material.Wood
+	shaft.Color = Color3.fromRGB(150, 110, 70)
+	shaft.CanCollide = false
+	shaft.CanQuery = false
+	shaft.CanTouch = false
+	shaft.Massless = true
+	shaft.Parent = m
+	local tip = shaft:Clone()
+	tip.Name = "Tip"
+	tip.Size = Vector3.new(0.25, 0.25, 0.5)
+	tip.Material = Enum.Material.Metal
+	tip.Color = Color3.fromRGB(200, 200, 205)
+	tip.Parent = m
+	m.Parent = char
+	drawnArrow = m
+end
+
+local function updateAimPose()
+	local char, hum, hrp = character()
+	if not char or not hum or not hrp then
+		return
+	end
+	local bowOut = weapon() == "Bow" and not isMountedFn()
+	local active = bowOut and (aiming or charging ~= nil)
+	local cam = workspace.CurrentCamera
+	if active then
+		-- personagem acompanha a câmera (mira sempre para a frente)
+		local look = cam.CFrame.LookVector
+		local flat = Vector3.new(look.X, 0, look.Z)
+		if flat.Magnitude > 0.1 then
+			hrp.CFrame = CFrame.lookAt(hrp.Position, hrp.Position + flat)
+		end
+		hum.AutoRotate = false
+		hum.WalkSpeed = AIM_WALK
+		hum.CameraOffset = hum.CameraOffset:Lerp(if aiming then Vector3.new(2.4, 0.8, 0) else Vector3.new(1.4, 0.5, 0), 0.25)
+		cam.FieldOfView += ((if aiming then AIM_FOV else baseFov - 6) - cam.FieldOfView) * 0.2
+		-- flecha puxada: recua com a carga, apontando para a mira
+		if charging and drawnArrow then
+			local c = math.clamp((os.clock() - charging) / Combat.Bow.ChargeSeconds, 0, 1)
+			local head = char:FindFirstChild("Head") :: BasePart?
+			local from = (if head then head.Position else hrp.Position) + Vector3.new(0, -0.6, 0)
+			local dir = (CombatController.AimPoint() - from)
+			dir = if dir.Magnitude > 0.1 then dir.Unit else hrp.CFrame.LookVector
+			local base = CFrame.lookAt(from + dir * (2.4 - c * 1.2) + hrp.CFrame.RightVector * 0.4, from + dir * 10)
+			local shaft = drawnArrow:FindFirstChild("Shaft") :: BasePart
+			local tip = drawnArrow:FindFirstChild("Tip") :: BasePart
+			shaft.CFrame = base
+			tip.CFrame = base * CFrame.new(0, 0, -1.5)
+		end
+	else
+		if not hum.AutoRotate then
+			hum.AutoRotate = true
+			hum.WalkSpeed = game:GetService("StarterPlayer").CharacterWalkSpeed
+		end
+		if hum.CameraOffset.Magnitude > 0.01 then
+			hum.CameraOffset = hum.CameraOffset:Lerp(Vector3.zero, 0.3)
+			if hum.CameraOffset.Magnitude < 0.05 then
+				hum.CameraOffset = Vector3.zero
+			end
+		end
+		if math.abs(cam.FieldOfView - baseFov) > 0.2 then
+			cam.FieldOfView += (baseFov - cam.FieldOfView) * 0.25
+		end
+	end
+end
+
 local function attackBegin()
 	if isMountedFn() then
 		NetClient.Fire("DragonCommand", "Attack", CombatController.AimPoint())
@@ -111,6 +206,7 @@ local function attackBegin()
 	end
 	if weapon() == "Bow" then
 		charging = os.clock()
+		showDrawnArrow()
 		if chargeChanged then
 			chargeChanged(0)
 		end
@@ -124,6 +220,7 @@ local function attackEnd()
 	if charging then
 		local c = math.clamp((os.clock() - charging) / Combat.Bow.ChargeSeconds, 0, 1)
 		charging = nil
+		clearDrawnArrow()
 		if chargeChanged then
 			chargeChanged(nil)
 		end
@@ -142,14 +239,8 @@ local function secondary(begin: boolean)
 	if weapon() == "Sword" then
 		NetClient.Fire("CombatAction", if begin then "BlockOn" else "BlockOff")
 	else
+		-- o zoom, o giro do personagem e a câmera no ombro são feitos em updateAimPose
 		aiming = begin
-		local cam = workspace.CurrentCamera
-		if begin then
-			baseFov = cam.FieldOfView
-			cam.FieldOfView = 50
-		else
-			cam.FieldOfView = baseFov
-		end
 	end
 end
 
@@ -212,6 +303,17 @@ end
 function CombatController.Init(isMounted: () -> boolean, onCharge: ((number?) -> ())?)
 	isMountedFn = isMounted
 	chargeChanged = onCharge
+	baseFov = workspace.CurrentCamera.FieldOfView
+	if not aimStepBound then
+		aimStepBound = true
+		game:GetService("RunService"):BindToRenderStep("BowAim", Enum.RenderPriority.Camera.Value + 1, updateAimPose)
+	end
+	-- trocou de arma ou morreu no meio da mira: cancela a carga
+	player.CharacterAdded:Connect(function()
+		charging = nil
+		aiming = false
+		clearDrawnArrow()
+	end)
 
 	UserInputService.InputBegan:Connect(function(input, processed)
 		if processed then
@@ -264,7 +366,7 @@ function CombatController.Init(isMounted: () -> boolean, onCharge: ((number?) ->
 		elseif s == Enum.UserInputState.End then
 			secondary(false)
 		end
-	end, "Defesa", UDim2.new(1, -165, 1, -230))
+	end, "Mirar", UDim2.new(1, -165, 1, -230))
 	bind("CombatDodge", function(s)
 		if s == Enum.UserInputState.Begin then
 			dodge()
