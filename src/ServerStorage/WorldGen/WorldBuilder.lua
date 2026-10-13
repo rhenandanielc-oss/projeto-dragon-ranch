@@ -2024,11 +2024,11 @@ function WorldBuilder:forestBlock(bi: number, bj: number, parent: Instance): num
 				local under = UNDER[cfg[4]] or UNDER.default
 				local p
 				if m > cfg[1] + 0.3 then
-					p = 0.62 -- miolo da mancha de floresta
+					p = 0.55 -- miolo da mancha de floresta
 				elseif m > cfg[1] then
-					p = 0.25 -- borda rala
+					p = 0.22 -- borda rala
 				else
-					p = 0.035 -- árvores soltas no campo
+					p = 0.03 -- árvores soltas no campo
 				end
 				local hit0 = nil
 				if rng:NextNumber() < p then
@@ -2038,14 +2038,14 @@ function WorldBuilder:forestBlock(bi: number, bj: number, parent: Instance): num
 					if hit and hit.Position.Y < cfg[3] then
 						put(e, jx, jy, false)
 						-- camada intermediária: árvore jovem perto das grandes no miolo da floresta
-						if m > cfg[1] + 0.3 and rng:NextNumber() < 0.3 then
+						if m > cfg[1] + 0.3 and rng:NextNumber() < 0.18 then
 							local e2 = self:pick(KITS[cfg[2]])
 							put({ e2[1], 1, e2[3] * 0.5, e2[4] * 0.6, e2[5] }, jx + rng:NextNumber(-12, 12), jy + rng:NextNumber(-12, 12), false)
 						end
 					end
 				end
 				-- sub-bosque: mais na borda da floresta; flores e rochas nos campos, em grupos
-				local u = if m > cfg[1] + 0.3 then 0.08 elseif m > cfg[1] - 0.15 then 0.18 else 0.06
+				local u = if m > cfg[1] + 0.3 then 0.06 elseif m > cfg[1] - 0.15 then 0.12 else 0.04
 				if rng:NextNumber() < u then
 					local e = self:pickAt(under, jx + 300, jy)
 					local count = if e[1] == "Flowers" then rng:NextInteger(3, 6) elseif e[1] == "Boulder" then 1 else rng:NextInteger(1, 3)
