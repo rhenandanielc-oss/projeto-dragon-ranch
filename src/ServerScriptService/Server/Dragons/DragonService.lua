@@ -510,6 +510,14 @@ end
 
 DragonService.ToggleCompanion = onToggleCompanion
 
+-- Reconstrói o modelo de um dragão (ex.: depois de liberar voo).
+function DragonService.Refresh(player: Player, dragonId: string)
+	if dragonId == (DataService.Get(player) or {}).ActiveDragonId then
+		CompanionService.Detach(player)
+	end
+	buildModel(player, dragonId)
+end
+
 function DragonService.IsCompanionHome(player: Player): boolean
 	return companionHome[player] == true
 end

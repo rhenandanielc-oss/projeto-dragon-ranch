@@ -217,6 +217,37 @@ function InventoryService.Discard(player: Player, slotIndex: number, count: numb
 end
 
 --------------------------------------------------------------------------
+-- Itens de missão (aba separada, não ocupam espaço; nunca são perdidos em PvP)
+--------------------------------------------------------------------------
+function InventoryService.CountQuestItem(player: Player, itemId: string): number
+	local data = DataService.Get(player)
+	return data and data.QuestItems[itemId] or 0
+end
+
+function InventoryService.AddQuestItem(player: Player, itemId: string, count: number)
+	local data = DataService.Get(player)
+	local def = Items[itemId]
+	if not data or not def or def.Category ~= "Quest" or not isInt(count) then
+		return
+	end
+	data.QuestItems[itemId] = (data.QuestItems[itemId] or 0) + count
+	DataService.MarkChanged(player, "QuestItems")
+end
+
+function InventoryService.RemoveQuestItem(player: Player, itemId: string, count: number): boolean
+	local data = DataService.Get(player)
+	if not data or not isInt(count) or (data.QuestItems[itemId] or 0) < count then
+		return false
+	end
+	data.QuestItems[itemId] -= count
+	if data.QuestItems[itemId] <= 0 then
+		data.QuestItems[itemId] = nil
+	end
+	DataService.MarkChanged(player, "QuestItems")
+	return true
+end
+
+--------------------------------------------------------------------------
 -- Ampliação da mochila e barra de itens
 --------------------------------------------------------------------------
 function InventoryService.ExpandBackpack(player: Player): (boolean, string)

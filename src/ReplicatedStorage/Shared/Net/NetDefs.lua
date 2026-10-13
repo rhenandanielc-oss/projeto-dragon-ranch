@@ -79,6 +79,15 @@ local NetDefs: { [string]: RemoteDef } = {
 	SkillUsed = { Kind = "Event", Direction = "S2C" }, -- (habilidade, recarga) para a interface
 	DragonPowers = { Kind = "Event", Direction = "S2C" }, -- (poderes liberados, pode lutar)
 
+	-- Missões (Mestra Lira) e tutoriais
+	OpenQuests = { Kind = "Event", Direction = "S2C" },
+	QuestLog = { Kind = "Event", Direction = "S2C" }, -- lista de missões com estado
+	QuestLogRequest = { Kind = "Event", Direction = "C2S", Args = {}, Rate = 1, Burst = 3 },
+	QuestAccept = { Kind = "Event", Direction = "C2S", Args = { { Type = "string", MaxLen = 24 } }, Rate = 1, Burst = 3 },
+	QuestTurnIn = { Kind = "Event", Direction = "C2S", Args = { { Type = "string", MaxLen = 24 } }, Rate = 1, Burst = 3 },
+	QuestFeed = { Kind = "Event", Direction = "C2S", Args = { { Type = "string", MaxLen = 24 } }, Rate = 0.5, Burst = 2 },
+	Tutorial = { Kind = "Event", Direction = "S2C" }, -- ("Flight" | "Burrow" | ...)
+
 	-- Mundo aberto: escolha do bioma da fazenda (mesa do cartógrafo no Hub).
 	FarmChooser = { Kind = "Event", Direction = "S2C" }, -- (biomas livres, bioma atual, pode escolher)
 	ChooseFarmBiome = { Kind = "Event", Direction = "C2S", Args = { { Type = "enum", Values = { "blossom", "coast", "crystal", "enchanted", "fir", "hidden", "lake", "meadow", "oak", "orchard", "pine", "rainforest", "redrock", "ruins", "snow", "swamp", "volcanic" } } }, Rate = 0.2, Burst = 2 },

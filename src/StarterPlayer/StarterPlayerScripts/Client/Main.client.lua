@@ -28,6 +28,7 @@ local Fx = require(CombatFolder:WaitForChild("Fx"))
 local CombatController = require(CombatFolder:WaitForChild("CombatController"))
 local CombatHud = require(UI:WaitForChild("CombatHud"))
 local ZoneBanner = require(UI:WaitForChild("ZoneBanner"))
+local QuestPanel = require(UI:WaitForChild("QuestPanel"))
 
 -- Tela principal
 local screen = Theme.new("ScreenGui", {
@@ -54,6 +55,7 @@ Fx.Init()
 CombatController.Init(MountController.IsMounted)
 CombatHud.Init(screen, CombatController.Charging)
 ZoneBanner.Init(screen)
+QuestPanel.Init(screen)
 
 -- Cada jogador só vê as ações dos próprios dragões.
 local function filterPrompt(inst: Instance)
@@ -104,6 +106,18 @@ end)
 
 NetClient.On("DragonPowers", function(unlocked: { [string]: any }, canFight: boolean)
 	CombatHud.SetDragonPowers(unlocked, canFight)
+end)
+
+NetClient.On("QuestLog", function(log: { any })
+	QuestPanel.SetLog(log)
+end)
+
+NetClient.On("OpenQuests", function()
+	QuestPanel.Open()
+end)
+
+NetClient.On("Tutorial", function(kind: string)
+	QuestPanel.Tutorial(kind)
 end)
 
 NetClient.On("OpenShop", function()

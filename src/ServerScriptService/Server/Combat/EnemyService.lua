@@ -42,9 +42,16 @@ type Enemy = {
 	bar: Frame,
 	dead: boolean,
 	wanderAt: number,
+	maxHealth: number,
+	damage: number,
+	leash: number,
+	noDespawn: boolean,
+	onDeath: ((killer: Player?) -> ())?,
+	special: ((e: any, now: number) -> ())?, -- ataque especial (chefes)
 }
 
 local enemies: { Enemy } = {}
+local killListeners: { (player: Player, enemyId: string) -> () } = {}
 local folder: Folder
 local rng = Random.new()
 
@@ -198,7 +205,7 @@ local function healthBar(e: Enemy)
 end
 
 local function updateBar(e: Enemy)
-	e.bar.Size = UDim2.fromScale(math.clamp(e.health / e.def.Health, 0, 1), 1)
+	e.bar.Size = UDim2.fromScale(math.clamp(e.health / e.maxHealth, 0, 1), 1)
 	e.model:SetAttribute("Health", e.health)
 end
 
@@ -219,7 +226,7 @@ local function provider(center: Vector3, radius: number): { CombatService.Target
 	return out
 end
 
-local function rewardKill(e: Enemy)
+local function rewardKill(e: Enemy): Player?
 	-- quem causou mais dano leva a recompensa
 	local best: Player? = nil
 	local bestDmg = 0
@@ -229,9 +236,12 @@ local function rewardKill(e: Enemy)
 		end
 	end
 	if not best then
-		return
+		return nil
 	end
 	local player = best :: Player
+	for _, fn in ipairs(killListeners) do
+		task.spawn(fn, player, e.def.Id)
+	end
 	local data = DataService.Get(player)
 	if not data then
 		return
@@ -258,6 +268,7 @@ local function rewardKill(e: Enemy)
 		DataService.MarkChanged(player, "Dragons")
 	end
 	NetService.Fire(player, "Notify", e.def.Name .. " derrotado: " .. table.concat(parts, ", "), "success")
+	return player
 end
 
 local function kill(e: Enemy)
@@ -267,7 +278,10 @@ local function kill(e: Enemy)
 	e.dead = true
 	e.hum.WalkSpeed = 0
 	CombatService.Fx("Death", e.root.Position, { Pos = e.root.Position })
-	rewardKill(e)
+	local killer = rewardKill(e)
+	if e.onDeath then
+		task.spawn(e.onDeath :: any, killer)
+	end
 	for _, d in ipairs(e.model:GetDescendants()) do
 		if d:IsA("BasePart") then
 			d.CanQuery = false
@@ -322,11 +336,12 @@ groundParams.FilterType = Enum.RaycastFilterType.Include
 groundParams.FilterDescendantsInstances = { workspace.Terrain }
 groundParams.IgnoreWater = false
 
-local function spawnEnemy(id: string, at: Vector3)
+local function spawnEnemy(id: string, at: Vector3, opts: { [string]: any }?): Enemy?
 	local def = EnemiesCfg.Defs[id]
 	if not def then
-		return
+		return nil
 	end
+	local o = opts or {}
 	local model, hum, root = buildBody(def, CFrame.new(at) * CFrame.Angles(0, rng:NextNumber(0, math.pi * 2), 0))
 	model:SetAttribute("EnemyId", id)
 	model:SetAttribute("MaxHealth", def.Health)
@@ -348,14 +363,33 @@ local function spawnEnemy(id: string, at: Vector3)
 		bar = nil :: any,
 		dead = false,
 		wanderAt = os.clock() + rng:NextNumber(2, 6),
+		maxHealth = def.Health * (o.HealthMult or 1),
+		damage = def.Damage * (o.DamageMult or 1),
+		leash = o.Leash or def.Leash,
+		noDespawn = o.NoDespawn == true,
+		onDeath = o.OnDeath,
+		special = o.Special,
 	}
+	e.health = e.maxHealth
+	model:SetAttribute("MaxHealth", e.maxHealth)
+	if o.Scale and o.Scale ~= 1 then
+		model:ScaleTo(o.Scale)
+		hum.HipHeight *= o.Scale
+	end
 	healthBar(e)
+	if o.Name then
+		local label = (e.bar.Parent :: Instance).Parent:FindFirstChildOfClass("TextLabel")
+		if label then
+			label.Text = o.Name
+		end
+	end
 	updateBar(e)
-	model.Parent = folder
+	model.Parent = o.Parent or folder
 	pcall(function()
 		root:SetNetworkOwner(nil)
 	end)
 	table.insert(enemies, e)
+	return e
 end
 
 local function trySpawnNear(player: Player)
@@ -371,7 +405,7 @@ local function trySpawnNear(player: Player)
 	end
 	local near = 0
 	for _, e in ipairs(enemies) do
-		if not e.dead and (e.root.Position - hrp.Position).Magnitude < COUNT_RADIUS then
+		if not e.dead and not e.noDespawn and (e.root.Position - hrp.Position).Magnitude < COUNT_RADIUS then
 			near += 1
 		end
 	end
@@ -387,7 +421,7 @@ local function trySpawnNear(player: Player)
 			local pos = hit.Position
 			local r2 = WorldQuery.RegionAt(pos)
 			if r2 and r2.id == region.id and not WorldQuery.IsSafe(pos) then
-				spawnEnemy(spawnCfg.List[rng:NextInteger(1, #spawnCfg.List)], pos)
+				spawnEnemy(spawnCfg.List[rng:NextInteger(1, #spawnCfg.List)], pos, nil)
 				return
 			end
 		end
@@ -417,7 +451,7 @@ local function think(e: Enemy, now: number)
 	local def = e.def
 	e.hum.WalkSpeed = def.WalkSpeed * (if now < e.slowUntil then e.slowMult else 1)
 	-- longe de casa: desiste e volta curando
-	if (pos - e.home).Magnitude > def.Leash then
+	if (pos - e.home).Magnitude > e.leash then
 		e.target = nil
 		e.returning = true
 	end
@@ -425,7 +459,7 @@ local function think(e: Enemy, now: number)
 		e.hum:MoveTo(e.home)
 		if (pos - e.home).Magnitude < 12 then
 			e.returning = false
-			e.health = def.Health
+			e.health = e.maxHealth
 			e.damagers = {}
 			updateBar(e)
 		end
@@ -447,6 +481,9 @@ local function think(e: Enemy, now: number)
 		e.target = best
 	end
 	local t = e.target
+	if t and e.special then
+		(e.special :: any)(e, now)
+	end
 	if t then
 		local tp = t.root.Position
 		local dist = (Vector3.new(tp.X, pos.Y, tp.Z) - pos).Magnitude
@@ -460,13 +497,41 @@ local function think(e: Enemy, now: number)
 		if dist <= reach and now - e.lastAttack >= def.AttackInterval then
 			e.lastAttack = now
 			CombatService.Fx("EnemyAttack", pos, { Pos = pos, Dir = (tp - pos).Unit })
-			CombatService.Damage({ kind = "Enemy", player = nil, model = e.model, position = pos }, t, def.Damage, nil)
+			CombatService.Damage({ kind = "Enemy", player = nil, model = e.model, position = pos }, t, e.damage, nil)
 		end
-	elseif now >= e.wanderAt then
+	elseif now >= e.wanderAt and not e.noDespawn then
 		e.wanderAt = now + rng:NextNumber(4, 9)
 		local a = rng:NextNumber(0, math.pi * 2)
 		local d = rng:NextNumber(10, 40)
 		e.hum:MoveTo(e.home + Vector3.new(math.cos(a) * d, 0, math.sin(a) * d))
+	end
+end
+
+-- API para dungeon e ninhos: cria um inimigo com opções (Leash, NoDespawn, HealthMult,
+-- DamageMult, Scale, Name, Parent, OnDeath(killer), Special(e, now)).
+function EnemyService.Spawn(id: string, at: Vector3, opts: { [string]: any }?): any
+	return spawnEnemy(id, at, opts)
+end
+
+function EnemyService.Remove(handle: any)
+	local e = handle :: Enemy
+	if e and not e.dead then
+		e.dead = true
+		e.model:Destroy()
+	end
+end
+
+function EnemyService.OnKilled(fn: (Player, string) -> ())
+	table.insert(killListeners, fn)
+end
+
+-- Dano em área de um inimigo (ataques especiais de chefes).
+function EnemyService.AreaAttack(handle: any, center: Vector3, radius: number, damage: number)
+	local e = handle :: Enemy
+	for _, t in ipairs(CombatService.TargetsNear(center, radius)) do
+		if t.kind ~= "Enemy" and (t.root.Position - center).Magnitude <= radius + t.radius then
+			CombatService.Damage({ kind = "Enemy", player = nil, model = e.model, position = center }, t, damage, { Knockback = (t.root.Position - center).Unit * 40 })
+		end
 	end
 end
 
@@ -517,7 +582,7 @@ function EnemyService.Init()
 						break
 					end
 				end
-				if seen then
+				if seen or e.noDespawn then
 					e.lastSeenPlayer = now
 				elseif now - e.lastSeenPlayer > 30 then
 					e.dead = true
