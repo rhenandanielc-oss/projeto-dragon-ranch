@@ -183,6 +183,10 @@ local function step(dt: number)
 		local a = r.action
 		if a then
 			local p = (now - a.t0) / a.dur
+			local freeze = char:GetAttribute("AnimDebugP") -- só para conferir poses no Studio
+			if typeof(freeze) == "number" and RunService:IsStudio() then
+				p = freeze
+			end
 			if p >= 1 then
 				r.action = nil
 			elseif a.kind == "Slash" then
