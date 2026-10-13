@@ -71,6 +71,9 @@ local function teleport(player: Player, pos: Vector3)
 	if CompanionService.IsMounted(player) then
 		CompanionService.Dismount(player)
 	end
+	pcall(function()
+		player:RequestStreamAroundAsync(pos, 5)
+	end)
 	local char = player.Character :: Model
 	char:PivotTo(CFrame.new(pos + Vector3.new(0, 4, 0)) * hrp.CFrame.Rotation)
 end
@@ -163,6 +166,10 @@ end
 
 local function useReturnStone(player: Player, data: { [string]: any })
 	if channeling[player] then
+		return
+	end
+	if player:GetAttribute("InDungeon") then
+		notify(player, "A Pedra do Retorno não funciona dentro da dungeon.")
 		return
 	end
 	local readyAt = data.Travel and data.Travel.ReturnReadyAt or 0

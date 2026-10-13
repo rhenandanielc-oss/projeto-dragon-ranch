@@ -88,6 +88,9 @@ local NetDefs: { [string]: RemoteDef } = {
 	QuestFeed = { Kind = "Event", Direction = "C2S", Args = { { Type = "string", MaxLen = 24 } }, Rate = 0.5, Burst = 2 },
 	Tutorial = { Kind = "Event", Direction = "S2C" }, -- ("Flight" | "Burrow" | ...)
 
+	-- Dungeon
+	LeaveDungeon = { Kind = "Event", Direction = "C2S", Args = {}, Rate = 0.5, Burst = 2 },
+
 	-- Mundo aberto: escolha do bioma da fazenda (mesa do cartógrafo no Hub).
 	FarmChooser = { Kind = "Event", Direction = "S2C" }, -- (biomas livres, bioma atual, pode escolher)
 	ChooseFarmBiome = { Kind = "Event", Direction = "C2S", Args = { { Type = "enum", Values = { "blossom", "coast", "crystal", "enchanted", "fir", "hidden", "lake", "meadow", "oak", "orchard", "pine", "rainforest", "redrock", "ruins", "snow", "swamp", "volcanic" } } }, Rate = 0.2, Burst = 2 },

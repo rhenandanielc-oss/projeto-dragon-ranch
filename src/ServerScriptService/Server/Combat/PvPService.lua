@@ -42,6 +42,9 @@ function PvPService.ZoneAt(pos: Vector3): string
 end
 
 local function zoneOf(player: Player): string
+	if player:GetAttribute("InDungeon") then
+		return "Dungeon" -- dungeon não é zona de PvP
+	end
 	local char = player.Character
 	local hrp = char and char:FindFirstChild("HumanoidRootPart") :: BasePart?
 	if not hrp then
@@ -67,7 +70,8 @@ end
 
 -- Regra usada pelo CombatService para todo dano entre jogadores (e seus dragões).
 local function pvpRule(attacker: Player, victim: Player): boolean
-	if zoneOf(attacker) == "Safe" or zoneOf(victim) == "Safe" then
+	local za, zv = zoneOf(attacker), zoneOf(victim)
+	if za == "Safe" or zv == "Safe" or za == "Dungeon" or zv == "Dungeon" then
 		return false
 	end
 	local prot = protectedNow(victim)

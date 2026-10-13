@@ -5,6 +5,7 @@
 local Players = game:GetService("Players")
 
 local Theme = require(script.Parent.Theme)
+local NetClient = require(game:GetService("ReplicatedStorage").Shared.Net.NetClient)
 
 local player = Players.LocalPlayer
 local ZoneBanner = {}
@@ -12,6 +13,7 @@ local ZoneBanner = {}
 local INFO = {
 	Safe = { Title = "Zona protegida", Text = "Sem PvP. Aqui ninguém pode atacar você.", Color = Color3.fromRGB(110, 200, 120) },
 	Common = { Title = "Zona comum", Text = "PvP ativo, mas quem perde não perde itens.", Color = Color3.fromRGB(240, 190, 70) },
+	Dungeon = { Title = "Dungeon", Text = "Sem PvP. Quem morrer sai da expedição (mas fica com o que coletou).", Color = Color3.fromRGB(150, 120, 255) },
 	Danger = { Title = "Zona perigosa", Text = "PvP com perda: quem perde deixa até 40% dos materiais que carrega. Guarde tudo no baú antes!", Color = Color3.fromRGB(230, 80, 70) },
 }
 
@@ -44,6 +46,15 @@ function ZoneBanner.Init(screen: ScreenGui)
 		Text = "",
 		Parent = screen,
 	}, { Theme.corner(10) })
+
+	-- botão para sair da expedição (só aparece dentro da dungeon)
+	local leave = Theme.button("Sair da expedição", { AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 70), Size = UDim2.fromOffset(170, 34), TextSize = 14, BackgroundColor3 = Theme.Colors.ButtonAlt, Visible = false, Parent = screen })
+	leave.Activated:Connect(function()
+		NetClient.Fire("LeaveDungeon")
+	end)
+	player:GetAttributeChangedSignal("InDungeon"):Connect(function()
+		leave.Visible = player:GetAttribute("InDungeon") ~= nil
+	end)
 
 	local token = 0
 	local function show(zone: string)
