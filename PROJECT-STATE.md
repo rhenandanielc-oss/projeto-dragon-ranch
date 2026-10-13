@@ -1,7 +1,7 @@
 # PROJECT-STATE.md
 ## Estado atual do projeto Dragon Ranch
 
-**Última atualização:** 12/10/2026
+**Última atualização:** 13/10/2026
 **Documentos de referência:** `GAME-DESIGN.md`, `ART-DIRECTION.md`, `DRAGON-VISUAL-DESIGN.md`
 **Place no Studio:** "Rancho do Dragão" (placeId 14594299983)
 
@@ -17,6 +17,17 @@ Legenda: ✅ feito · 🟡 parcial · ⬜ não feito · ⛔ bloqueado por decis�
 ---
 
 ## 1. Fase atual
+
+**13/10/2026 — código de todas as fases de sistemas escrito fora do Studio** (pedido do
+responsável: "construa todo o código fora do Studio, depois passamos para o Studio").
+Fases 3, 4, 5, 6 (missões, waypoints), 7, 8, 9 e 10 estão no repositório, com checagem de
+sintaxe e testes de lógica fora do Studio, **mas ainda não foram testadas no Studio**.
+Próxima sessão no Studio (ordem):
+1. Sincronizar todo o código (RepoSync) e reconstruir o mundo em etapas, salvando (Ctrl+S).
+2. Testar em Play: companheiro e montaria, coleta/loja/armazém, combate e inimigos, missões,
+   dungeon, voo/terra, PvP (2 jogadores no Studio), ninhos e tempestade (atributo `ForceStorm`).
+3. Corrigir o que aparecer, tirar prints de cada etapa e enviar ao responsável.
+
 
 **Mapa do mundo aberto construído (12/10/2026)** conforme `WORLD-DESIGN.md` v0.2:
 terreno de 16.000 × 16.000 studs, Hub na ilha fluvial, 18 fazendas espalhadas com
@@ -101,13 +112,13 @@ Atualizado em 12/10/2026, depois da construção do mundo aberto.
 | 1 | Fazenda do jogador (atribuição e acesso) | ✅ novatos perto do Hub; bioma à escolha com dragão Jovem | B9, B8 |
 | 2 | Ovo, cuidados (comida e água) | ✅ | B1, B2 |
 | 3 | Crescimento em 6 estágios + salvamento | 🟡 crescimento ✅; salvamento real a testar com API ativada | B2, B8 |
-| 4 | Coleta, moedas, compra/venda | ⬜ | B7 |
-| 5 | Missões e NPCs | ⬜ | B3, B9 |
-| 6 | Entrada física da dungeon + grupo | ⬜ | B6 |
-| 7 | Instância da dungeon, inimigos, chefe, recompensas | ⬜ | B6, B4 |
-| 8 | Missão e desbloqueio do voo | ⬜ | B3 |
-| 9 | Combate em tempo real (jogador + dragão) | ⬜ | B4, B1 |
-| 10 | PvP, proteção e loot por zona | ⬜ | B5 |
+| 4 | Coleta, moedas, compra/venda | 🟡 código pronto (13/10), testar no Studio | B7 |
+| 5 | Missões e NPCs | 🟡 código pronto (13/10), testar no Studio | B3, B9 |
+| 6 | Entrada física da dungeon + grupo | 🟡 código pronto (13/10), testar no Studio | B6 |
+| 7 | Instância da dungeon, inimigos, chefe, recompensas | 🟡 código pronto (13/10), testar no Studio | B6, B4 |
+| 8 | Missão e desbloqueio do voo | 🟡 código pronto (13/10), testar no Studio | B3 |
+| 9 | Combate em tempo real (jogador + dragão) | 🟡 código pronto (13/10), testar no Studio | B4, B1 |
+| 10 | PvP, proteção e loot por zona | 🟡 código pronto (13/10), testar no Studio | B5 |
 | 11 | Salvamento sem perda nem duplicação | ⬜ | B8 |
 | 12 | Suporte aos dispositivos escolhidos | ⬜ | B10 |
 
@@ -140,7 +151,23 @@ O código fica em `src/` (espelho exato do Studio). Pastas gerenciadas:
 | `Server/Data/DataService` | Salvamento com trava de sessão, autosave, BindToClose, novas tentativas | ✅ testado (memória) |
 | `Server/Data/ProfileTemplate` | Formato do perfil + reconciliação | ✅ |
 | `Server/Services/FarmService` | 18 terrenos, atribuição ao entrar, placa com nome, nascer na própria fazenda | ✅ testado |
-| `Server/Services/InventoryService` | Núcleo da mochila (adicionar, remover, contar, empilhar) | ✅ |
+| `Server/Services/InventoryService` | Mochila 30→60, armazém 100, barra de 8, itens de missão em aba separada, ampliar, jogar fora | 🟡 lógica testada fora do Studio |
+| `Server/Dragons/CompanionService` | Dragão ativo segue o dono; montaria em terra (Jovem+), voo e Wyrm por baixo da terra; o servidor mede velocidade/subida/altura por modo e reseta quem trapaceia | 🟡 a testar |
+| `Server/Services/GatherService` | ~420 pontos de coleta por região (madeira, pedra, ervas, penas, cristal, obsidiana) com reaparecimento; água e carne nos acampamentos e no bebedouro da fazenda | 🟡 a testar |
+| `Server/Services/StorageService` | Baú da fazenda (só o dono, só perto), pedidos da mochila | 🟡 a testar |
+| `Server/Services/ShopService` + `Client/UI/ShopPanel` | Loja do Tobias: comprar, vender a preço fixo, ovo do mercador (Comum/Incomum) | 🟡 a testar |
+| `Server/Services/TravelService` + `Client/UI/TravelPanel` | Obeliscos despertados e viagem entre eles; Pedra do Retorno (3 obeliscos) com canalização e recarga; usar poção de vida | 🟡 a testar |
+| `Server/Services/QuestService` + `Client/UI/QuestPanel` | Missões da Mestra Lira (coleta, caça, obeliscos, O Primeiro Voo, O Chamado da Terra por dragão), rastreador na tela, tutoriais | 🟡 a testar |
+| `Server/Combat/CombatService` | Dano central, espada (combo 3, Golpe Giratório, bloqueio), arco (carga, Flecha Tripla, flechas finitas, flecha simulada no servidor), esquiva com invulnerabilidade, regeneração fora de combate | 🟡 a testar |
+| `Server/Combat/EnemyService` | 9 inimigos (lobos, javalis, saqueadores, aranhas, diabretes, lobos das neves, golens, dragão selvagem) por região, IA simples, recompensas direto na mochila | 🟡 a testar |
+| `Server/Combat/DragonCombat` | Dragão ataca quem ataca o dono; F/G/Z/X/C; poderes por estágio e espécie; derrotado descansa 60 s; mecânicas e efeitos por raridade | 🟡 a testar |
+| `Server/Combat/PvPService` + `Client/UI/ZoneBanner` | Zonas protegida/comum/perigosa/dungeon, proteções de iniciante e ao renascer, loot de até 40% dos materiais, anti-abuso 30 min, aviso de zona | 🟡 a testar |
+| `Server/Combat/DungeonService` | Santuário da Cascata: círculo de grupo, instância por grupo, salas, chefe, baú de 20 h, item da missão, eliminação, reconexão | 🟡 a testar |
+| `Server/Combat/NestService` + `Client/World/Weather` | Ninhos selvagens com guardião, ovos com raridade por sorte, tempestades, ninho secreto | 🟡 a testar |
+| `Server/World/WorldQuery` | Região, zona protegida e zona perigosa em qualquer ponto do mapa | ✅ |
+| `Client/Combat/*` + `Client/UI/CombatHud` | Controles de combate (PC e toque), mira, efeitos, vida, recargas e poderes | 🟡 a testar |
+| `Client/Dragon/MountController` | Controle montado em terra, voo e por baixo da terra (PC, toque e controle) | 🟡 a testar |
+| `Client/UI/InventoryPanel` | Mochila, armazém e barra de 8 itens (teclas 1–8; repetir a tecla usa o item) | 🟡 a testar |
 | `Server/Dragons/DragonService` | Ovo inicial, incubação, cuidados, treino, pontos, estágios, nome filtrado, dragão ativo, ampliar espaços | ✅ testado |
 | `Server/Dragons/DragonModels` | Usa os modelos realistas gerados (ServerStorage.DragonAssets); peças simples só como reserva | ✅ testado |
 | `Server/Services/NPCService` + `Client/UI/Dialog` | 4 NPCs no Hub com conversa | ✅ testado |
@@ -201,6 +228,8 @@ esta lista ao concluir a V1.
 | 9 | Confirmar que *Terrain → Decoration* (grama alta animada) continua ligado; o script não consegue alterar esse valor | Antes de publicar | ⬜ |
 | 10 | Revisar os créditos das árvores da Creator Store (Letaij e outros, modelos gratuitos) se quiser citar os autores na descrição | Antes de lançar | ⬜ |
 | 8 | Conferir no Studio, em *Workspace*, `StreamingTargetRadius` (~1024) e `StreamingMinRadius` (~256): o script não consegue alterar esses dois valores | Antes de publicar | ⬜ |
+| 11 | Testar PvP e dungeon em grupo com pelo menos 2 pessoas reais (no Studio: *Test → Clients and Servers* com 2 jogadores; depois, publicado) | Fase 11 | ⬜ |
+| 12 | Aprovar os valores provisórios de balanceamento (dano, vida, recargas, preços, chances, tempos) depois de jogar | Fase 11 | ⬜ |
 
 ---
 
@@ -231,4 +260,5 @@ esta lista ao concluir a V1.
 | 13/10/2026 | Alvo visual aprovado (ART-DIRECTION §11.1, imagem de referência). Próxima sessão: aplicar esse visual ao mundo inteiro |
 | 12/10/2026 | Mais vegetação nos campos; folhas atravessáveis com colisor só no tronco; vento nas folhas; acampamentos de dragão grandes ao lado das estradas; grama padrão sem manchas |
 | 12/10/2026 | Passe de gráficos: vegetação "na medida" (florestas com clareiras e campos abertos), árvores realistas, rochas de terreno, grama alta, luz/névoa novas, acampamentos para dragões, ferramenta de qualidade no jogo |
+| 13/10/2026 | Código das fases 3–10 escrito fora do Studio: companheiro e montaria, inventário/economia/coleta/loja, combate e inimigos, missões, waypoints e Pedra do Retorno, dungeon com instância por grupo, voo e "entrar na terra", PvP por zona, ninhos e tempestades. Mundo: Túnel de Gelo, Caverna do Vale Oculto (fazenda 18 movida para dentro da bacia), lava na cratera |
 | 12/10/2026 | Mundo aberto aprovado (D1–D12) e construído: terreno 16k, Hub na ilha fluvial, 18 fazendas espalhadas com bosques, florestas, pontes, acampamentos, waypoints, marcos, castelo, ilhas flutuantes; regra de atribuição de fazenda; bússola |
