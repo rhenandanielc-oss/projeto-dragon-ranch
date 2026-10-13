@@ -229,6 +229,7 @@ esta lista ao concluir a V1.
 | 10 | Revisar os créditos das árvores da Creator Store (Letaij e outros, modelos gratuitos) se quiser citar os autores na descrição | Antes de lançar | ⬜ |
 | 8 | Conferir no Studio, em *Workspace*, `StreamingTargetRadius` (~1024) e `StreamingMinRadius` (~256): o script não consegue alterar esses dois valores | Antes de publicar | ⬜ |
 | 11 | Testar PvP e dungeon em grupo com pelo menos 2 pessoas reais (no Studio: *Test → Clients and Servers* com 2 jogadores; depois, publicado) | Fase 11 | ⬜ |
+| 13 | Testar o jogo publicado num computador comum e no celular, olhando memória e FPS (no Studio o mundo inteiro fica carregado e chega a ~9 GB; no jogo publicado o carregamento por distância reduz isso). Se pesar, reduzir a floresta pela ferramenta de qualidade ou pedir uma versão mais leve | Fase 11 | ⬜ |
 | 12 | Aprovar os valores provisórios de balanceamento (dano, vida, recargas, preços, chances, tempos) depois de jogar | Fase 11 | ⬜ |
 
 ---
@@ -260,5 +261,6 @@ esta lista ao concluir a V1.
 | 13/10/2026 | Alvo visual aprovado (ART-DIRECTION §11.1, imagem de referência). Próxima sessão: aplicar esse visual ao mundo inteiro |
 | 12/10/2026 | Mais vegetação nos campos; folhas atravessáveis com colisor só no tronco; vento nas folhas; acampamentos de dragão grandes ao lado das estradas; grama padrão sem manchas |
 | 12/10/2026 | Passe de gráficos: vegetação "na medida" (florestas com clareiras e campos abertos), árvores realistas, rochas de terreno, grama alta, luz/névoa novas, acampamentos para dragões, ferramenta de qualidade no jogo |
+| 13/10/2026 | No Studio: Baía do Coração (Hub em ilha, água turquesa/azul), 6 pontes grandes decoradas, cais com barcos, floresta contínua no mapa todo (~68 mil plantas; revisão de cima e na altura do jogador), Bosque Escondido com trilhas, mirante e cabana, Ilha do Bosque, dragões selvagens voando (cliente), dragões soltos para passear. Servidor inicia sem erros no Play. Atenção: o Studio chega a ~9 GB de memória com o mundo inteiro carregado |
 | 13/10/2026 | Código das fases 3–10 escrito fora do Studio: companheiro e montaria, inventário/economia/coleta/loja, combate e inimigos, missões, waypoints e Pedra do Retorno, dungeon com instância por grupo, voo e "entrar na terra", PvP por zona, ninhos e tempestades. Mundo: Túnel de Gelo, Caverna do Vale Oculto (fazenda 18 movida para dentro da bacia), lava na cratera |
 | 12/10/2026 | Mundo aberto aprovado (D1–D12) e construído: terreno 16k, Hub na ilha fluvial, 18 fazendas espalhadas com bosques, florestas, pontes, acampamentos, waypoints, marcos, castelo, ilhas flutuantes; regra de atribuição de fazenda; bússola |
