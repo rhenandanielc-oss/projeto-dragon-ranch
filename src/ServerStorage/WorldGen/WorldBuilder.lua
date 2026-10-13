@@ -32,6 +32,7 @@ function WorldBuilder.new(folder: Instance)
 	local WorldGen = require((folder :: any).WorldGen:Clone())
 	self.gen = WorldGen.new(self.data)
 	self.assets = ServerStorage:FindFirstChild("WorldAssets")
+	self.Props = require((folder :: any).Props:Clone())
 	self.rng = Random.new(20261012)
 	local rp = RaycastParams.new()
 	rp.FilterType = Enum.RaycastFilterType.Include
@@ -410,21 +411,49 @@ function WorldBuilder:plantRaw(kind: string, pos: Vector3, scale: number, parent
 end
 
 function WorldBuilder:lantern(pos: Vector3, facing: Vector3, parent: Instance)
+	-- poste de madeira com lanterna pendurada, virado para `facing`
 	local cf = CFrame.lookAt(pos, Vector3.new(facing.X, pos.Y, facing.Z))
-	local m = self:placeAsset("Lantern", cf, 1, parent)
-	local lightParent: BasePart
-	if m then
-		lightParent = m:FindFirstChildWhichIsA("BasePart", true) :: BasePart
-	else
-		local post = part({ Name = "LanternPost", Size = Vector3.new(0.6, 9, 0.6), CFrame = CFrame.new(pos + Vector3.new(0, 4.5, 0)), Material = Enum.Material.Metal, Color = Color3.fromRGB(50, 50, 55) }, parent)
-		lightParent = part({ Name = "Lantern", Size = Vector3.new(1.4, 1.8, 1.4), CFrame = CFrame.new(pos + Vector3.new(0, 9.2, 0)), Material = Enum.Material.Neon, Color = Color3.fromRGB(255, 196, 110) }, post)
+	return self.Props.lanternPost(cf, parent)
+end
+
+-- estátua de dragão em pedra (modelo de dragão adulto sem textura, cor de pedra)
+function WorldBuilder:dragonStatue(cf: CFrame, height: number, parent: Instance, alive: boolean?)
+	local da = ServerStorage:FindFirstChild("DragonAssets")
+	local wd = da and da:FindFirstChild("WesternDragon")
+	local adult = wd and wd:FindFirstChild("Adult")
+	if not adult then
+		return nil
 	end
-	local light = Instance.new("PointLight")
-	light.Color = Color3.fromRGB(255, 190, 120)
-	light.Brightness = 1.4
-	light.Range = 18
-	light.Shadows = false
-	light.Parent = lightParent
+	local st = adult:Clone()
+	st.Name = if alive then "RestingDragon" else "DragonStatue"
+	if not st:IsA("Model") then
+		return nil
+	end
+	local _, s = st:GetBoundingBox()
+	st:ScaleTo(st:GetScale() * (height / math.max(s.Y, 1)))
+	for _, d in ipairs(st:GetDescendants()) do
+		if d:IsA("BasePart") then
+			d.Anchored = true
+			d.CanCollide = false
+			if not alive then
+				if d:IsA("MeshPart") then
+					d.TextureID = ""
+				end
+				d.Material = Enum.Material.Slate
+				d.Color = Color3.fromRGB(78, 76, 82)
+			end
+		elseif d:IsA("SurfaceAppearance") and not alive then
+			d:Destroy()
+		elseif d:IsA("Script") or d:IsA("LocalScript") then
+			d:Destroy()
+		end
+	end
+	local yaw = st:GetAttribute("YawDegrees") or wd:GetAttribute("YawDegrees") or -15
+	st:PivotTo(cf * CFrame.Angles(0, math.rad(yaw), 0))
+	local bcf, sz = st:GetBoundingBox()
+	st:PivotTo(st:GetPivot() + Vector3.new(0, cf.Position.Y - (bcf.Position.Y - sz.Y / 2), 0))
+	st.Parent = parent
+	return st
 end
 
 function WorldBuilder:flowers(center: Vector3, radius: number, count: number, parent: Instance)
@@ -1456,6 +1485,49 @@ function WorldBuilder:buildCamps()
 			end
 		end
 
+		-- clima da referência: fogueira com toldos e barracas, dragão descansando,
+		-- píer na lagoa, estandartes com emblema, postes de lanterna e tochas
+		do
+			local Props = self.Props
+			local fireCF = cfAt(-22, -46)
+			Props.campfire(fireCF, m, 1.3)
+			Props.tarp(cfAt(-6, -56, -15), 16, 12, 9, m)
+			Props.tarp(cfAt(-36, -58, 20), 14, 10, 8, m)
+			Props.tent(cfAt(-44, -36, 70), m, 1.1)
+			Props.tent(cfAt(-48, -66, -30), m, 1)
+			for k = 1, 5 do
+				local q = cfAt(-10 + rng:NextNumber(-6, 6), -62 + rng:NextNumber(-3, 3), rng:NextNumber(0, 90))
+				if k % 2 == 0 then
+					Props.barrel(q, m)
+				else
+					Props.crate(q, m, rng:NextNumber(0.8, 1.1))
+				end
+			end
+			-- o dragão do tratador, deitado perto do fogo
+			self:dragonStatue(cfAt(-30, -30, 140), 14, m, true)
+			-- píer entrando na lagoa
+			local wp = at(-56, 6)
+			local dir = (at(0, 0) - wp) * Vector3.new(1, 0, 1)
+			if dir.Magnitude > 1 then
+				dir = dir.Unit
+				Props.pier(wp + dir * 30, wp + dir * 8, wp.Y + 0.6, 5, m)
+			end
+			for k = 0, 3 do
+				local a = k / 4 * math.pi * 2 + 0.4
+				Props.torch(CFrame.new(wp + Vector3.new(math.cos(a) * 28, 0, math.sin(a) * 28)), m)
+			end
+			-- estandartes e postes de lanterna no caminho do portão
+			for _, o in ipairs({ { -22, -84 }, { 22, -84 }, { -36, 4 }, { 36, 4 } }) do
+				Props.banner(cfAt(o[1], o[2]), m, 16)
+			end
+			for _, z in ipairs({ -40, -66 }) do
+				for _, sx in ipairs({ -9, 9 }) do
+					local q = at(sx, z)
+					Props.lanternPost(CFrame.lookAt(q, at(0, z)), m)
+				end
+			end
+		end
+
 		m:SetAttribute("CampName", c.name)
 		m:SetAttribute("DragonFood", true)
 		m:SetAttribute("DragonWater", true)
@@ -1471,7 +1543,7 @@ function WorldBuilder:buildWaypoints()
 	for i, w in ipairs(self.data.WAYPOINTS) do
 		local gy = self:groundY(w.x, w.y)
 		local pos = V(w.x, w.y, gy)
-		local m = self:placeAsset("Waypoint", CFrame.new(pos), 1, folder, 0.5)
+		local m = self.Props.obelisk(CFrame.new(pos - Vector3.new(0, 0.6, 0)), folder)
 		if not m then
 			m = Instance.new("Model")
 			part({ Name = "Obelisk", Size = Vector3.new(5, 24, 5), CFrame = CFrame.new(pos + Vector3.new(0, 12, 0)), Material = Enum.Material.Slate, Color = Color3.fromRGB(90, 96, 104) }, m)
@@ -1527,11 +1599,14 @@ function WorldBuilder:buildLandmarks()
 	if castleShape then
 		local gy = self:groundY(castleShape.x, castleShape.y)
 		local pos = V(castleShape.x, castleShape.y, gy)
-		local castle = self:placeAsset("Castle", CFrame.new(pos) * CFrame.Angles(0, math.rad(200), 0), 1, folder, 2)
-		if castle then
-			castle.Name = "DragonCastle"
-			castle:SetAttribute("Landmark", "Castelo dos Dragões")
-		end
+		-- frente do castelo virada para a estrada em serpentina que sobe
+		local rx, ry = self:roadDirection(castleShape.x, castleShape.y)
+		local ccf = CFrame.lookAt(pos, pos + Vector3.new(rx, 0, -ry))
+		local castle = self.Props.castle(ccf, folder, castleShape.rTop * 0.72, function(scf: CFrame, h: number)
+			self:dragonStatue(scf, h, folder)
+		end)
+		castle:SetAttribute("Landmark", "Castelo dos Dragões")
+		self:paintDisc(castleShape.x, castleShape.y, castleShape.rTop * 0.68, Enum.Material.Cobblestone)
 		for k = 1, 6 do
 			local a = k / 6 * math.pi * 2
 			local x, y = castleShape.x + math.cos(a) * 150, castleShape.y + math.sin(a) * 150
@@ -1547,23 +1622,13 @@ function WorldBuilder:buildLandmarks()
 	end
 	-- Farol na costa sul
 	local lx, ly = self:findLand(-700, -6850)
-	local lh = self:placeAsset("Lighthouse", CFrame.new(V(lx, ly, self:groundY(lx, ly))), 1, folder, 1)
-	if lh then
-		lh.Name = "Lighthouse"
-		local bcf, size = lh:GetBoundingBox()
-		local lamp = part({ Name = "Lamp", Shape = Enum.PartType.Ball, Size = Vector3.new(4, 4, 4), CFrame = CFrame.new(bcf.Position + Vector3.new(0, size.Y * 0.38, 0)), Material = Enum.Material.Neon, Color = Color3.fromRGB(255, 236, 170) }, lh)
-		local sl = Instance.new("PointLight")
-		sl.Range = 60
-		sl.Brightness = 3
-		sl.Color = Color3.fromRGB(255, 230, 170)
-		sl.Parent = lamp
-	end
+	local lh = self.Props.lighthouse(CFrame.new(V(lx, ly, self:groundY(lx, ly) - 1)), folder)
+	lh:SetAttribute("Landmark", "Farol")
 	-- Cúpula das Ruínas e colunas espalhadas
 	local rx, ry = 5300, 4050
-	local ruins = self:placeAsset("Ruins", CFrame.new(V(rx, ry, self:groundY(rx, ry))) * CFrame.Angles(0, math.rad(30), 0), 1, folder, 1.5)
-	if ruins then
-		ruins.Name = "RuinsDome"
-	end
+	local ruins = self.Props.ruins(CFrame.new(V(rx, ry, self:groundY(rx, ry))) * CFrame.Angles(0, math.rad(30), 0), folder, rng)
+	ruins.Name = "RuinsDome"
+	ruins:SetAttribute("Landmark", "Cúpula das Ruínas")
 	for k = 1, 26 do
 		local a = rng:NextNumber(0, math.pi * 2)
 		local R = rng:NextNumber(120, 650)
@@ -1917,39 +1982,39 @@ end
 --------------------------------------------------------------------------
 function WorldBuilder:setupLighting()
 	-- Base "Ultra" (a ferramenta de qualidade do cliente reduz a partir daqui)
-	Lighting.ClockTime = 15
-	Lighting.GeographicLatitude = 30
-	Lighting.Brightness = 3.2
-	Lighting.ExposureCompensation = 0.15
+	Lighting.ClockTime = 16.4 -- fim de tarde dourado (alvo visual §11.1)
+	Lighting.GeographicLatitude = 23
+	Lighting.Brightness = 3
+	Lighting.ExposureCompensation = 0.1
 	Lighting.EnvironmentDiffuseScale = 1
 	Lighting.EnvironmentSpecularScale = 1
-	Lighting.ShadowSoftness = 0.2
-	Lighting.OutdoorAmbient = Color3.fromRGB(138, 140, 150)
+	Lighting.ShadowSoftness = 0.12
+	Lighting.OutdoorAmbient = Color3.fromRGB(118, 128, 150) -- sombras azuladas
 	Lighting.Ambient = Color3.fromRGB(64, 66, 76)
-	Lighting.ColorShift_Top = Color3.fromRGB(255, 236, 205)
+	Lighting.ColorShift_Top = Color3.fromRGB(255, 212, 160) -- sol quente
 	Lighting.ColorShift_Bottom = Color3.fromRGB(0, 0, 0)
 	local atm = Lighting:FindFirstChildOfClass("Atmosphere") or Instance.new("Atmosphere")
-	atm.Density = 0.26
-	atm.Offset = 0.22
-	atm.Haze = 1.8
-	atm.Glare = 0.6
-	atm.Color = Color3.fromRGB(214, 226, 236)
-	atm.Decay = Color3.fromRGB(118, 140, 168)
+	atm.Density = 0.3
+	atm.Offset = 0.25
+	atm.Haze = 2.1
+	atm.Glare = 1.1
+	atm.Color = Color3.fromRGB(206, 214, 228)
+	atm.Decay = Color3.fromRGB(150, 128, 112)
 	atm.Parent = Lighting
 	local bloom = Lighting:FindFirstChildOfClass("BloomEffect") or Instance.new("BloomEffect")
-	bloom.Intensity = 0.8
+	bloom.Intensity = 0.9
 	bloom.Size = 32
-	bloom.Threshold = 1.4
+	bloom.Threshold = 1.25
 	bloom.Parent = Lighting
 	local rays = Lighting:FindFirstChildOfClass("SunRaysEffect") or Instance.new("SunRaysEffect")
-	rays.Intensity = 0.12
+	rays.Intensity = 0.16
 	rays.Spread = 0.8
 	rays.Parent = Lighting
 	local cc = Lighting:FindFirstChildOfClass("ColorCorrectionEffect") or Instance.new("ColorCorrectionEffect")
-	cc.Saturation = 0.15
-	cc.Contrast = 0.1
+	cc.Saturation = 0.1
+	cc.Contrast = 0.16
 	cc.Brightness = 0.02
-	cc.TintColor = Color3.fromRGB(255, 249, 238)
+	cc.TintColor = Color3.fromRGB(255, 242, 222)
 	cc.Parent = Lighting
 	local dof = Lighting:FindFirstChildOfClass("DepthOfFieldEffect") or Instance.new("DepthOfFieldEffect")
 	dof.FarIntensity = 0.12

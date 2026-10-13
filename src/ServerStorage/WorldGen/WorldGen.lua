@@ -343,11 +343,22 @@ local function reliefNoise(x: number, y: number, B: number, Ah: number, Am: numb
 	local nm = noise(x / 320, y / 320, 3.37) * 1.5 + noise(x / 150, y / 150, 4.11) * 0.5
 	local h = B + Ah * nh + Am * nm
 	if Ar > 0.5 then
-		local r1 = 1 - abs(noise(x / 1400, y / 1400, 5.13) * 1.8)
-		if r1 < 0 then r1 = 0 end
-		local r2 = 1 - abs(noise(x / 520, y / 520, 6.27) * 1.8)
-		if r2 < 0 then r2 = 0 end
-		h += Ar * (r1 * r1 * (0.65 + 0.35 * r2 * r2) - 0.25)
+		-- montanhas: multifractal com cristas (5 oitavas) e distorção de domínio,
+		-- para picos e vales mais naturais vistos do alto
+		local wx = x + 260 * noise(x / 900, y / 900, 21.7)
+		local wy = y + 260 * noise(x / 900, y / 900, 22.9)
+		local sum, amp, freq, weight = 0, 1, 1 / 1500, 1
+		for o = 1, 5 do
+			local n = 1 - abs(noise(wx * freq, wy * freq, 5.13 + o * 1.7) * 1.8)
+			if n < 0 then n = 0 end
+			n = n * n * weight
+			weight = n * 1.6
+			if weight > 1 then weight = 1 end
+			sum += n * amp
+			amp *= 0.5
+			freq *= 2.1
+		end
+		h += Ar * (sum * 0.62 - 0.22)
 	end
 	local cut = 0
 	if Ac > 0.5 then
@@ -622,21 +633,22 @@ function WorldGen:computeChunk(x0: number, y0: number, n: number, step: number?)
 				mat = if nz > 0.1 then M.Mud else M.LeafyGrass
 				sub = M.Mud
 			elseif region == "snow" then
-				mat = if h > 260 + 60 * nz then M.Snow else (if nz > 0 then M.Grass else M.Ground)
+				mat = if h > 420 + 70 * nz then M.Snow elseif h > 330 + 60 * nz and nz > 0.1 then M.Snow else (if nz > 0.4 then M.LeafyGrass else M.Grass)
 			elseif region == "volcanic" then
 				mat = if nz > 0.25 then M.Ground elseif nz < -0.3 then M.Rock else M.Basalt
 				if cutA[idx] > 0.55 or (h < 120 and nz > 0.45) then mat = M.CrackedLava end
 			elseif region == "crystal" then
-				mat = if nz > 0.62 then M.Glacier elseif nz < -0.62 then M.Salt else M.Grass
+				mat = if nz > 0.82 then M.Glacier elseif nz > 0.4 then M.LeafyGrass elseif nz < -0.65 then M.Slate else M.Grass
 			elseif region == "ruins" then
 				mat = if nz > 0.35 then M.Limestone else M.Grass
 			elseif region == "castle" then
 				mat = if nz > 0.3 then M.Ground elseif nz < -0.25 then M.Slate else M.Basalt
 			elseif region == "mountain" then
-				if h < 300 + 40 * nz then
-					mat = if nz > 0.3 then M.Ground else M.Grass
-				elseif h < 520 + 60 * nz then
-					mat = if nz > 0 then M.Rock else M.Grass
+				-- encostas verdes; rocha só no alto e nos penhascos (ver regra de inclinação)
+				if h < 560 + 60 * nz then
+					mat = if nz > 0.55 then M.LeafyGrass elseif nz < -0.6 then M.Ground else M.Grass
+				elseif h < 700 + 50 * nz then
+					mat = if nz > 0.1 then M.Rock elseif nz < -0.3 then M.Slate else M.Grass
 				else
 					mat = if nz > 0.2 then M.Slate else M.Rock
 				end
