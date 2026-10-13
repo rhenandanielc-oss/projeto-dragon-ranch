@@ -3,6 +3,7 @@
 -- Também mostra moedas e um resumo dos itens até a mochila completa chegar (Fase 4).
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
 
 local Theme = require(script.Parent.Theme)
 local State = require(script.Parent.Parent.State)
@@ -77,6 +78,14 @@ local function dragonCard(dragon: { [string]: any }, isActive: boolean, order: n
 		if dragon.Hunger < Growth.Needs.HungryThreshold or dragon.Thirst < Growth.Needs.HungryThreshold then
 			Theme.label("Com fome ou sede: ganha só metade dos pontos.", 14, { TextColor3 = Theme.Colors.Warn, LayoutOrder = 6, Parent = card })
 		end
+		-- montaria em terra a partir de Jovem
+		local land = Rules.Mount.LandSpeedByStage[dragon.Stage]
+		if land then
+			local speed = math.floor(land * (dragon.Species == "Wyrm" and Rules.Mount.WyrmLandMultiplier or 1))
+			Theme.label(string.format("Montaria em terra: velocidade %d (V perto dele para montar)", speed), 14, { TextColor3 = Theme.Colors.TextDim, LayoutOrder = 6, Parent = card })
+		elseif isActive then
+			Theme.label("Ele te acompanha pelo mundo. Pode ser montado a partir de Jovem.", 14, { TextColor3 = Theme.Colors.TextDim, LayoutOrder = 6, Parent = card })
+		end
 	end
 
 	local row = Theme.new("Frame", { BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 44), LayoutOrder = 7, Parent = card }, {
@@ -86,6 +95,13 @@ local function dragonCard(dragon: { [string]: any }, isActive: boolean, order: n
 		local b = Theme.button("Tornar ativo", { Size = UDim2.fromOffset(130, 44), TextSize = 16, Parent = row })
 		b.Activated:Connect(function()
 			NetClient.Fire("SetActiveDragon", dragon.Id)
+		end)
+	end
+	if isActive and dragon.Stage ~= "Egg" then
+		local out = Players.LocalPlayer:GetAttribute("CompanionOut") == true
+		local b = Theme.button(out and "Guardar" or "Chamar", { Size = UDim2.fromOffset(110, 44), TextSize = 16, Parent = row })
+		b.Activated:Connect(function()
+			NetClient.Fire("ToggleCompanion")
 		end)
 	end
 	local renameButton = Theme.button("Renomear", { Size = UDim2.fromOffset(110, 44), TextSize = 16, BackgroundColor3 = Theme.Colors.ButtonAlt, Parent = row })
@@ -224,6 +240,12 @@ function DragonPanel.Init(screen: ScreenGui)
 	toggle.Activated:Connect(function()
 		panel.Visible = not panel.Visible
 		if panel.Visible then
+			DragonPanel.Render()
+		end
+	end)
+
+	Players.LocalPlayer:GetAttributeChangedSignal("CompanionOut"):Connect(function()
+		if panel.Visible and renaming == nil then
 			DragonPanel.Render()
 		end
 	end)

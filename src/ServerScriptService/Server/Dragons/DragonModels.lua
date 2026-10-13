@@ -371,6 +371,7 @@ function DragonModels.Build(dragon: { [string]: any }, at: CFrame): Model
 	if source then
 		local height = attachMesh(source, meshScale, root)
 		nameTag(model, root, height + 1.5)
+		model:SetAttribute("Height", height)
 	elseif stage == "Egg" then
 		local egg = makePart({ kind = "Ball", size = Vector3.new(2.6, 3.4, 2.6), cf = CFrame.new(0, 1.7, 0), color = "main" }, 1, 1, colors, root)
 		egg.Name = "Egg"
@@ -393,6 +394,7 @@ function DragonModels.Build(dragon: { [string]: any }, at: CFrame): Model
 			maxY = math.max(maxY, (spec.cf.Position.Y + spec.size.Y / 2) * scale)
 		end
 		nameTag(model, root, maxY + 2)
+		model:SetAttribute("Height", maxY)
 	end
 
 	model:SetAttribute("DragonId", dragon.Id)

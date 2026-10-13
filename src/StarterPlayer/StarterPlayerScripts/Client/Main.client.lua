@@ -19,6 +19,7 @@ local FarmChooser = require(UI:WaitForChild("FarmChooser"))
 local Compass = require(UI:WaitForChild("Compass"))
 local GraphicsSettings = require(UI:WaitForChild("GraphicsSettings"))
 local Wind = require(Client:WaitForChild("World"):WaitForChild("Wind"))
+local MountController = require(Client:WaitForChild("Dragon"):WaitForChild("MountController"))
 
 -- Tela principal
 local screen = Theme.new("ScreenGui", {
@@ -37,6 +38,7 @@ FarmChooser.Init(screen)
 Compass.Init(screen)
 Wind.Init()
 GraphicsSettings.Init(screen)
+MountController.Init()
 
 -- Cada jogador só vê as ações dos próprios dragões.
 local function filterPrompt(inst: Instance)

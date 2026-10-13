@@ -15,6 +15,27 @@ Rules.World = {
 	FarmMoveCooldownSeconds = 120,
 }
 
+-- Fase 3: dragão companheiro e montaria em terra (valores provisórios).
+Rules.Companion = {
+	TeleportDistance = 140, -- longe demais (ou caiu/teleportou): o dragão reaparece ao lado
+	FollowCatchUpSpeed = 60, -- velocidade máxima andando atrás do jogador
+	MountDistance = 20, -- distância para montar (somada ao tamanho do dragão)
+}
+
+Rules.Mount = {
+	-- Velocidade em terra por estágio (o jogador a pé anda a 16).
+	LandSpeedByStage = { Young = 34, Subadult = 40, Adult = 45, Elder = 48 },
+	-- Wyrm: muito mais rápido em terra (Adulto ≈ 65), como compensação por não voar.
+	WyrmLandMultiplier = 1.45,
+	-- Voo (fase 8): base 70 × FlightSpeedMult da raridade.
+	FlightBaseSpeed = 70,
+	-- Anti-exploit: tolerância sobre a velocidade permitida medida pelo servidor.
+	SpeedTolerance = 1.35,
+	MaxClimbPerSecond = 60,
+	MaxHoverHeight = 14, -- acima disso, sem estar descendo, conta como voo ilegal
+	StrikesToReset = 3,
+}
+
 Rules.Farm = {
 	StartDragonSlots = 3,
 	MaxDragonSlots = 8,

@@ -19,6 +19,7 @@ local NetService = require(Server.Services.NetService)
 local FarmService = require(Server.Services.FarmService)
 local InventoryService = require(Server.Services.InventoryService)
 local DragonModels = require(Server.Dragons.DragonModels)
+local CompanionService = require(Server.Dragons.CompanionService)
 
 local DragonService = {}
 
@@ -43,6 +44,7 @@ end
 
 local models: { [Player]: { [string]: Model } } = {}
 local petCooldown: { [string]: number } = {}
+local companionHome: { [Player]: boolean } = {} -- true = o jogador guardou o dragão ativo na fazenda
 
 --------------------------------------------------------------------------
 -- Utilidades
@@ -79,6 +81,12 @@ local function sortedIds(data: { [string]: any }): { string }
 		return (data.Dragons[a].CreatedAt or 0) < (data.Dragons[b].CreatedAt or 0)
 	end)
 	return ids
+end
+
+-- O dragão ativo, já nascido, acompanha o dono (a menos que ele o tenha guardado na fazenda).
+local function isCompanion(player: Player, data: { [string]: any }, dragonId: string): boolean
+	local dragon = data.Dragons[dragonId]
+	return dragon ~= nil and dragon.Stage ~= "Egg" and data.ActiveDragonId == dragonId and not companionHome[player]
 end
 
 local function characterNear(player: Player, model: Model?): boolean
@@ -181,13 +189,16 @@ local function buildModel(player: Player, dragonId: string)
 		return
 	end
 	local model = DragonModels.Build(dragon, at)
-	local container = plot:FindFirstChild("Dragons")
-	if not container then
-		container = Instance.new("Folder")
-		container.Name = "Dragons"
-		container.Parent = plot
+	local companion = isCompanion(player, data, dragonId)
+	if not companion then
+		local container = plot:FindFirstChild("Dragons")
+		if not container then
+			container = Instance.new("Folder")
+			container.Name = "Dragons"
+			container.Parent = plot
+		end
+		model.Parent = container
 	end
-	model.Parent = container
 	list[dragonId] = model
 
 	if dragon.Stage ~= "Egg" then
@@ -204,6 +215,10 @@ local function buildModel(player: Player, dragonId: string)
 				end)
 			end
 		end
+	end
+	if companion then
+		CompanionService.Attach(player, model, dragon)
+		player:SetAttribute("CompanionOut", true)
 	end
 end
 
@@ -226,6 +241,8 @@ local function rebuildAll(player: Player)
 end
 
 local function clearModels(player: Player)
+	CompanionService.Detach(player)
+	player:SetAttribute("CompanionOut", false)
 	local list = models[player]
 	if list then
 		for _, model in pairs(list) do
@@ -454,9 +471,35 @@ local function onSetActive(player: Player, dragonId: string)
 	if not data or not data.Dragons[dragonId] or data.ActiveDragonId == dragonId then
 		return
 	end
+	local old = data.ActiveDragonId
 	data.ActiveDragonId = dragonId
 	DataService.MarkChanged(player, "ActiveDragonId")
 	notify(player, displayName(data.Dragons[dragonId]) .. " agora é seu dragão ativo.")
+	-- o antigo volta para o cercado; o novo vem acompanhar o dono
+	CompanionService.Detach(player)
+	player:SetAttribute("CompanionOut", false)
+	if old and data.Dragons[old] then
+		buildModel(player, old)
+	end
+	buildModel(player, dragonId)
+end
+
+local function onToggleCompanion(player: Player)
+	local data = DataService.Get(player)
+	if not data or not FarmService.GetPlot(player) then
+		return
+	end
+	local id = data.ActiveDragonId
+	local dragon = id and data.Dragons[id]
+	if not dragon or dragon.Stage == "Egg" then
+		notify(player, "Seu dragão ativo ainda é um ovo.")
+		return
+	end
+	companionHome[player] = not companionHome[player]
+	CompanionService.Detach(player)
+	player:SetAttribute("CompanionOut", false)
+	buildModel(player, id)
+	notify(player, companionHome[player] and (displayName(dragon) .. " voltou para a fazenda.") or (displayName(dragon) .. " está com você."))
 end
 
 local function onExpandSlots(player: Player)
@@ -511,6 +554,14 @@ function DragonService.Init()
 	NetService.On("RenameDragon", onRename)
 	NetService.On("SetActiveDragon", onSetActive)
 	NetService.On("ExpandDragonSlots", onExpandSlots)
+	NetService.On("ToggleCompanion", onToggleCompanion)
+	NetService.On("MountDragon", function(player: Player)
+		CompanionService.Mount(player)
+	end)
+	NetService.On("DismountDragon", function(player: Player)
+		CompanionService.Dismount(player)
+	end)
+	CompanionService.Init(notify)
 
 	FarmService.PlotAssigned:Connect(function(player: Player)
 		rebuildAll(player)
@@ -520,6 +571,7 @@ function DragonService.Init()
 	end)
 	Players.PlayerRemoving:Connect(function(player)
 		clearModels(player)
+		companionHome[player] = nil
 	end)
 
 	task.spawn(function()
