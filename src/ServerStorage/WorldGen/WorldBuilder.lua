@@ -2344,8 +2344,19 @@ function WorldBuilder:buildGroveFeatures()
 				end
 			end
 		end
-		local last = pts[#pts]
-		local prev = pts[#pts - 1]
+		-- mirante no ponto mais alto do fim da trilha (vista livre)
+		local bi = #pts
+		if tr.kind == "edge" then
+			local bestH = -math.huge
+			for i = math.max(2, #pts - 6), #pts do
+				local hh = self:groundY(pts[i][1], pts[i][2])
+				if hh > bestH then
+					bestH, bi = hh, i
+				end
+			end
+		end
+		local last = pts[bi]
+		local prev = pts[bi - 1]
 		local endP = V(last[1], last[2], self:groundY(last[1], last[2]))
 		local dir = Vector3.new(last[1] - prev[1], 0, -(last[2] - prev[2])).Unit
 		if tr.kind == "edge" then

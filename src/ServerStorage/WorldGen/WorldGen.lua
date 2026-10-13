@@ -672,7 +672,15 @@ function WorldGen:computeChunk(x0: number, y0: number, n: number, step: number?)
 			elseif region == "coast" then
 				steepMat = if nz > 0 then M.Sandstone else M.Rock
 			end
-			-- base por região
+			-- base por região (bosques fechados especiais usam o chão de mata)
+			if region ~= "forest" and data.DENSE_GROVES then
+				for _, g in ipairs(data.DENSE_GROVES) do
+					if (x - g.x) ^ 2 + (y - g.y) ^ 2 < (g.r * 0.92) ^ 2 then
+						region = "forest"
+						break
+					end
+				end
+			end
 			if region == "forest" then
 				-- chão de mata fechada: folhas e terra escura (as frestas entre as copas parecem mata, não campo)
 				mat = if nz > 0.3 then M.Ground elseif nz > -0.35 then M.LeafyGrass else M.Grass
