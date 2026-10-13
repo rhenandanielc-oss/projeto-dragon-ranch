@@ -1383,17 +1383,7 @@ function WorldBuilder:buildCamps()
 			local back = at(-80, 14)
 			Terrain:FillBall(back + Vector3.new(0, 4, 0), 11, Enum.Material.Rock)
 			Terrain:FillBall(back + Vector3.new(4, 12, 6), 8, Enum.Material.Rock)
-			local fall = p({ Name = "Trickle", Size = Vector3.new(5, 16, 1), CFrame = CFrame.lookAt(back + Vector3.new(7, 8, 0), wp + Vector3.new(0, 8, 0)), Material = Enum.Material.Glass, Color = Color3.fromRGB(190, 225, 245), Transparency = 0.45, CanCollide = false, CanQuery = false, CastShadow = false })
-			local mist = Instance.new("ParticleEmitter")
-			mist.Texture = "rbxasset://textures/particles/smoke_main.dds"
-			mist.Color = ColorSequence.new(Color3.fromRGB(235, 245, 255))
-			mist.Transparency = NumberSequence.new(0.6, 1)
-			mist.Size = NumberSequence.new(3, 7)
-			mist.Rate = 6
-			mist.Lifetime = NumberRange.new(1.5, 3)
-			mist.Speed = NumberRange.new(2, 4)
-			mist.EmissionDirection = Enum.NormalId.Bottom
-			mist.Parent = fall
+			self.Props.waterfall(back + Vector3.new(7, 15, 0), Vector3.new(back.X + 9, wg, back.Z), 6, (wp - back) * Vector3.new(1, 0, 1), m)
 			local water = p({ Name = "DragonWater", Size = Vector3.new(44, 1, 44), CFrame = CFrame.new(wp), Transparency = 1, CanCollide = false, CanQuery = false })
 			water:SetAttribute("DragonWater", true)
 			for k = 1, 10 do
@@ -1717,6 +1707,20 @@ function WorldBuilder:buildLandmarks()
 			end
 		end
 	end
+	-- Cachoeira Grande (Rio das Cachoeiras), com rochas dos lados
+	do
+		local G = self.data.GREAT_WATERFALL
+		if G then
+			local down = Vector3.new(0, 0, 1) -- o rio desce para o sul
+			local top = V(G.x, G.y, G.top + 0.5)
+			self.Props.waterfall(top, V(G.x, G.y - 8, G.bottom), G.width, down, folder)
+			for _, sx in ipairs({ -1, 1 }) do
+				for k = 0, 3 do
+					Terrain:FillBall(V(G.x + sx * (G.width / 2 + 6 + k * 3), G.y + rng:NextNumber(-6, 6), G.top + 4 - k * 3), rng:NextNumber(6, 9), Enum.Material.Rock)
+				end
+			end
+		end
+	end
 	-- Portão da dungeon no fundo do vale escondido (sem marcador), encostado no paredão
 	-- norte, atrás de uma cachoeira que cai num lago
 	local D = self.data.DUNGEON
@@ -1884,17 +1888,7 @@ function WorldBuilder:buildSkyIslands()
 		local edgeA = math.atan2(py - isl.y, px - isl.x)
 		local ex, ey = isl.x + math.cos(edgeA) * (isl.r * 0.98), isl.y + math.sin(edgeA) * (isl.r * 0.98)
 		local fallH = 140
-		local fall = part({ Name = "Waterfall", Size = Vector3.new(10, fallH, 2), CFrame = CFrame.lookAt(V(ex, ey, isl.alt - fallH / 2 + 2), V(isl.x, isl.y, isl.alt - fallH / 2 + 2)), Material = Enum.Material.Glass, Color = Color3.fromRGB(190, 225, 245), Transparency = 0.4, CanCollide = false, CanQuery = false, CastShadow = false }, m)
-		local mist = Instance.new("ParticleEmitter")
-		mist.Texture = "rbxasset://textures/particles/smoke_main.dds"
-		mist.Color = ColorSequence.new(Color3.fromRGB(235, 245, 255))
-		mist.Transparency = NumberSequence.new(0.5, 1)
-		mist.Size = NumberSequence.new(4, 10)
-		mist.Rate = 8
-		mist.Lifetime = NumberRange.new(2, 3)
-		mist.Speed = NumberRange.new(4, 8)
-		mist.EmissionDirection = Enum.NormalId.Bottom
-		mist.Parent = fall
+		self.Props.waterfall(V(ex, ey, isl.alt + 1), V(ex, ey, isl.alt - fallH), 9, Vector3.new(math.cos(edgeA), 0, -math.sin(edgeA)), m)
 		m.Parent = folder
 		task.wait()
 	end
