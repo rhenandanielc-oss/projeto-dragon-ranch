@@ -21,7 +21,8 @@ ilhas flutuantes. Passe de gráficos feito (12/10/2026): vegetação rebalancead
 (manchas de floresta alta com clareiras, campos abertos com árvores soltas),
 árvores e plantas realistas (PBR), rochas de terreno, grama alta, luz e névoa
 novas, acampamentos em escala de dragão e ferramenta de qualidade no jogo
-(Baixo/Médio/Alto/Ultra). Próximo: Fase 3 — Dragão companheiro (ver `V1-ROADMAP.md`).
+(Baixo/Médio/Alto/Ultra). Próximo (13/10): aplicar o alvo visual aprovado (ART-DIRECTION §11.1) ao mundo
+inteiro; depois Fase 3 — Dragão companheiro (ver `V1-ROADMAP.md`).
 
 Fase 2 — Fazenda e ovos concluída (12/10/2026).
 
@@ -81,7 +82,7 @@ Atualizado em 12/10/2026, depois da construção do mundo aberto.
 | `Workspace.World.Groves` | Bosque irregular em volta de cada fazenda (~8.800 árvores e arbustos), com corredor de entrada voltado para a estrada |
 | `Workspace.World.Forest` | Vegetação por região em blocos de 1.024 studs: ~17.000 árvores (pinheiros-ponderosa, carvalhos, cerejeiras), ~17.000 detalhes (samambaias, arbustos, flores) numa pasta `Detail` que a ferramenta de qualidade esconde, e rochas feitas de terreno |
 | `Workspace.World.Bridges` | 19 pontes onde as estradas cruzam água (inclui a ponte longa da Ilha do Lago) |
-| `Workspace.World.Camps` | 7 acampamentos **para dragões**: lagoa-bebedouro com borda de rochas, 2 cochos de pedra com carne, varal alto de carne, abrigo alto aberto, ninhos de palha grandes, poleiros (rochas grandes e árvore morta) e braseiro |
+| `Workspace.World.Camps` | 7 acampamentos **para dragões** (~180 studs, ao lado das estradas): cerca com portão e placa, círculo de pouso com pedras e braseiros, lagoa-bebedouro, área de alimentação, estábulo aberto com 4 baias, 2 torres-poleiro, cabana do tratador |
 | `Workspace.World.Waypoints` | 8 obeliscos rúnicos |
 | `Workspace.World.Landmarks` | Castelo dos Dragões, Farol, Cúpula das Ruínas, Árvore-Mãe, Árvore de Luz, Pilar de Cristal, portão da dungeon com cachoeira |
 | `Workspace.World.SkyIslands` | 9 ilhas flutuantes (terreno) com árvores frutíferas, arbustos de frutas, varal de carne, lagoa e queda-d'água |
@@ -149,6 +150,7 @@ O código fica em `src/` (espelho exato do Studio). Pastas gerenciadas:
 | `ServerStorage/WorldGen/WorldBuilder` | Constrói Hub, pontes, fazendas, bosques, acampamentos, waypoints, marcos, ilhas, florestas e luz | ✅ |
 | `Shared/Config/Biomes` + `Client/UI/FarmChooser` | Escolha do bioma da fazenda na mesa do cartógrafo (validada no servidor) | ✅ |
 | `Client/UI/Compass` | Bússola com direção e distância da fazenda e do Hub | ✅ testado |
+| `Client/World/Wind` | Vento: copas, arbustos e samambaias balançam perto da câmera (desligado no Baixo); grama alta balança com GlobalWind | ✅ testado |
 | `Shared/Config/Graphics` + `Client/UI/GraphicsSettings` | Ferramenta de qualidade (Baixo/Médio/Alto/Ultra): sombras, efeitos de tela, névoa, nuvens, detalhes pequenos, partículas e luzes pequenas; salva no perfil; celular começa no Médio | ✅ testado |
 | `tools/worldgen/preview.py` | Prévia do relevo em PNG sem abrir o Studio | ✅ |
 | `tools/studio/sync_from_github.luau` / `ServerStorage.RepoSync` | Copia o código do GitHub (por commit) para o Studio | ✅ |
@@ -222,5 +224,7 @@ esta lista ao concluir a V1.
 | 12/10/2026 | Fase 2 concluída: 18 fazendas, ovo inicial, crescimento, cuidados, painel |
 | 12/10/2026 | Hub Central com 4 NPCs; fazendas em anel separadas por floresta; bosque decorado nas entradas; fazendas decoradas; dragões e cenário com modelos 3D gerados por IA |
 | 12/10/2026 | Proposta do mundo aberto (WORLD-DESIGN.md + mapa conceitual); construção do mapa pausada até aprovação |
+| 13/10/2026 | Alvo visual aprovado (ART-DIRECTION §11.1, imagem de referência). Próxima sessão: aplicar esse visual ao mundo inteiro |
+| 12/10/2026 | Mais vegetação nos campos; folhas atravessáveis com colisor só no tronco; vento nas folhas; acampamentos de dragão grandes ao lado das estradas; grama padrão sem manchas |
 | 12/10/2026 | Passe de gráficos: vegetação "na medida" (florestas com clareiras e campos abertos), árvores realistas, rochas de terreno, grama alta, luz/névoa novas, acampamentos para dragões, ferramenta de qualidade no jogo |
 | 12/10/2026 | Mundo aberto aprovado (D1–D12) e construído: terreno 16k, Hub na ilha fluvial, 18 fazendas espalhadas com bosques, florestas, pontes, acampamentos, waypoints, marcos, castelo, ilhas flutuantes; regra de atribuição de fazenda; bússola |

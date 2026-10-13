@@ -225,6 +225,33 @@ Antes de produzir o mapa inteiro, recomenda-se criar protótipos pequenos no Rob
 
 Avaliar consistência visual, leitura, desempenho e facilidade de implementação antes de expandir o conteúdo.
 
+## 11.1 Alvo visual aprovado (13/10/2026)
+
+**APROVADO:** o responsável escolheu a imagem `docs/reference/visual-target-forest-camp.png`
+como alvo de gráficos **para o mundo inteiro**, variando só conforme o bioma
+(junto com as referências anteriores de Dystovia e Deepwoken).
+
+O que a imagem pede, traduzido para o Roblox:
+- **Luz:** fim de tarde dourado e quente, sol baixo atravessando as copas, sombras
+  longas e suaves, contraste forte entre áreas sombreadas e manchas de sol;
+  névoa azulada leve no fundo (perspectiva aérea).
+- **Natureza em camadas:** copas altas e cheias (carvalhos e pinheiros), sub-bosque
+  denso de arbustos, samambaias, folhagens e flores; trepadeiras e musgo nos troncos
+  e rochas; rochas grandes cobertas de musgo; nada de chão "pelado".
+- **Relevo:** paredões de pedra com cachoeira caindo num lago, trilhas de terra
+  batida serpenteando, bordas de clareira cobertas de vegetação.
+- **Acampamento (dragões):** clareira à beira do lago, dragão descansando junto à
+  fogueira, toldos/barracas de lona, píer de madeira, estandartes com o emblema do
+  dragão, caixas e barris, lanternas em postes de madeira e tochas acesas.
+- **Água:** lago escuro e reflexivo, verde-azulado, com brilho das tochas.
+- **Por bioma:** a mesma riqueza de camadas, trocando espécies, cores e luz
+  (neve, vulcão, pântano, cristais, ruínas etc.).
+
+Limite honesto: a imagem é uma arte renderizada (qualidade de motor como Unreal).
+No Roblox dá para chegar perto com iluminação Future, névoa, sombras, vegetação densa
+em camadas e modelos PBR, mas não idêntico; o objetivo é o mesmo clima e composição.
+O desempenho no celular continua controlado pela ferramenta de qualidade do jogo.
+
 ## 12. Decisões pendentes
 
 - **PENDENTE:** confirmar oficialmente o estilo visual geral: fantasia estilizada premium, cartoon detalhado, low-poly ou semirrealista.
@@ -260,3 +287,4 @@ e cerejeiras — coerente com §3.
 
 - **0.1:** documento inicial; incorporadas as preferências aprovadas de cores vibrantes, florestas verdes, magia colorida, paisagens variadas e grandes montanhas com vistas panorâmicas.
 - **0.2 (12/10/2026):** referências às espécies atualizadas para as cinco espécies aprovadas.
+- **0.3 (13/10/2026):** alvo visual aprovado (§11.1): floresta em camadas, luz dourada, acampamento à beira do lago.
