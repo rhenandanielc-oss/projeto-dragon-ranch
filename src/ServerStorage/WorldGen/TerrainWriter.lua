@@ -82,6 +82,12 @@ function TerrainWriter.writeChunk(gen, WorldGen, mats, ci: number, cj: number)
 	end
 	local region = Region3.new(Vector3.new(x0, yMin, -(y0 + CHUNK * VOX)), Vector3.new(x0 + CHUNK * VOX, yMax, -y0))
 	workspace.Terrain:WriteVoxelChannels(region, VOX, { SolidMaterial = solidMat, SolidOccupancy = solidOcc, LiquidOccupancy = liquidOcc })
+	-- limpa terreno antigo acima do novo (quando o relevo baixou, ex.: a baía)
+	local clearTo = TerrainWriter.ClearTo
+	if clearTo and clearTo > yMax then
+		local span = CHUNK * VOX
+		workspace.Terrain:FillBlock(CFrame.new(x0 + span / 2, (yMax + clearTo) / 2, -(y0 + span / 2)), Vector3.new(span, clearTo - yMax, span), Enum.Material.Air)
+	end
 	return ny
 end
 
@@ -101,7 +107,10 @@ function TerrainWriter.chunksAround(size: number, x: number, y: number, r: numbe
 end
 
 -- Gera o mundo inteiro (ou os blocos de first..last na ordem linear, ou a lista `only`) em segundo plano
-function TerrainWriter.start(folder: Instance, first: number?, last: number?, only: { number }?)
+TerrainWriter.ClearTo = nil :: number?
+
+function TerrainWriter.start(folder: Instance, first: number?, last: number?, only: { number }?, clearTo: number?)
+	TerrainWriter.ClearTo = clearTo
 	local WorldData = require(folder:FindFirstChild("WorldData"):Clone())
 	local WorldGen = require(folder:FindFirstChild("WorldGen"):Clone())
 	local per = math.floor(WorldData.SIZE / (CHUNK * VOX) + 0.5)
