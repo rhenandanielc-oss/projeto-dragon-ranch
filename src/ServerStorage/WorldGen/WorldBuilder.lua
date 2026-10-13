@@ -1725,6 +1725,28 @@ function WorldBuilder:buildLandmarks()
 			end
 		end
 	end
+	-- Mirantes: no ponto mais alto perto do lugar marcado, virados para a vista
+	for _, L in ipairs(self.data.LOOKOUTS or {}) do
+		local bx, by, bh = L.x, L.y, -math.huge
+		for k = 0, 35 do
+			local a = k / 36 * math.pi * 2
+			for _, r in ipairs({ 0, 60, 120 }) do
+				local x, y = L.x + math.cos(a) * r, L.y + math.sin(a) * r
+				local hit = self:surface(x, y)
+				if hit and hit.Material ~= Enum.Material.Water and hit.Position.Y > bh then
+					bx, by, bh = x, y, hit.Position.Y
+				end
+			end
+		end
+		local pos = V(bx, by, bh)
+		local look = CFrame.lookAt(pos, pos + Vector3.new(L.vx, 0, -L.vy))
+		local lo = self.Props.lookout(look, folder, function(q: Vector3): number
+			return self:groundY(q.X, -q.Z)
+		end)
+		lo.Name = L.name
+		lo:SetAttribute("Landmark", L.name)
+	end
+
 	-- Cachoeira Grande (Rio das Cachoeiras), com rochas dos lados
 	do
 		local G = self.data.GREAT_WATERFALL

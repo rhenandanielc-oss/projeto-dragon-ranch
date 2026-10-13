@@ -145,6 +145,14 @@ WorldData.SHAPES = {
 }
 
 -- Ilhas flutuantes: centro (x, y), altitude do topo, raio
+-- Mirantes da cordilheira (vista panorâmica): ponto aproximado e direção da vista (x, y)
+WorldData.LOOKOUTS = {
+	{ name = "Mirante do Passo", x = -1500, y = 4150, vx = 0, vy = -1 },
+	{ name = "Mirante do Pico Branco", x = -4300, y = 5900, vx = 0.3, vy = -1 },
+	{ name = "Mirante da Encosta", x = 900, y = 4300, vx = 0, vy = -1 },
+	{ name = "Mirante da Serpentina", x = 3100, y = 5150, vx = -0.4, vy = -1 },
+}
+
 WorldData.GREAT_WATERFALL = { x = 3738, y = 338, top = 29, bottom = 13, width = 44 }
 
 WorldData.SKY_ISLANDS = {

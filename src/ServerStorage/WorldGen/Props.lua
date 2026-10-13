@@ -675,6 +675,40 @@ function Props.waterfall(top: Vector3, bottom: Vector3, width: number, facing: V
 	return m
 end
 
+-- mirante de madeira na beira do penhasco, com corrimão, banco e luneta
+function Props.lookout(cf: CFrame, parent, groundAt: (Vector3) -> number)
+	local m = model("Lookout", parent)
+	local deckY = cf.Position.Y + 3
+	local W, D = 18, 14
+	for _, o in ipairs({ { -W / 2 + 1, -D / 2 + 1 }, { W / 2 - 1, -D / 2 + 1 }, { -W / 2 + 1, D / 2 - 1 }, { W / 2 - 1, D / 2 - 1 } }) do
+		local p = (cf * CFrame.new(o[1], 0, o[2])).Position
+		local g = groundAt(p)
+		local h = deckY - g + 2
+		part({ Name = "Post", Size = Vector3.new(1.2, h, 1.2), CFrame = CFrame.new(p.X, g - 2 + h / 2, p.Z), Material = Enum.Material.Wood, Color = DARKWOOD }, m)
+	end
+	local deck = CFrame.new(cf.Position.X, deckY, cf.Position.Z) * cf.Rotation
+	for i = 0, 11 do
+		part({ Name = "Plank", Size = Vector3.new(W, 0.4, D / 12 - 0.08), CFrame = deck * CFrame.new(0, 0, -D / 2 + (i + 0.5) * D / 12), Material = Enum.Material.WoodPlanks, Color = Color3.fromRGB(126 + (i % 3) * 6, 92, 60) }, m)
+	end
+	-- corrimão em 3 lados (a frente -Z é o lado da vista)
+	local rails = { { Vector3.new(-W / 2, 0, -D / 2), Vector3.new(W / 2, 0, -D / 2) }, { Vector3.new(-W / 2, 0, -D / 2), Vector3.new(-W / 2, 0, D / 2) }, { Vector3.new(W / 2, 0, -D / 2), Vector3.new(W / 2, 0, D / 2) } }
+	for _, r in ipairs(rails) do
+		local a, b = (deck * CFrame.new(r[1])).Position, (deck * CFrame.new(r[2])).Position
+		part({ Name = "Rail", Size = Vector3.new(0.4, 0.4, (b - a).Magnitude), CFrame = CFrame.lookAt((a + b) / 2 + Vector3.new(0, 3.6, 0), b + Vector3.new(0, 3.6, 0)), Material = Enum.Material.Wood, Color = DARKWOOD }, m)
+		for k = 0, 4 do
+			local q = a:Lerp(b, k / 4)
+			part({ Name = "Baluster", Size = Vector3.new(0.4, 3.6, 0.4), CFrame = CFrame.new(q + Vector3.new(0, 1.8, 0)), Material = Enum.Material.Wood, Color = DARKWOOD }, m)
+		end
+	end
+	part({ Name = "Bench", Size = Vector3.new(7, 0.5, 2), CFrame = deck * CFrame.new(0, 1.6, 4), Material = Enum.Material.WoodPlanks, Color = WOOD }, m)
+	local tri = deck * CFrame.new(5, 0, -4)
+	for k = 0, 2 do
+		part({ Name = "TelescopeLeg", Size = Vector3.new(0.25, 4, 0.25), CFrame = tri * CFrame.Angles(0, k * math.rad(120), 0) * CFrame.new(0, 2, 0.6) * CFrame.Angles(math.rad(-12), 0, 0), Material = Enum.Material.Wood, Color = DARKWOOD }, m)
+	end
+	part({ Name = "Telescope", Shape = Enum.PartType.Cylinder, Size = Vector3.new(3.4, 0.7, 0.7), CFrame = tri * CFrame.new(0, 4.2, 0) * CFrame.Angles(0, math.rad(90), math.rad(12)), Material = Enum.Material.Metal, Color = Color3.fromRGB(150, 120, 60) }, m)
+	return m
+end
+
 -- ninho de galhos e palha sobre pedras (habitat do ovo / cama de dragão)
 function Props.nest(cf: CFrame, parent, s: number, rng: Random)
 	local m = model("Nest", parent)
