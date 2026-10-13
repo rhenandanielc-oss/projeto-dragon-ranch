@@ -8,6 +8,10 @@
 Este arquivo registra o que já foi feito, o que falta e o que está bloqueado.
 Deve ser atualizado a cada etapa concluída.
 
+**Regra de trabalho (pedido do responsável, 13/10/2026):** a cada etapa,
+tirar fotos (prints) do jogo no Studio e enviá-las ao responsável, de
+preferência dentro do jogo (modo Play), mostrando o que mudou.
+
 Legenda: ✅ feito · 🟡 parcial · ⬜ não feito · ⛔ bloqueado por decisão pendente
 
 ---
