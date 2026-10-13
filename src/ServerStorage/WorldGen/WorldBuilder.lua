@@ -372,6 +372,13 @@ function WorldBuilder:plantRaw(kind: string, pos: Vector3, scale: number, parent
 		self:terrainRock(pos, scale)
 		return nil
 	end
+	if kind == "Crystal" then
+		return self.Props.crystalCluster(cf, parent, scale * 1.6, self.rng)
+	elseif kind == "DeadTree" then
+		return self.Props.deadTree(cf, parent, scale, self.rng)
+	elseif kind == "CrystalPine" then
+		return self:plantRaw("TallPine", pos, scale * 0.45, parent, leaf)
+	end
 	local vs = VARIANTS[kind]
 	if vs then
 		local v = vs[self.rng:NextInteger(1, #vs)]

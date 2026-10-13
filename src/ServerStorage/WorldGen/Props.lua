@@ -494,4 +494,54 @@ function Props.castle(cf: CFrame, parent, R: number, statue: ((CFrame, number) -
 	return m
 end
 
+-- aglomerado de cristais mágicos (prismas de vidro com brilho)
+function Props.crystalCluster(cf: CFrame, parent, s: number, rng: Random)
+	local m = model("Crystal", parent)
+	local n = rng:NextInteger(4, 8)
+	local hue = if rng:NextNumber() < 0.7 then Color3.fromRGB(120, 190, 255) else Color3.fromRGB(180, 130, 255)
+	for i = 1, n do
+		local h = (if i == 1 then 9 else rng:NextNumber(3, 7)) * s
+		local w = h * rng:NextNumber(0.18, 0.28)
+		local a = rng:NextNumber(0, math.pi * 2)
+		local r = if i == 1 then 0 else rng:NextNumber(0.8, 2.4) * s
+		local tilt = if i == 1 then 0 else rng:NextNumber(0.25, 0.6)
+		local base = cf * CFrame.new(math.cos(a) * r, 0, math.sin(a) * r) * CFrame.Angles(0, a, 0) * CFrame.Angles(tilt, 0, 0)
+		part({ Name = "Prism", Size = Vector3.new(w, h, w), CFrame = base * CFrame.new(0, h / 2 - 0.4, 0) * CFrame.Angles(0, math.rad(45), 0), Material = Enum.Material.Glass, Color = hue, Transparency = 0.2, CastShadow = false }, m)
+		wedge({ Name = "Tip", Size = Vector3.new(w, w * 1.2, w), CFrame = base * CFrame.new(0, h - 0.4 + w * 0.6, 0) * CFrame.Angles(0, math.rad(45), 0), Material = Enum.Material.Glass, Color = hue, Transparency = 0.2, CastShadow = false }, m)
+	end
+	local glow = part({ Name = "Glow", Size = Vector3.new(1, 1, 1), CFrame = cf * CFrame.new(0, 3 * s, 0), Transparency = 1, CanCollide = false, CanQuery = false }, m)
+	local l = Instance.new("PointLight")
+	l.Color = hue
+	l.Range = 14 * s
+	l.Brightness = 1.2
+	l.Shadows = false
+	l.Parent = glow
+	return m
+end
+
+-- árvore morta retorcida (tronco afinando e galhos secos)
+function Props.deadTree(cf: CFrame, parent, s: number, rng: Random)
+	local m = model("DeadTree", parent)
+	local bark = Color3.fromRGB(58, 48, 42)
+	local h = 26 * s
+	local lean = CFrame.Angles(rng:NextNumber(-0.08, 0.08), 0, rng:NextNumber(-0.08, 0.08))
+	local seg = 4
+	local top = cf * lean
+	for i = 0, seg - 1 do
+		local d = (2.6 - i * 0.5) * s
+		local sh = h / seg
+		part({ Name = "Trunk", Size = Vector3.new(d, sh + 0.6, d), CFrame = top * CFrame.new(0, sh / 2, 0), Material = Enum.Material.Wood, Color = bark }, m)
+		top = top * CFrame.new(0, sh, 0) * CFrame.Angles(rng:NextNumber(-0.12, 0.12), 0, rng:NextNumber(-0.12, 0.12))
+		if i >= 1 then
+			for _ = 1, 2 do
+				local a = rng:NextNumber(0, math.pi * 2)
+				local len = rng:NextNumber(5, 10) * s
+				local bcf = top * CFrame.new(0, -sh * 0.3, 0) * CFrame.Angles(0, a, 0) * CFrame.Angles(0, 0, math.rad(rng:NextNumber(40, 70)))
+				part({ Name = "Branch", Size = Vector3.new(0.7 * s, len, 0.7 * s), CFrame = bcf * CFrame.new(0, len / 2, 0), Material = Enum.Material.Wood, Color = bark }, m)
+			end
+		end
+	end
+	return m
+end
+
 return Props
