@@ -103,6 +103,9 @@ local function buildBody(def: any, at: CFrame): (Model, Humanoid, BasePart)
 	elseif def.Body == "Spider" then
 		root.Size = Vector3.new(3.6, 1.8, 4) * s
 		hip = 1.6 * s
+	elseif def.Body == "Drake" then
+		root.Size = Vector3.new(3, 3, 7) * s
+		hip = 2.4 * s
 	else
 		root.Size = Vector3.new(2.2, bodyH, 4.6) * s
 		hip = 1.8 * s
@@ -123,6 +126,23 @@ local function buildBody(def: any, at: CFrame): (Model, Humanoid, BasePart)
 		for _, x in ipairs({ -0.45, 0.45 }) do
 			weldPart(m, root, { Name = "Eye", Size = Vector3.new(0.18, 0.18, 0.1) * s, Color = Color3.fromRGB(255, 200, 60), Material = Enum.Material.Neon }, CFrame.new(x * s, 0.75 * s, -3.5 * s))
 		end
+	elseif def.Body == "Drake" then
+		local belly = c:Lerp(Color3.fromRGB(220, 200, 160), 0.4)
+		weldPart(m, root, { Name = "Body", Size = Vector3.new(2.8, 2.6, 6) * s, Color = c, Material = Enum.Material.Slate }, CFrame.new(0, 0, 0))
+		weldPart(m, root, { Name = "Belly", Size = Vector3.new(2.2, 0.6, 5) * s, Color = belly, Material = Enum.Material.Slate }, CFrame.new(0, -1.2 * s, 0))
+		weldPart(m, root, { Name = "Neck", Size = Vector3.new(1.4, 1.4, 3) * s, Color = c, Material = Enum.Material.Slate }, CFrame.new(0, 1.2 * s, -3.6 * s) * CFrame.Angles(math.rad(35), 0, 0))
+		weldPart(m, root, { Name = "Head", Size = Vector3.new(1.6, 1.4, 2.6) * s, Color = c, Material = Enum.Material.Slate }, CFrame.new(0, 2.4 * s, -5.2 * s))
+		for _, x in ipairs({ -0.5, 0.5 }) do
+			weldPart(m, root, { Name = "Horn", Size = Vector3.new(0.3, 0.3, 1.6) * s, Color = Color3.fromRGB(230, 220, 200), Material = Enum.Material.Marble }, CFrame.new(x * s, 3.2 * s, -4.6 * s) * CFrame.Angles(math.rad(30), 0, 0))
+			weldPart(m, root, { Name = "Eye", Size = Vector3.new(0.25, 0.25, 0.1) * s, Color = Color3.fromRGB(255, 190, 40), Material = Enum.Material.Neon }, CFrame.new(x * 1.3 * s, 2.6 * s, -6.4 * s))
+		end
+		for _, sx in ipairs({ -1, 1 }) do
+			weldPart(m, root, { Name = "Wing", Size = Vector3.new(6, 0.2, 3.6) * s, Color = c:Lerp(Color3.new(0, 0, 0), 0.2), Material = Enum.Material.Fabric }, CFrame.new(sx * 4 * s, 1.6 * s, -0.5 * s) * CFrame.Angles(0, 0, math.rad(sx * 18)))
+		end
+		for _, o in ipairs({ { -1, -2 }, { 1, -2 }, { -1, 2 }, { 1, 2 } }) do
+			weldPart(m, root, { Name = "Leg", Size = Vector3.new(0.8, 2.4, 0.8) * s, Color = c, Material = Enum.Material.Slate }, CFrame.new(o[1] * s, -2 * s, o[2] * s))
+		end
+		weldPart(m, root, { Name = "Tail", Size = Vector3.new(0.8, 0.8, 5) * s, Color = c, Material = Enum.Material.Slate }, CFrame.new(0, 0.2 * s, 5 * s) * CFrame.Angles(math.rad(-10), 0, 0))
 	elseif def.Body == "Spider" then
 		weldPart(m, root, { Name = "Body", Shape = Enum.PartType.Ball, Size = Vector3.new(2.6, 2.6, 2.6) * s, Color = c, Material = Enum.Material.Fabric }, CFrame.new(0, 0.2 * s, 0.9 * s))
 		weldPart(m, root, { Name = "Head", Shape = Enum.PartType.Ball, Size = Vector3.new(1.5, 1.5, 1.5) * s, Color = c, Material = Enum.Material.Fabric }, CFrame.new(0, 0, -1.1 * s))

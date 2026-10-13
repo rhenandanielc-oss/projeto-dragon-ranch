@@ -159,6 +159,17 @@ local HANDLERS: { [string]: (data: { [string]: any }) -> () } = {
 	Power = function(d)
 		local color = elementColor(d.Element)
 		local kind = d.Kind
+		-- raridade: Raro+ ganha um anel dourado; Lendário+ ganha brilho extra
+		local tier = d.Tier or 1
+		local at: Vector3? = d.To or d.From
+		if tier >= 3 and at then
+			task.delay(0.15, function()
+				ring(at :: Vector3, if tier >= 7 then Color3.fromRGB(20, 255, 220) elseif tier >= 5 then Color3.fromRGB(255, 200, 60) else Color3.fromRGB(150, 190, 255), (d.Radius or 10) * 1.2, 0.6, 0.3)
+			end)
+		end
+		if tier >= 5 and at then
+			burst(at :: Vector3, Color3.fromRGB(255, 240, 200), (d.Radius or 10) * 0.8, 0.5)
+		end
 		if kind == "Projectile" then
 			local ball = part({ Shape = Enum.PartType.Ball, Size = Vector3.new(3, 3, 3), Color = color })
 			local light = Instance.new("PointLight")

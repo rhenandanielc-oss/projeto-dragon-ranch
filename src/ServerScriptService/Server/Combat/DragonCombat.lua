@@ -14,6 +14,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local Combat = require(ReplicatedStorage.Shared.Config.Combat)
 local Species = require(ReplicatedStorage.Shared.Config.Species)
 local Growth = require(ReplicatedStorage.Shared.Config.Growth)
+local Rarity = require(ReplicatedStorage.Shared.Config.Rarity)
 local Rules = require(ReplicatedStorage.Shared.Config.Rules)
 
 local Server = ServerScriptService.Server
@@ -45,6 +46,8 @@ type DState = {
 	shieldUntil: number,
 	shieldMult: number,
 	bar: Frame?,
+	rarityTier: number,
+	extra: number, -- mecânicas extras da raridade (0–3)
 }
 
 local states: { [Player]: DState } = {}
@@ -120,6 +123,8 @@ local function onAttached(player: Player, model: Model, dragon: { [string]: any 
 		shieldUntil = 0,
 		shieldMult = 1,
 		bar = nil,
+		rarityTier = (Rarity.Defs[dragon.Rarity] or Rarity.Defs.Common).Tier,
+		extra = (Rarity.Defs[dragon.Rarity] or Rarity.Defs.Common).ExtraMechanics,
 	}
 	st.health = math.min(savedHealth[dragon.Id] or st.maxHealth, st.maxHealth)
 	states[player] = st
@@ -282,8 +287,17 @@ local function usePower(st: DState, slot: string, aim: Vector3?)
 	if now < (st.cooldowns[slot] or 0) then
 		return
 	end
-	st.cooldowns[slot] = now + def.Cooldown
-	NetService.Fire(player, "SkillUsed", "Dragon" .. slot, def.Cooldown)
+	-- mecânicas extras da raridade: 1 = área maior · 2 = recarga menor · 3 = deixa os alvos lentos
+	local radiusMult = if st.extra >= 1 then 1.15 else 1
+	local cooldown = def.Cooldown * (if st.extra >= 2 then 0.9 else 1)
+	st.cooldowns[slot] = now + cooldown
+	NetService.Fire(player, "SkillUsed", "Dragon" .. slot, cooldown)
+	def = table.clone(def) :: any
+	def.Radius *= radiusMult
+	if st.extra >= 3 and not def.Slow and def.Kind ~= "Heal" and def.Kind ~= "Self" then
+		def.Slow = 0.3
+		def.Duration = 2
+	end
 
 	local origin = st.root.Position + Vector3.new(0, st.size * 0.35, 0)
 	local point = if typeof(aim) == "Vector3" then aim :: Vector3 else origin + st.root.CFrame.LookVector * 30
@@ -321,26 +335,26 @@ local function usePower(st: DState, slot: string, aim: Vector3?)
 		local hit = workspace:Raycast(origin, point - origin, params)
 		local impact = if hit then hit.Position else point
 		local travel = (impact - origin).Magnitude / 120
-		CombatService.Fx("Power", origin, { Id = def.Id, Kind = def.Kind, Element = def.Element, From = origin, To = impact, Radius = def.Radius, Time = travel })
+		CombatService.Fx("Power", origin, { Tier = st.rarityTier, Id = def.Id, Kind = def.Kind, Element = def.Element, From = origin, To = impact, Radius = def.Radius, Time = travel })
 		task.delay(travel, function()
 			hitTargets(impact, def.Radius, function(t)
 				return (t.root.Position - impact).Magnitude <= def.Radius + t.radius
 			end)
 		end)
 	elseif def.Kind == "Cone" then
-		CombatService.Fx("Power", origin, { Id = def.Id, Kind = def.Kind, Element = def.Element, From = origin, Dir = dir, Range = def.Range, Angle = def.Radius })
+		CombatService.Fx("Power", origin, { Tier = st.rarityTier, Id = def.Id, Kind = def.Kind, Element = def.Element, From = origin, Dir = dir, Range = def.Range, Angle = def.Radius })
 		hitTargets(origin, def.Range, function(t)
 			return inCone(origin, dir, t.root.Position, def.Range + t.radius, def.Radius)
 		end)
 	elseif def.Kind == "Line" then
 		local to = origin + dir * def.Range
-		CombatService.Fx("Power", origin, { Id = def.Id, Kind = def.Kind, Element = def.Element, From = origin, To = to, Radius = def.Radius })
+		CombatService.Fx("Power", origin, { Tier = st.rarityTier, Id = def.Id, Kind = def.Kind, Element = def.Element, From = origin, To = to, Radius = def.Radius })
 		hitTargets((origin + to) / 2, def.Range / 2 + def.Radius, function(t)
 			return segDist(t.root.Position, origin, to) <= def.Radius + t.radius
 		end)
 	elseif def.Kind == "Area" then
 		local center = if def.Range > 0 then point else st.root.Position
-		CombatService.Fx("Power", center, { Id = def.Id, Kind = def.Kind, Element = def.Element, From = origin, To = center, Radius = def.Radius })
+		CombatService.Fx("Power", center, { Tier = st.rarityTier, Id = def.Id, Kind = def.Kind, Element = def.Element, From = origin, To = center, Radius = def.Radius })
 		task.delay(0.35, function()
 			hitTargets(center, def.Radius, function(t)
 				return (t.root.Position - center).Magnitude <= def.Radius + t.radius
@@ -348,7 +362,7 @@ local function usePower(st: DState, slot: string, aim: Vector3?)
 		end)
 	elseif def.Kind == "Heal" then
 		local center = st.root.Position
-		CombatService.Fx("Power", center, { Id = def.Id, Kind = def.Kind, Element = def.Element, To = center, Radius = def.Radius, Time = def.Duration })
+		CombatService.Fx("Power", center, { Tier = st.rarityTier, Id = def.Id, Kind = def.Kind, Element = def.Element, To = center, Radius = def.Radius, Time = def.Duration })
 		local ticks = math.max(1, math.floor(def.Duration or 1))
 		local per = (def.Heal or 0) * st.powerMult / ticks
 		task.spawn(function()
@@ -374,7 +388,7 @@ local function usePower(st: DState, slot: string, aim: Vector3?)
 	elseif def.Kind == "Self" then
 		st.shieldUntil = now + (def.Duration or 5)
 		st.shieldMult = 1 - (def.Shield or 0.5)
-		CombatService.Fx("Power", st.root.Position, { Id = def.Id, Kind = def.Kind, Element = def.Element, To = st.root.Position, Radius = st.size * 0.6, Time = def.Duration })
+		CombatService.Fx("Power", st.root.Position, { Tier = st.rarityTier, Id = def.Id, Kind = def.Kind, Element = def.Element, To = st.root.Position, Radius = st.size * 0.6, Time = def.Duration })
 	end
 end
 
