@@ -623,6 +623,58 @@ function Props.fountain(cf: CFrame, parent)
 	return m
 end
 
+-- queda-d'água: lâmina translúcida com água "correndo" (partículas) e névoa embaixo.
+-- top e bottom são pontos do mundo; facing é a direção para onde a água cai (para fora do paredão)
+function Props.waterfall(top: Vector3, bottom: Vector3, width: number, facing: Vector3, parent)
+	local m = model("Waterfall", parent)
+	local h = top.Y - bottom.Y
+	if h < 2 then
+		return m
+	end
+	local flat = Vector3.new(facing.X, 0, facing.Z)
+	if flat.Magnitude < 0.01 then
+		flat = Vector3.new(0, 0, -1)
+	end
+	flat = flat.Unit
+	local mid = Vector3.new(top.X, (top.Y + bottom.Y) / 2, top.Z) + flat * 1.5
+	local cf = CFrame.lookAt(mid, mid + flat)
+	local sheet = part({ Name = "Sheet", Size = Vector3.new(width, h, 0.6), CFrame = cf, Material = Enum.Material.Glass, Color = Color3.fromRGB(196, 228, 240), Transparency = 0.45, CanCollide = false, CanQuery = false, CastShadow = false }, m)
+	local sheet2 = part({ Name = "SheetFront", Size = Vector3.new(width * 0.8, h, 0.3), CFrame = cf * CFrame.new(0, 0, -0.9), Material = Enum.Material.Glass, Color = Color3.fromRGB(230, 244, 250), Transparency = 0.7, CanCollide = false, CanQuery = false, CastShadow = false }, m)
+	local _ = sheet2
+	-- emissor no topo: faixas brancas descendo
+	local emitTop = part({ Name = "FlowEmitter", Size = Vector3.new(width, 0.5, 1), CFrame = cf * CFrame.new(0, h / 2, -0.6), Transparency = 1, CanCollide = false, CanQuery = false }, m)
+	local flow = Instance.new("ParticleEmitter")
+	flow.Texture = "rbxasset://textures/particles/smoke_main.dds"
+	flow.Color = ColorSequence.new(Color3.fromRGB(240, 250, 255))
+	flow.Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.55), NumberSequenceKeypoint.new(0.85, 0.65), NumberSequenceKeypoint.new(1, 1) })
+	flow.Size = NumberSequence.new(math.clamp(width * 0.35, 2, 10))
+	flow.Rate = math.clamp(width * 6, 20, 140)
+	flow.EmissionDirection = Enum.NormalId.Bottom
+	flow.Speed = NumberRange.new(14, 20)
+	flow.Acceleration = Vector3.new(0, -60, 0)
+	flow.Lifetime = NumberRange.new(math.sqrt(2 * h / 60) * 0.9, math.sqrt(2 * h / 60) * 1.05)
+	flow.SpreadAngle = Vector2.new(4, 4)
+	flow.LightInfluence = 1
+	flow.Parent = emitTop
+	-- névoa e espuma na base
+	local base = part({ Name = "MistEmitter", Size = Vector3.new(width, 0.5, width * 0.6), CFrame = CFrame.new(Vector3.new(bottom.X, bottom.Y + 1, bottom.Z) + flat * 3), Transparency = 1, CanCollide = false, CanQuery = false }, m)
+	local mist = Instance.new("ParticleEmitter")
+	mist.Texture = "rbxasset://textures/particles/smoke_main.dds"
+	mist.Color = ColorSequence.new(Color3.fromRGB(236, 246, 255))
+	mist.Transparency = NumberSequence.new(0.55, 1)
+	mist.Size = NumberSequence.new(math.clamp(width * 0.4, 3, 14), math.clamp(width * 0.8, 6, 26))
+	mist.Rate = math.clamp(width * 1.5, 6, 40)
+	mist.Lifetime = NumberRange.new(2, 3.5)
+	mist.Speed = NumberRange.new(3, 7)
+	mist.SpreadAngle = Vector2.new(60, 60)
+	mist.EmissionDirection = Enum.NormalId.Top
+	mist.LightInfluence = 1
+	mist.Parent = base
+	local foam = part({ Name = "Foam", Size = Vector3.new(width * 1.2, 0.3, width * 0.5), CFrame = CFrame.new(Vector3.new(bottom.X, bottom.Y + 0.2, bottom.Z) + flat * 2), Material = Enum.Material.SmoothPlastic, Color = Color3.fromRGB(240, 248, 252), Transparency = 0.35, CanCollide = false, CanQuery = false, CastShadow = false }, m)
+	local _2 = foam
+	return m
+end
+
 -- ninho de galhos e palha sobre pedras (habitat do ovo / cama de dragão)
 function Props.nest(cf: CFrame, parent, s: number, rng: Random)
 	local m = model("Nest", parent)

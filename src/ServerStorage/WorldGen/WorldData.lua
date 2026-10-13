@@ -61,7 +61,7 @@ WorldData.RIVERS = {
 	{ name = "Braço Norte", hw = 20, depth = 9, pts = { { 600, -1250, 7 }, { 200, -1000, 6.5 }, { -300, -1030, 6 }, { -650, -1450, 5.5 } } },
 	{ name = "Braço Sul", hw = 20, depth = 9, pts = { { 600, -1250, 7 }, { 300, -1950, 6.5 }, { -300, -1980, 6 }, { -650, -1550, 5.5 } } },
 	{ name = "Rio do Sudoeste", hw = 24, depth = 10, pts = { { -650, -1500, 5.5 }, { -1500, -2200, 5 }, { -2300, -3300, 4.6 }, { -2560, -4650, 4.2 } } },
-	{ name = "Rio das Cachoeiras", hw = 20, depth = 9, pts = { { 3200, 3700, 70 }, { 3500, 2200, 42 }, { 3700, 800, 30 }, { 3720, 450, 29 }, { 3760, 260, 13 }, { 3800, -650, 12 } } },
+	{ name = "Rio das Cachoeiras", hw = 20, depth = 9, pts = { { 3200, 3700, 70 }, { 3500, 2200, 42 }, { 3700, 800, 30 }, { 3720, 450, 29 }, { 3732, 352, 29 }, { 3742, 326, 13 }, { 3760, 260, 13 }, { 3800, -650, 12 } } },
 }
 
 -- Estradas e trilhas (meia-largura 7 studs)
@@ -141,9 +141,12 @@ WorldData.SHAPES = {
 	{ name = "Rochedo do Castelo", kind = "mesa", x = 3600, y = 6000, top = 620, rTop = 200, R = 560 },
 	{ name = "Colina da Árvore-Mãe", kind = "hill", x = -3200, y = 1300, R = 450, H = 70 },
 	{ name = "Pilar de Cristal", kind = "cone", x = 6600, y = 300, R = 380, H = 260, exp = 2.2 },
+	{ name = "Paredão da Cachoeira Grande", kind = "hill", x = 3700, y = 560, R = 340, H = 48 },
 }
 
 -- Ilhas flutuantes: centro (x, y), altitude do topo, raio
+WorldData.GREAT_WATERFALL = { x = 3738, y = 338, top = 29, bottom = 13, width = 44 }
+
 WorldData.SKY_ISLANDS = {
 	{ name = "Arquipélago Celeste I", x = 1300, y = 2300, alt = 520, r = 170 },
 	{ name = "Arquipélago Celeste II", x = 1900, y = 2700, alt = 640, r = 130 },

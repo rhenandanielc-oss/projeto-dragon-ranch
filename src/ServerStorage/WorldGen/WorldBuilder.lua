@@ -1717,34 +1717,68 @@ function WorldBuilder:buildLandmarks()
 			end
 		end
 	end
-	-- Portão da dungeon no fundo do vale escondido (sem marcador)
+	-- Portão da dungeon no fundo do vale escondido (sem marcador), encostado no paredão
+	-- norte, atrás de uma cachoeira que cai num lago
 	local D = self.data.DUNGEON
-	local dy = self:groundY(D.x, D.y + 40)
+	local floorY = self:groundY(D.x, D.y)
 	local gate = Instance.new("Model")
 	gate.Name = "DungeonGate"
-	local gp = V(D.x, D.y + 40, dy)
-	part({ Name = "PillarL", Size = Vector3.new(6, 30, 6), CFrame = CFrame.new(gp + Vector3.new(-12, 15, 0)), Material = Enum.Material.Slate, Color = Color3.fromRGB(80, 84, 92) }, gate)
-	part({ Name = "PillarR", Size = Vector3.new(6, 30, 6), CFrame = CFrame.new(gp + Vector3.new(12, 15, 0)), Material = Enum.Material.Slate, Color = Color3.fromRGB(80, 84, 92) }, gate)
-	part({ Name = "Lintel", Size = Vector3.new(32, 6, 7), CFrame = CFrame.new(gp + Vector3.new(0, 33, 0)), Material = Enum.Material.Slate, Color = Color3.fromRGB(70, 74, 82) }, gate)
-	local portal = part({ Name = "Portal", Size = Vector3.new(18, 30, 1), CFrame = CFrame.new(gp + Vector3.new(0, 15, 0)), Material = Enum.Material.Neon, Color = Color3.fromRGB(90, 60, 200), Transparency = 0.35, CanCollide = false }, gate)
+	local origin = V(D.x, D.y, floorY + 20)
+	local north = Vector3.new(0, 0, -1)
+	local wallHit = workspace:Raycast(origin, north * 300, self.raySolid)
+	local wallP = if wallHit then wallHit.Position else origin + north * 120
+	local south = -north
+	local gp = Vector3.new(wallP.X, self:groundY(wallP.X, -(wallP.Z + 10)), wallP.Z + 10)
+	local gcf = CFrame.lookAt(gp, gp + south)
+	-- arco de pedra escura com runas
+	for _, sx in ipairs({ -13, 13 }) do
+		part({ Name = "Pillar", Size = Vector3.new(7, 34, 7), CFrame = gcf * CFrame.new(sx, 17, 0), Material = Enum.Material.Slate, Color = Color3.fromRGB(72, 76, 84) }, gate)
+		for k = 0, 3 do
+			part({ Name = "Rune", Size = Vector3.new(1, 2.4, 0.2), CFrame = gcf * CFrame.new(sx, 8 + k * 6, -3.6), Material = Enum.Material.Neon, Color = Color3.fromRGB(150, 110, 255), CastShadow = false }, gate)
+		end
+	end
+	part({ Name = "Lintel", Size = Vector3.new(36, 7, 8), CFrame = gcf * CFrame.new(0, 37, 0), Material = Enum.Material.Slate, Color = Color3.fromRGB(64, 68, 76) }, gate)
+	local portal = part({ Name = "Portal", Size = Vector3.new(19, 33, 1), CFrame = gcf * CFrame.new(0, 16.5, 1), Material = Enum.Material.Neon, Color = Color3.fromRGB(90, 60, 200), Transparency = 0.35, CanCollide = false }, gate)
 	portal:SetAttribute("DungeonEntrance", true)
 	local pl = Instance.new("PointLight")
 	pl.Color = Color3.fromRGB(140, 100, 255)
-	pl.Range = 40
+	pl.Range = 45
 	pl.Brightness = 2
 	pl.Parent = portal
-	-- cortina de cachoeira na frente do portão
-	local fall = part({ Name = "Waterfall", Size = Vector3.new(40, 60, 2), CFrame = CFrame.new(gp + Vector3.new(0, 30, 10)), Material = Enum.Material.Glass, Color = Color3.fromRGB(180, 220, 240), Transparency = 0.45, CanCollide = false, CanQuery = false }, gate)
-	local mist = Instance.new("ParticleEmitter")
-	mist.Texture = "rbxasset://textures/particles/smoke_main.dds"
-	mist.Color = ColorSequence.new(Color3.fromRGB(235, 245, 255))
-	mist.Transparency = NumberSequence.new(0.6, 1)
-	mist.Size = NumberSequence.new(6, 14)
-	mist.Rate = 10
-	mist.Lifetime = NumberRange.new(2, 4)
-	mist.Speed = NumberRange.new(2, 5)
-	mist.EmissionDirection = Enum.NormalId.Bottom
-	mist.Parent = fall
+	-- cachoeira caindo do alto do paredão, na frente do portão
+	local rim = workspace:Raycast(Vector3.new(gp.X, 3000, wallP.Z - 25), Vector3.new(0, -3200, 0), self.raySolid)
+	local rimY = if rim then rim.Position.Y else gp.Y + 120
+	local fallTop = Vector3.new(gp.X, rimY - 2, wallP.Z + 4)
+	self.Props.waterfall(fallTop, Vector3.new(gp.X, gp.Y, wallP.Z + 16), 34, south, gate)
+	-- lago na base da cachoeira
+	local pc = gp + south * 34
+	Terrain:FillCylinder(CFrame.new(pc.X, pc.Y + 2, pc.Z), 12, 24, Enum.Material.Air)
+	Terrain:FillCylinder(CFrame.new(pc.X, pc.Y - 7, pc.Z), 4, 26, Enum.Material.Slate)
+	Terrain:FillCylinder(CFrame.new(pc.X, pc.Y - 2.5, pc.Z), 5, 23.5, Enum.Material.Water)
+	for k = 0, 17 do
+		local a = k / 18 * math.pi * 2
+		if math.sin(a) > -0.5 then -- borda aberta do lado do portão
+			Terrain:FillBall(Vector3.new(pc.X + math.cos(a) * 25, pc.Y - 0.5, pc.Z + math.sin(a) * 25), rng:NextNumber(3, 4.5), Enum.Material.Rock)
+		end
+	end
+	-- trilha de pedras até o portão, samambaias e tochas
+	for k = 0, 6 do
+		local q = gp + south * (8 + k * 4) + Vector3.new(26 + rng:NextNumber(-1, 1), 0, 0)
+		part({ Name = "SteppingStone", Size = Vector3.new(4, 0.8, 3.4), CFrame = CFrame.new(q.X, self:groundY(q.X, -q.Z) + 0.1, q.Z) * CFrame.Angles(0, rng:NextNumber(0, 3), 0), Material = Enum.Material.Slate, Color = Color3.fromRGB(100, 102, 106) }, gate)
+	end
+	for _, sx in ipairs({ -22, 22 }) do
+		local q = gp + Vector3.new(sx, 0, 8)
+		self.Props.torch(CFrame.new(q.X, self:groundY(q.X, -q.Z), q.Z), gate)
+	end
+	for _ = 1, 24 do
+		local a = rng:NextNumber(0, math.pi * 2)
+		local r = rng:NextNumber(30, 70)
+		local q = pc + Vector3.new(math.cos(a) * r, 0, math.sin(a) * r)
+		local hit = self:surface(q.X, -q.Z)
+		if hit and hit.Material ~= Enum.Material.Water then
+			self:plant(if rng:NextNumber() < 0.6 then "Fern" else "Bush", hit.Position, rng:NextNumber(0.8, 1.3), gate)
+		end
+	end
 	gate.Parent = folder
 end
 
