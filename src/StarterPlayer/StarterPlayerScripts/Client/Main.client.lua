@@ -18,6 +18,9 @@ local Dialog = require(UI:WaitForChild("Dialog"))
 local FarmChooser = require(UI:WaitForChild("FarmChooser"))
 local Compass = require(UI:WaitForChild("Compass"))
 local GraphicsSettings = require(UI:WaitForChild("GraphicsSettings"))
+local InventoryPanel = require(UI:WaitForChild("InventoryPanel"))
+local ShopPanel = require(UI:WaitForChild("ShopPanel"))
+local TravelPanel = require(UI:WaitForChild("TravelPanel"))
 local Wind = require(Client:WaitForChild("World"):WaitForChild("Wind"))
 local MountController = require(Client:WaitForChild("Dragon"):WaitForChild("MountController"))
 
@@ -38,6 +41,9 @@ FarmChooser.Init(screen)
 Compass.Init(screen)
 Wind.Init()
 GraphicsSettings.Init(screen)
+InventoryPanel.Init(screen)
+ShopPanel.Init(screen)
+TravelPanel.Init(screen)
 MountController.Init()
 
 -- Cada jogador só vê as ações dos próprios dragões.
@@ -73,6 +79,22 @@ end)
 
 NetClient.On("NpcDialog", function(npcId: string)
 	Dialog.Open(npcId)
+end)
+
+NetClient.On("OpenStorage", function()
+	InventoryPanel.OpenStorage()
+end)
+
+NetClient.On("OpenShop", function()
+	ShopPanel.Open()
+end)
+
+NetClient.On("OpenWaypoints", function(currentId: number, dests: { any })
+	TravelPanel.Open(currentId, dests)
+end)
+
+NetClient.On("ChannelStarted", function(seconds: number, text: string)
+	TravelPanel.Channel(seconds, text)
 end)
 
 NetClient.On("FarmChooser", function(free: { string }, current: string, canChoose: boolean)

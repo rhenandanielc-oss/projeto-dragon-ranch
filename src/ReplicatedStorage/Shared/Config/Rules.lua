@@ -36,6 +36,16 @@ Rules.Mount = {
 	StrikesToReset = 3,
 }
 
+-- Viagem: waypoints despertados por exploração e Pedra do Retorno (WORLD-DESIGN D7). Provisório.
+Rules.Travel = {
+	WaypointDistance = 22, -- distância do obelisco para despertar/viajar
+	WaypointCooldownSeconds = 20,
+	ReturnStoneUnlockWaypoints = 3, -- despertar 3 waypoints dá a Pedra do Retorno
+	ReturnChannelSeconds = 4, -- parado segurando a pedra
+	ReturnMaxMove = 3, -- se andar mais que isso durante a canalização, cancela
+	ReturnCooldownSeconds = 300,
+}
+
 Rules.Farm = {
 	StartDragonSlots = 3,
 	MaxDragonSlots = 8,

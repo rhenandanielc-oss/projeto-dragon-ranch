@@ -209,7 +209,7 @@ function DragonPanel.Init(screen: ScreenGui)
 	panel = Theme.new("Frame", {
 		Name = "DragonPanel",
 		AnchorPoint = Vector2.new(0, 1),
-		Position = UDim2.new(0, 12, 1, -72),
+		Position = UDim2.new(0, 140, 1, -12),
 		Size = UDim2.new(0.42, 0, 0.72, 0),
 		BackgroundColor3 = Theme.Colors.Panel,
 		BackgroundTransparency = 0.05,

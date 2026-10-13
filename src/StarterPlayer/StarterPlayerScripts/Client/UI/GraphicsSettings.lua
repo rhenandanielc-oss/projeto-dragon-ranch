@@ -135,8 +135,8 @@ function GraphicsSettings.Init(screen: ScreenGui)
 	local _ = CollectionService
 
 	local toggle = Theme.button("Gráficos", {
-		AnchorPoint = Vector2.new(0, 1),
-		Position = UDim2.new(0, 160, 1, -12),
+		AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.new(1, -12, 0, 60),
 		Size = UDim2.fromOffset(120, 44),
 		TextSize = 16,
 		BackgroundColor3 = Theme.Colors.ButtonAlt,
@@ -144,8 +144,8 @@ function GraphicsSettings.Init(screen: ScreenGui)
 	})
 	panel = Theme.new("Frame", {
 		Name = "GraphicsPanel",
-		AnchorPoint = Vector2.new(0, 1),
-		Position = UDim2.new(0, 12, 1, -66),
+		AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.new(1, -12, 0, 112),
 		Size = UDim2.fromOffset(340, 210),
 		BackgroundColor3 = Theme.Colors.Panel,
 		Visible = false,

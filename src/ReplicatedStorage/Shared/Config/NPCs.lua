@@ -9,8 +9,8 @@ local NPCs = {
 		Body = { Skin = Color3.fromRGB(234, 184, 146), Shirt = Color3.fromRGB(196, 120, 40), Pants = Color3.fromRGB(90, 64, 42) },
 		Lines = {
 			"Bem-vindo às Terras de Escamarra, viajante!",
-			"Em breve vou vender comida, água, poções e até ovos de dragão.",
-			"Também vou comprar os materiais que você coletar pelo mundo. Volte logo!",
+			"Vendo carne, cantis de água, poções, flechas e até ovos de dragão.",
+			"E compro, a preço justo, os materiais que você coletar pelo mundo: madeira, pedra, ervas, penas, cristais...",
 		},
 	},
 	QuestMaster = {

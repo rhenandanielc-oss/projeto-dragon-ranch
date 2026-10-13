@@ -7,6 +7,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local NPCs = require(ReplicatedStorage.Shared.Config.NPCs)
 local NetService = require(ServerScriptService.Server.Services.NetService)
+local ShopService = require(ServerScriptService.Server.Services.ShopService)
 
 local NPCService = {}
 
@@ -70,6 +71,20 @@ local function buildNpc(marker: BasePart, id: string, def: any): Model?
 	prompt.Triggered:Connect(function(player: Player)
 		NetService.Fire(player, "NpcDialog", id)
 	end)
+	if id == "Merchant" then
+		local shop = Instance.new("ProximityPrompt")
+		shop.Name = "Shop"
+		shop.ActionText = "Comprar e vender"
+		shop.ObjectText = def.Name
+		shop.KeyboardKeyCode = Enum.KeyCode.R
+		shop.UIOffset = Vector2.new(0, -72)
+		shop.MaxActivationDistance = 12
+		shop.RequiresLineOfSight = false
+		shop.Parent = hrp
+		shop.Triggered:Connect(function(player: Player)
+			ShopService.Open(player)
+		end)
+	end
 
 	npc.Parent = marker.Parent
 	return npc

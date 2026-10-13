@@ -39,6 +39,8 @@ function ProfileTemplate.New(): { [string]: any }
 		Quests = { Active = {}, Completed = {} },
 		Farm = { Placed = {}, PreferredBiome = "" }, -- bioma preferido (escolha liberada com dragão Jovem)
 
+		Travel = { Waypoints = {}, ReturnReadyAt = 0 }, -- Waypoints["3"] = true quando despertado
+
 		Protection = { NewPlayer = true },
 		Dungeon = { FinalChestReadyAt = 0 },
 
