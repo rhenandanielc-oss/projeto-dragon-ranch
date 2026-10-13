@@ -1261,13 +1261,14 @@ end
 -- Acampamentos, waypoints, marcos, castelo, dungeon
 --------------------------------------------------------------------------
 -- Direção (no mapa) da estrada mais próxima de um ponto
-function WorldBuilder:roadDirection(x: number, y: number): (number, number)
+function WorldBuilder:roadDirection(x: number, y: number, minDist: number?): (number, number)
 	local best, bx, by = math.huge, nil, nil
 	local WorldGen = require((self.folder :: any).WorldGen:Clone())
+	local md2 = (minDist or 20) ^ 2
 	for _, road in ipairs(self.data.ROADS) do
 		for _, p in ipairs(WorldGen.sampleOpen(road, 10)) do
 			local d = (p[1] - x) ^ 2 + (p[2] - y) ^ 2
-			if d < best then
+			if d < best and d > md2 then
 				best, bx, by = d, p[1], p[2]
 			end
 		end
@@ -1639,7 +1640,7 @@ function WorldBuilder:buildLandmarks()
 		local gy = self:groundY(castleShape.x, castleShape.y)
 		local pos = V(castleShape.x, castleShape.y, gy)
 		-- frente do castelo virada para a estrada em serpentina que sobe
-		local rx, ry = self:roadDirection(castleShape.x, castleShape.y)
+		local rx, ry = self:roadDirection(castleShape.x, castleShape.y, 260)
 		local ccf = CFrame.lookAt(pos, pos + Vector3.new(rx, 0, -ry))
 		local castle = self.Props.castle(ccf, folder, castleShape.rTop * 0.72, function(scf: CFrame, h: number)
 			self:dragonStatue(scf, h, folder)
