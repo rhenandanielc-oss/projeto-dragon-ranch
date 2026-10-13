@@ -57,10 +57,8 @@ WorldData.SWAMP_LEVEL = 4
 -- Rios: hw = meia-largura do leito, depth = profundidade; pontos {x, y, nível da água}
 WorldData.RIVERS = {
 	{ name = "Rio Principal", hw = 34, depth = 14, pts = { { -3000, 5700, 250 }, { -3300, 3000, 42 }, { -3800, 700, 26 }, { -3600, -1200, 17 }, { -3000, -3200, 9 }, { -2400, -5200, 3 }, { -2200, -7000, 0 }, { -2150, -7700, 0 } } },
-	{ name = "Rio do Lago", hw = 26, depth = 11, pts = { { 3000, -1360, 12 }, { 1600, -1300, 9 }, { 600, -1250, 7 } } },
-	{ name = "Braço Norte", hw = 20, depth = 9, pts = { { 600, -1250, 7 }, { 200, -1000, 6.5 }, { -300, -1030, 6 }, { -650, -1450, 5.5 } } },
-	{ name = "Braço Sul", hw = 20, depth = 9, pts = { { 600, -1250, 7 }, { 300, -1950, 6.5 }, { -300, -1980, 6 }, { -650, -1550, 5.5 } } },
-	{ name = "Rio do Sudoeste", hw = 24, depth = 10, pts = { { -650, -1500, 5.5 }, { -1500, -2200, 5 }, { -2300, -3300, 4.6 }, { -2560, -4650, 4.2 } } },
+	{ name = "Rio do Lago", hw = 26, depth = 11, pts = { { 3000, -1360, 12 }, { 1600, -1300, 8.5 }, { 700, -1260, 6 } } },
+	{ name = "Rio do Sudoeste", hw = 24, depth = 10, pts = { { -650, -1650, 6 }, { -1500, -2200, 5.4 }, { -2300, -3300, 4.6 }, { -2560, -4650, 4.2 } } },
 	{ name = "Rio das Cachoeiras", hw = 20, depth = 9, pts = { { 3200, 3700, 70 }, { 3500, 2200, 42 }, { 3700, 800, 30 }, { 3720, 450, 29 }, { 3732, 352, 29 }, { 3742, 326, 13 }, { 3760, 260, 13 }, { 3800, -650, 12 } } },
 }
 
@@ -84,6 +82,27 @@ WorldData.ROADS = {
 }
 
 WorldData.HUB = { x = 0, y = -1500, r0 = 320, r1 = 470, target = 16 }
+
+-- Baía do Coração: o Hub vira uma ilha no meio de uma baía grande (rio do lago entra pelo leste,
+-- rio do sudoeste sai pelo sudoeste). Fundo raso de areia perto das margens (água turquesa e
+-- transparente) e fundo escuro no meio (azul profundo).
+WorldData.BAY = { name = "Baía do Coração", x = 0, y = -1500, rIsland = 530, rShore = 980, level = 6 }
+
+-- Pontes grandes: uma por estrada que sai do Hub (na ordem das estradas em ROADS)
+WorldData.GRAND_BRIDGES = {
+	{ name = "Ponte do Dragão", accent = { 90, 170, 255 } }, -- norte (Prados, Cordilheira)
+	{ name = "Ponte da Floresta", accent = { 100, 230, 150 } }, -- oeste (Floresta Densa)
+	{ name = "Ponte do Lago", accent = { 80, 220, 235 } }, -- leste (Grande Lago, Cristais)
+	{ name = "Ponte dos Mercadores", accent = { 255, 190, 90 } }, -- sudeste (Moinho, Pântano)
+	{ name = "Ponte do Farol", accent = { 120, 200, 255 } }, -- sul (Costa, Farol)
+	{ name = "Ponte Celeste", accent = { 175, 115, 255 } }, -- sudoeste (Garganta Rubra)
+}
+WorldData.BRIDGE_WIDTH = 46
+
+-- Bosques fechados especiais (floresta densa forçada, com borda aberta numa direção)
+WorldData.DENSE_GROVES = {
+	{ name = "Bosque Escondido", x = -1250, y = 3630, r = 650, openDir = { 1, -0.35 }, kit = "pine", giant = 1.3 },
+}
 
 -- Fazendas: tier 1 = faixa interna (novatos), 2 = média, 3 = externa
 WorldData.FARMS = {
@@ -172,6 +191,7 @@ WorldData.SKY_ISLANDS = {
 	{ name = "Ilha das Brasas", x = -6600, y = -2600, alt = 900, r = 130 },
 	{ name = "Ilha de Cristal", x = 6500, y = -1600, alt = 800, r = 140 },
 	{ name = "Ilha da Guarda", x = 2400, y = 5200, alt = 1150, r = 120 },
+	{ name = "Ilha do Bosque", x = -250, y = 3250, alt = 400, r = 95 }, -- vista das clareiras do Bosque Escondido
 }
 
 return WorldData

@@ -33,6 +33,7 @@ function WorldBuilder.new(folder: Instance)
 	self.gen = WorldGen.new(self.data)
 	self.assets = ServerStorage:FindFirstChild("WorldAssets")
 	self.Props = require((folder :: any).Props:Clone())
+	self.GrandBridge = require((folder :: any).GrandBridge:Clone())
 	self.rng = Random.new(20261012)
 	local rp = RaycastParams.new()
 	rp.FilterType = Enum.RaycastFilterType.Include
@@ -653,8 +654,13 @@ function WorldBuilder:buildBridges()
 		local pts = WorldGen.sampleOpen(road, 6)
 		local inWater = false
 		local startIdx = 0
+		local BAY = self.data.BAY
 		for i, p in ipairs(pts) do
 			local wet = self:waterAlong(p[1], p[2])
+			-- a baía do Hub tem as pontes grandes (buildGrandBridges)
+			if wet and BAY and (p[1] - BAY.x) ^ 2 + (p[2] - BAY.y) ^ 2 < (BAY.rShore + 160) ^ 2 then
+				wet = false
+			end
 			if wet and not inWater then
 				inWater = true
 				startIdx = i
@@ -683,6 +689,165 @@ function WorldBuilder:buildBridges()
 		task.wait()
 	end
 	return count
+end
+
+--------------------------------------------------------------------------
+-- Baía do Coração: pontes grandes, cais da ilha e barcos
+--------------------------------------------------------------------------
+function WorldBuilder:hubBridgeDirs(): { { dir: Vector3, spec: any } }
+	local BAY, H = self.data.BAY, self.data.HUB
+	local out = {}
+	local k = 0
+	for _, road in ipairs(self.data.ROADS) do
+		if road[1][1] == H.x and road[1][2] == H.y then
+			k += 1
+			local nx, ny = road[2][1] - H.x, road[2][2] - H.y
+			local len = math.sqrt(nx * nx + ny * ny)
+			table.insert(out, { dx = nx / len, dy = ny / len, spec = self.data.GRAND_BRIDGES[k] })
+		end
+	end
+	return out :: any
+end
+
+function WorldBuilder:buildGrandBridges()
+	self:status("grandbridges")
+	local BAY = self.data.BAY
+	if not BAY then
+		return 0
+	end
+	local folder = self:container("GrandBridges", self:worldFolder())
+	local function statue(cf: CFrame, h: number, parent: Instance)
+		return self:dragonStatue(cf, h, parent, false)
+	end
+	local n = 0
+	for _, d in ipairs(self:hubBridgeDirs() :: any) do
+		local spec = d.spec or { name = "Ponte", accent = { 120, 180, 255 } }
+		-- pontas: dentro da ilha e já em terra firme do outro lado (passa a margem irregular)
+		local ax, ay = BAY.x + d.dx * (BAY.rIsland - 45), BAY.y + d.dy * (BAY.rIsland - 45)
+		local bx, by = BAY.x + d.dx * (BAY.rShore + 150), BAY.y + d.dy * (BAY.rShore + 150)
+		local A = V(ax, ay, self:groundY(ax, ay))
+		local B = V(bx, by, self:groundY(bx, by))
+		local c = spec.accent
+		self.GrandBridge.build({
+			name = spec.name,
+			a = A,
+			b = B,
+			width = self.data.BRIDGE_WIDTH or 46,
+			accent = Color3.fromRGB(c[1], c[2], c[3]),
+			waterY = BAY.level,
+			floorY = BAY.level - 46,
+		}, folder, self.Props, statue, self.rng)
+		-- avenida da ilha até a ponte e caminho de pedra da margem até a estrada
+		local H = self.data.HUB
+		self:paintStrip(V(BAY.x + d.dx * (H.r0 + 40), BAY.y + d.dy * (H.r0 + 40)), A, 22, Enum.Material.Cobblestone)
+		self:paintStrip(B, V(BAY.x + d.dx * (BAY.rShore + 260), BAY.y + d.dy * (BAY.rShore + 260)), 22, Enum.Material.Cobblestone)
+		n += 1
+		task.wait()
+	end
+	return n
+end
+
+-- Cais em volta da ilha (mureta com lanternas), píeres com barcos e mirantes para o mar
+function WorldBuilder:buildHubQuay()
+	self:status("quay")
+	local BAY = self.data.BAY
+	if not BAY then
+		return
+	end
+	local folder = self:container("Quay", self:worldFolder())
+	local dirs = self:hubBridgeDirs() :: any
+	local function nearBridge(a: number): boolean
+		for _, d in ipairs(dirs) do
+			local ba = math.atan2(d.dy, d.dx)
+			local diff = math.abs((a - ba + math.pi) % (2 * math.pi) - math.pi)
+			if diff < math.rad(7) then
+				return true
+			end
+		end
+		return false
+	end
+	local R = BAY.rIsland - 70
+	local N = 96
+	local docks = { math.rad(200), math.rad(250), math.rad(320) }
+	local function nearDock(a: number): boolean
+		for _, da in ipairs(docks) do
+			local diff = math.abs((a - da + math.pi) % (2 * math.pi) - math.pi)
+			if diff < math.rad(3) then
+				return true
+			end
+		end
+		return false
+	end
+	for i = 0, N - 1 do
+		local a0, a1 = i / N * math.pi * 2, (i + 1) / N * math.pi * 2
+		local am = (a0 + a1) / 2
+		if not nearBridge(am) and not nearDock(am) then
+			local p0 = V(BAY.x + math.cos(a0) * R, BAY.y + math.sin(a0) * R)
+			local p1 = V(BAY.x + math.cos(a1) * R, BAY.y + math.sin(a1) * R)
+			local y = math.max(self:groundY(p0.X, -p0.Z), self:groundY(p1.X, -p1.Z))
+			local mid = Vector3.new((p0.X + p1.X) / 2, y, (p0.Z + p1.Z) / 2)
+			local len = (Vector3.new(p1.X, 0, p1.Z) - Vector3.new(p0.X, 0, p0.Z)).Magnitude + 0.5
+			local cf = CFrame.lookAt(mid, Vector3.new(p1.X, y, p1.Z))
+			part({ Name = "QuayWall", Size = Vector3.new(2.2, 4, len), CFrame = cf * CFrame.new(0, 1.5, 0), Material = Enum.Material.Slate, Color = Color3.fromRGB(86, 88, 96) }, folder)
+			part({ Name = "QuayCap", Size = Vector3.new(3, 0.7, len), CFrame = cf * CFrame.new(0, 3.8, 0), Material = Enum.Material.Slate, Color = Color3.fromRGB(150, 140, 120) }, folder)
+			self:paintStrip(Vector3.new(p0.X, y, p0.Z) - (cf.RightVector * 6), Vector3.new(p1.X, y, p1.Z) - (cf.RightVector * 6), 10, Enum.Material.Cobblestone)
+			if i % 4 == 0 then
+				local lp = self.Props.lanternPost(cf * CFrame.new(-2.5, 0, 0) * CFrame.Angles(0, math.rad(-90), 0), folder, 10)
+				if i % 8 == 4 then
+					local g = lp:FindFirstChild("LanternGlass")
+					local l = g and g:FindFirstChildOfClass("PointLight")
+					if l then
+						l:Destroy()
+					end
+				end
+			end
+		end
+		if i % 12 == 0 then
+			task.wait()
+		end
+	end
+	-- píeres de madeira com barcos
+	for _, a in ipairs(docks) do
+		local p0 = V(BAY.x + math.cos(a) * (R - 6), BAY.y + math.sin(a) * (R - 6))
+		local p1 = V(BAY.x + math.cos(a) * (R + 130), BAY.y + math.sin(a) * (R + 130))
+		self.Props.pier(p0, p1, BAY.level + 2.2, 12, folder)
+		local out = (p1 - p0) * Vector3.new(1, 0, 1)
+		out = out.Unit
+		local side = out:Cross(Vector3.yAxis)
+		for k, f in ipairs({ 0.45, 0.8 }) do
+			local q = p0:Lerp(p1, f) + side * (if k == 1 then 13 else -13)
+			self:boat(CFrame.lookAt(Vector3.new(q.X, BAY.level, q.Z), Vector3.new(q.X, BAY.level, q.Z) + out), folder, k == 2)
+		end
+	end
+end
+
+-- barco simples de madeira (casco, bancos e, às vezes, mastro com vela)
+function WorldBuilder:boat(cf: CFrame, parent: Instance, sail: boolean)
+	local m = Instance.new("Model")
+	m.Name = "Boat"
+	local wood = Color3.fromRGB(110, 76, 48)
+	part({ Name = "Hull", Size = Vector3.new(7, 2.4, 20), CFrame = cf * CFrame.new(0, 0.4, 0), Material = Enum.Material.WoodPlanks, Color = wood }, m)
+	for _, sz in ipairs({ -1, 1 }) do
+		local w = Instance.new("WedgePart")
+		w.Anchored = true
+		w.Size = Vector3.new(7, 2.4, 5)
+		w.CFrame = cf * CFrame.new(0, 0.4, sz * 12.5) * CFrame.Angles(0, if sz > 0 then math.pi else 0, 0)
+		w.Material = Enum.Material.WoodPlanks
+		w.Color = wood
+		w.Parent = m
+	end
+	for _, sx in ipairs({ -1, 1 }) do
+		part({ Name = "Gunwale", Size = Vector3.new(0.6, 1.2, 20), CFrame = cf * CFrame.new(sx * 3.5, 2.1, 0), Material = Enum.Material.Wood, Color = Color3.fromRGB(80, 56, 36) }, m)
+	end
+	for _, z in ipairs({ -5, 3 }) do
+		part({ Name = "Seat", Size = Vector3.new(6.4, 0.5, 1.6), CFrame = cf * CFrame.new(0, 1.6, z), Material = Enum.Material.Wood, Color = Color3.fromRGB(96, 68, 44) }, m)
+	end
+	if sail then
+		part({ Name = "Mast", Size = Vector3.new(0.7, 16, 0.7), CFrame = cf * CFrame.new(0, 9.5, -2), Material = Enum.Material.Wood, Color = Color3.fromRGB(80, 56, 36) }, m)
+		part({ Name = "Sail", Size = Vector3.new(0.2, 10, 8), CFrame = cf * CFrame.new(0.4, 11, 1.5), Material = Enum.Material.Fabric, Color = Color3.fromRGB(226, 214, 186), CanCollide = false }, m)
+	end
+	m.Parent = parent
+	return m
 end
 
 --------------------------------------------------------------------------
@@ -2000,6 +2165,8 @@ function WorldBuilder:buildSkyIslands()
 		local m = Instance.new("Model")
 		m.Name = string.format("SkyIsland%02d", i)
 		m:SetAttribute("IslandName", isl.name)
+		-- ponto de pouso dos dragões selvagens (no topo, perto do centro)
+		m:SetAttribute("LandingSpot", Vector3.new(isl.x + isl.r * 0.15, isl.alt + 3, -(isl.y - isl.r * 0.2)))
 		m:SetAttribute("DragonFood", true)
 		m:SetAttribute("DragonWater", true)
 		local snowy = isl.alt > 1200
@@ -2062,6 +2229,15 @@ local FOREST = {
 }
 WorldBuilder.UNDER = UNDER
 
+-- Regiões de mata fechada (floresta contínua): kit, sub-bosque e altura máxima
+local DENSE = {
+	forest = { kit = "pine", under = "default", maxH = 520 },
+	enchanted = { kit = "enchanted", under = "enchanted", maxH = 520 },
+	mountain = { kit = "fir", under = "default", maxH = 430 },
+	swamp = { kit = "swamp", under = "swamp", maxH = 220 },
+	swampcore = { kit = "swamp", under = "swamp", maxH = 220 },
+}
+
 function WorldBuilder:excluded(x: number, y: number): boolean
 	for _, p in ipairs(self.gen.pads) do
 		local dx, dy = x - p.x, y - p.y
@@ -2078,7 +2254,113 @@ function WorldBuilder:excluded(x: number, y: number): boolean
 			end
 		end
 	end
+	if self:trailDist(x, y) < 7 then
+		return true
+	end
 	return self:roadDist(x, y) < 16
+end
+
+-- Trilhas sinuosas dos bosques fechados (uma até a borda aberta, outra para o fundo da mata)
+function WorldBuilder:groveTrails()
+	if self._trails then
+		return self._trails
+	end
+	local out = {}
+	for _, g in ipairs(self.data.DENSE_GROVES or {}) do
+		local od = g.openDir
+		local l = math.sqrt(od[1] ^ 2 + od[2] ^ 2)
+		local a0 = math.atan2(od[2] / l, od[1] / l)
+		local function path(ang: number, len: number, seed: number)
+			local pts = {}
+			local n = math.max(2, math.floor(len / 24))
+			for i = 0, n do
+				local d = i / n * len
+				local w = 42 * math.noise(d / 150, seed, 71.3) * math.min(1, d / 60)
+				local px = g.x + math.cos(ang) * d - math.sin(ang) * w
+				local py = g.y + math.sin(ang) * d + math.cos(ang) * w
+				table.insert(pts, { px, py })
+			end
+			return pts
+		end
+		table.insert(out, { kind = "edge", grove = g, pts = path(a0, g.r * 0.98, 3.7) })
+		table.insert(out, { kind = "deep", grove = g, pts = path(a0 + 2.5, g.r * 0.62, 9.1) })
+	end
+	self._trails = out
+	return out
+end
+
+function WorldBuilder:trailDist(x: number, y: number): number
+	local best = math.huge
+	for _, tr in ipairs(self:groveTrails()) do
+		local g = tr.grove
+		if (x - g.x) ^ 2 + (y - g.y) ^ 2 < (g.r + 40) ^ 2 then
+			local pts = tr.pts
+			for i = 1, #pts - 1 do
+				local ax, ay, bx, by = pts[i][1], pts[i][2], pts[i + 1][1], pts[i + 1][2]
+				local dx, dy = bx - ax, by - ay
+				local l2 = dx * dx + dy * dy
+				local t = math.clamp(((x - ax) * dx + (y - ay) * dy) / l2, 0, 1)
+				local qx, qy = ax + dx * t - x, ay + dy * t - y
+				local d = math.sqrt(qx * qx + qy * qy)
+				if d < best then
+					best = d
+				end
+			end
+		end
+	end
+	return best
+end
+
+-- Trilhas, mirante na borda, lanternas velhas e cabana abandonada no fundo do bosque
+function WorldBuilder:buildGroveFeatures()
+	self:status("groves")
+	local folder = self:container("DenseGroves", self:worldFolder())
+	for ti, tr in ipairs(self:groveTrails()) do
+		local pts = tr.pts
+		for i = 1, #pts - 1 do
+			local a = V(pts[i][1], pts[i][2], self:groundY(pts[i][1], pts[i][2]))
+			local b = V(pts[i + 1][1], pts[i + 1][2], self:groundY(pts[i + 1][1], pts[i + 1][2]))
+			self:paintStrip(a, b, 9, if i % 3 == 0 then Enum.Material.Mud else Enum.Material.Ground)
+			-- pedras e raízes na beira da trilha
+			if self.rng:NextNumber() < 0.5 then
+				local side = (b - a) * Vector3.new(1, 0, 1)
+				side = side.Unit:Cross(Vector3.yAxis) * (if self.rng:NextNumber() < 0.5 then 6 else -6)
+				local q = a + side
+				self:plant(if self.rng:NextNumber() < 0.6 then "Boulder" else "Fern", Vector3.new(q.X, self:groundY(q.X, -q.Z), q.Z), self.rng:NextNumber(0.35, 0.7), folder)
+			end
+			-- poucas lanternas antigas (só uma acesa)
+			if i % 9 == 4 then
+				local lp = self.Props.lanternPost(CFrame.lookAt(a + (b - a).Unit:Cross(Vector3.yAxis) * 6, b), folder, 8)
+				if not (ti == 1 and i == 4) then
+					local glass = lp:FindFirstChild("LanternGlass")
+					local l = glass and glass:FindFirstChildOfClass("PointLight")
+					if l then
+						l:Destroy()
+					end
+					if glass then
+						(glass :: BasePart).Color = Color3.fromRGB(120, 96, 70)
+						;(glass :: BasePart).Material = Enum.Material.Glass
+					end
+				end
+			end
+		end
+		local last = pts[#pts]
+		local prev = pts[#pts - 1]
+		local endP = V(last[1], last[2], self:groundY(last[1], last[2]))
+		local dir = Vector3.new(last[1] - prev[1], 0, -(last[2] - prev[2])).Unit
+		if tr.kind == "edge" then
+			-- mirante de pedra olhando para o horizonte (ilhas e dragões)
+			self.Props.lookout(CFrame.lookAt(endP, endP + dir), folder, function(p: Vector3)
+				return self:groundY(p.X, -p.Z)
+			end)
+		else
+			-- cabana abandonada, fogueira apagada e caixas
+			local cf = CFrame.lookAt(endP, endP - dir)
+			self.Props.house(cf * CFrame.new(0, 0, 14), folder, self.rng, 16, 14, "wood")
+			self.Props.crate(cf * CFrame.new(10, 0, 2), folder)
+			self.Props.barrel(cf * CFrame.new(-9, 0, 4), folder)
+		end
+	end
 end
 
 -- Planta a vegetação de um bloco de 1024 x 1024 studs (bi, bj = índices de 0 a 15)
@@ -2115,13 +2397,83 @@ function WorldBuilder:forestBlock(bi: number, bj: number, parent: Instance): num
 			n += 1
 		end
 	end
+	local groves = self.data.DENSE_GROVES or {}
 	for y = y0, y0 + 1024 - 1, STEP do
 		for x = x0, x0 + 1024 - 1, STEP do
 			local jx = x + rng:NextNumber(0, STEP)
 			local jy = y + rng:NextNumber(0, STEP)
 			local t = gen.types[gen:domAt(jx, jy)]
 			local cfg = FOREST[t]
-			if cfg then
+			-- Floresta contínua (revisão 13/10): regiões de mata fechada e bosques especiais
+			local dense = DENSE[t]
+			local grove = nil
+			for _, g in ipairs(groves) do
+				local dx, dy = jx - g.x, jy - g.y
+				if dx * dx + dy * dy < g.r * g.r then
+					grove = g
+					break
+				end
+			end
+			if grove or (dense and self:surface(jx, jy) and self:groundY(jx, jy) < dense.maxH) then
+				local kit = KITS[if grove then grove.kit else dense.kit]
+				local under = UNDER[if grove then "default" else dense.under] or UNDER.default
+				local dens
+				if grove then
+					-- borda aberta numa direção (vista para o horizonte e para os dragões)
+					local dx, dy = jx - grove.x, jy - grove.y
+					local d = math.sqrt(dx * dx + dy * dy)
+					local od = grove.openDir
+					local ol = math.sqrt(od[1] ^ 2 + od[2] ^ 2)
+					local along = (dx * od[1] + dy * od[2]) / (ol * math.max(d, 1))
+					local edge = math.clamp((grove.r - d) / 150, 0, 1)
+					dens = 0.97 * (0.35 + 0.65 * edge)
+					if along > 0.82 and d > grove.r * 0.45 then
+						dens *= 0.12 -- corredor aberto para o horizonte
+					end
+				else
+					-- mais rala só perto do limite da região (~160 studs)
+					local edge = false
+					for _, o in ipairs({ { 160, 0 }, { -160, 0 }, { 0, 160 }, { 0, -160 } }) do
+						if gen.types[gen:domAt(jx + o[1], jy + o[2])] ~= t then
+							edge = true
+							break
+						end
+					end
+					dens = if edge then 0.5 else 0.95
+				end
+				-- clareiras pequenas e naturais
+				if math.noise(jx / 130, jy / 130, 61.7) > 0.6 then
+					dens *= 0.12
+				end
+				if rng:NextNumber() < dens then
+					local r = rng:NextNumber()
+					local e = self:pickAt(kit, jx, jy)
+					local gm = if grove then grove.giant else 1
+					if e[1] == "Mushroom" and rng:NextNumber() > 0.12 then
+						e = { "Tree2", 1, 1.6, 2.0, e[5] } -- poucos cogumelos (têm luz)
+					end
+					if e[1] == "Blossom" or e[1] == "Tree2" or e[1] == "Oak" then
+						gm *= 0.75 -- copas largas: gigantes menos exagerados
+					end
+					if r < 0.6 then
+						-- pinheiro gigante (copa grande)
+						put({ e[1], 1, e[3] * 1.3 * gm, e[4] * 1.35 * gm, e[5] }, jx, jy, false)
+					elseif r < 0.9 then
+						put({ e[1], 1, e[3] * 0.85, e[4] * 1.0, e[5] }, jx, jy, false)
+					else
+						put({ e[1], 1, e[3] * 0.45, e[4] * 0.6, e[5] }, jx, jy, false)
+					end
+				end
+				-- chão da mata: samambaias, arbustos, troncos caídos, tocos e pedras
+				if rng:NextNumber() < 0.22 then
+					local e = self:pickAt(under, jx + 300, jy)
+					local ox, oy = rng:NextNumber(-12, 12), rng:NextNumber(-12, 12)
+					put(e, jx + ox, jy + oy, e[1] ~= "Boulder" or e[4] < 1.6)
+				end
+				if rng:NextNumber() < 0.025 then
+					put({ if rng:NextNumber() < 0.6 then "Log" else "Stump", 1, 0.9, 1.3 }, jx + rng:NextNumber(-10, 10), jy + rng:NextNumber(-10, 10), false)
+				end
+			elseif cfg then
 				local m = math.noise(jx / 650, jy / 650, 51.3) * 1.5 + math.noise(jx / 210, jy / 210, 52.9) * 0.6
 				local under = UNDER[cfg[4]] or UNDER.default
 				local p
@@ -2244,11 +2596,13 @@ function WorldBuilder:setupLighting()
 	pcall(function()
 		game:GetService("MaterialService"):SetBaseMaterialOverride(Enum.Material.Grass, "")
 	end)
-	Terrain.WaterColor = Color3.fromRGB(34, 92, 104)
-	Terrain.WaterTransparency = 0.75
-	Terrain.WaterReflectance = 0.7
-	Terrain.WaterWaveSize = 0.15
-	Terrain.WaterWaveSpeed = 9
+	-- Água azul-turquesa e transparente: no raso (fundo de areia) aparece turquesa e dá para ver
+	-- o fundo; no fundo (pedra escura) vira azul profundo. A cor é uma só para toda a água do Roblox.
+	Terrain.WaterColor = Color3.fromRGB(22, 120, 150)
+	Terrain.WaterTransparency = 0.88
+	Terrain.WaterReflectance = 0.45
+	Terrain.WaterWaveSize = 0.12
+	Terrain.WaterWaveSpeed = 8
 	pcall(function()
 		(Terrain :: any).Decoration = true -- grama animada (nem sempre disponível por script)
 	end)

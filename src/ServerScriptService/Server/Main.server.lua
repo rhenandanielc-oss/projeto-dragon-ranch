@@ -23,6 +23,32 @@ local DungeonService = require(Server.Combat.DungeonService)
 local NestService = require(Server.Combat.NestService)
 
 NetService.SetLoadedCheck(DataService.IsLoaded)
+
+-- Modelos dos dragões selvagens que voam no céu (o cliente anima; só visual)
+do
+	local ServerStorage = game:GetService("ServerStorage")
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+	local da = ServerStorage:FindFirstChild("DragonAssets")
+	if da and not ReplicatedStorage:FindFirstChild("AmbientDragons") then
+		local f = Instance.new("Folder")
+		f.Name = "AmbientDragons"
+		for _, species in ipairs({ "WesternDragon", "Wyvern", "Amphiptere" }) do
+			local sp = da:FindFirstChild(species)
+			local adult = sp and sp:FindFirstChild("Adult")
+			if adult then
+				local m = adult:Clone()
+				m.Name = species
+				for _, d in ipairs(m:GetDescendants()) do
+					if d:IsA("Script") or d:IsA("LocalScript") then
+						d:Destroy()
+					end
+				end
+				m.Parent = f
+			end
+		end
+		f.Parent = ReplicatedStorage
+	end
+end
 NetService.Init()
 
 -- Mudanças no perfil são enviadas ao dono (cópia somente-leitura).

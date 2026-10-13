@@ -498,6 +498,7 @@ function WorldGen:computeChunk(x0: number, y0: number, n: number, step: number?)
 
 	local hA, wlA, domA, flagA, cutA = table.create(W * W, 0), table.create(W * W, -1e9), table.create(W * W, 1), table.create(W * W, 0), table.create(W * W, 0)
 	local lakeLevel, swampLevel = data.LAKE_LEVEL, data.SWAMP_LEVEL
+	local BAY = data.BAY
 	for j = 0, W - 1 do
 		local y = by0 + j * VOX
 		for i = 0, W - 1 do
@@ -582,11 +583,52 @@ function WorldGen:computeChunk(x0: number, y0: number, n: number, step: number?)
 			elseif swampW > 0.02 and h < swampLevel + 0.6 and not inChannel and cd < -300 then
 				h = swampLevel + 0.6
 			end
+			-- Baía do Coração: ilha do Hub cercada de água, raso de areia nas margens e fundo escuro no meio
+			local bayFlag = 0
+			if BAY then
+				local bdx, bdy = x - BAY.x, y - BAY.y
+				local bd = sqrt(bdx * bdx + bdy * bdy)
+				local rI = BAY.rIsland + 35 * noise(x / 160, y / 160, 31.7)
+				local rS = BAY.rShore + 85 * noise(x / 320, y / 320, 32.9) + 28 * noise(x / 90, y / 90, 33.3)
+				if bd > rI and bd < rS then
+					local ds = math.min(bd - rI, rS - bd) -- distância até a margem mais próxima
+					local fl
+					if ds < 90 then
+						fl = BAY.level - 1.2 - ds * 0.085 -- prateleira rasa
+					elseif ds < 210 then
+						fl = BAY.level - 8.9 - (ds - 90) * 0.3 -- talude
+					else
+						fl = BAY.level - 45 + 5 * noise(x / 220, y / 220, 34.1)
+					end
+					h = fl
+					if BAY.level > wl then
+						wl = BAY.level
+					end
+					bayFlag = 6
+				elseif bd >= rS and bd < rS + 80 and not inChannel then
+					-- praia da margem: segura a água e sobe suave
+					local beach = BAY.level + 0.6 + (bd - rS) * 0.09
+					if h < beach then
+						h = beach
+					end
+					bayFlag = 7
+				elseif bd <= rI and bd > BAY.rIsland - 90 then
+					-- praia da ilha
+					local beach = BAY.level + 0.8 + (rI - bd) * 0.1
+					if h < beach then
+						h = beach
+					end
+					bayFlag = 7
+				end
+			end
 			if h < 0 and wl < 0 then
 				wl = 0 -- mar
 			end
 			if cd > 0 and wl < 0 then wl = 0 end
 			if road > 0.5 and (flag == 0 or flag == 4) then flag = 1 end
+			if bayFlag == 6 or (bayFlag == 7 and flag ~= 2) then
+				flag = bayFlag
+			end
 			hA[idx] = h
 			wlA[idx] = wl
 			cutA[idx] = cut
@@ -626,7 +668,8 @@ function WorldGen:computeChunk(x0: number, y0: number, n: number, step: number?)
 			end
 			-- base por região
 			if region == "forest" then
-				mat = if nz > 0.7 then M.Ground elseif nz > 0.35 then M.LeafyGrass else M.Grass
+				-- chão de mata fechada: folhas e terra escura (as frestas entre as copas parecem mata, não campo)
+				mat = if nz > 0.3 then M.Ground elseif nz > -0.35 then M.LeafyGrass else M.Grass
 			elseif region == "enchanted" then
 				mat = if nz > 0.5 then M.LeafyGrass else M.Grass
 			elseif region == "swamp" or region == "swampcore" then
@@ -685,7 +728,19 @@ function WorldGen:computeChunk(x0: number, y0: number, n: number, step: number?)
 				mat = M.Sand
 			end
 			-- estradas e áreas especiais
-			if flag == 1 then
+			if flag == 6 then
+				-- fundo da baía: areia clara no raso (turquesa), pedra escura no fundo (azul profundo)
+				local depth = wl - h
+				if depth < 10 then
+					mat = M.Sand
+				elseif depth < 22 then
+					mat = if nz > 0.2 then M.Sand elseif nz > -0.3 then M.Limestone else M.Slate
+				else
+					mat = if nz > 0.4 then M.Basalt else M.Slate
+				end
+			elseif flag == 7 then
+				mat = if h < (BAY and BAY.level or 6) + 5 + 2 * nz then M.Sand elseif nz > 0.5 then M.LeafyGrass else M.Grass
+			elseif flag == 1 then
 				mat = if region == "ruins" or region == "castle" then M.Cobblestone elseif region == "snow" then M.Snow elseif region == "swamp" or region == "swampcore" then M.Mud else M.Ground
 			elseif flag == 2 then
 				mat = M.Grass
